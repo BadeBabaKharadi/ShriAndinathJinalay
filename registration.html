@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="श्रावक संस्कार शिविर २०२६ पंजीकरण">
+  <title>श्रावक संस्कार शिविर २०२६ - पंजीकरण</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/registration.css">
+</head>
+
+<body>
+
+  <div class="announcement-bar">
+    🙏 जिनधर्म आराधना चातुर्मास में आपका स्वागत है
+  </div>
+
+  <header class="site-header">
+    <div class="container nav-wrapper">
+      <a class="brand" href="index.html" aria-label="जिनधर्म आराधना">
+        <span class="brand-icon">🪔</span>
+        <span>
+          <span class="brand-title">जिनधर्म आराधना</span>
+          <span class="brand-subtitle">चातुर्मास २०२६</span>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <section class="page-hero">
+      <div class="container">
+        <div class="event-eyebrow">पंजीकरण</div>
+        <h1 class="page-title">श्रावक संस्कार शिविर</h1>
+        <p class="page-subtitle" id="venue-summary">
+          आदिनाथ जिनालय, ड्रीम्स वीरोदय सोसाइटी · खराड़ी, पुणे
+        </p>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="container">
+
+        <div class="registration-panel">
+
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">शिविर के नियम एवं निर्देश</div>
+              <p class="panel-description">
+                पंजीकरण आगे बढ़ाने से पहले कृपया सभी नियम एवं निर्देश ध्यानपूर्वक पढ़ें।
+              </p>
+            </div>
+            <span class="badge">16–25 सितम्बर २०२६</span>
+          </div>
+
+          <div class="rules-box" id="rules-box" aria-label="शिविर के नियम">
+            <div class="rules-heading">शिविर के नियम</div>
+            <div id="rules-list"></div>
+          </div>
+
+          <div class="scroll-status" id="scroll-status">
+            कृपया नियमों को नीचे तक पढ़ें
+          </div>
+
+          <div class="event-info" id="event-details"></div>
+
+          <div class="acceptance">
+            <label class="accept-label">
+              <input type="checkbox" id="rules-accepted" disabled>
+              <span>
+                मैंने ऊपर दिए गए सभी नियम एवं निर्देश पढ़ लिए हैं और उनका पालन करने के लिए सहमत हूँ।
+              </span>
+            </label>
+
+            <button type="button" id="accept-button" class="button primary" disabled>
+              स्वीकार करें
+            </button>
+
+            <button type="button" id="continue-button" class="button primary" disabled>
+              आगे बढ़ें
+            </button>
+          </div>
+
+        </div>
+
+        <div class="registration-panel hidden" id="mobile-section">
+
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">पंजीकरण</div>
+              <p class="panel-description">
+                आगे बढ़ने के लिए अपना मोबाइल नंबर दर्ज करें।
+              </p>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="mobile">मोबाइल नंबर</label>
+            <input type="tel" id="mobile" class="input"
+                   inputmode="numeric" maxlength="10"
+                   placeholder="10 अंकों का मोबाइल नंबर"
+                   autocomplete="tel">
+            <p class="form-message hidden" id="mobile-message"></p>
+          </div>
+
+          <button type="button" id="mobile-continue" class="button primary">
+            आगे बढ़ें
+          </button>
+
+        </div>
+
+        <div class="registration-panel hidden" id="placeholder-section">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">पंजीकरण फॉर्म</div>
+              <p class="panel-description">
+                यह frontend चरण पूरा है। अगले चरण में इसी पेज को Google Apps Script API से जोड़ा जाएगा।
+              </p>
+            </div>
+          </div>
+
+          <button type="button" class="button secondary" id="back-button">
+            वापस जाएँ
+          </button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <span>आदिनाथ जिनालय · ड्रीम्स वीरोदय सोसाइटी, खराड़ी, पुणे</span>
+      <span>चातुर्मास २०२६</span>
+    </div>
+  </footer>
+
+  <script src="js/registration.js"></script>
+</body>
+</html>
