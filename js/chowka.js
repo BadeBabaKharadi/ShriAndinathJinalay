@@ -219,6 +219,46 @@ document.addEventListener("DOMContentLoaded", () => {
       count.textContent =
         `${result.rows.length} चौके`;
 
+
+      /*
+       * =====================================================
+       * MAHARAJ UPDATE STATUS
+       * =====================================================
+       *
+       * We only use the values coming from the Sheet to
+       * determine whether both Maharaj Ji have been updated.
+       *
+       * IMPORTANT:
+       * We DO NOT modify, translate, or map row.maharaj.
+       *
+       * Whatever value you put in the Sheet will continue to
+       * be displayed exactly as returned by the API.
+       *
+       * Example:
+       *
+       * AjitSagarJi
+       * VivekanandSagarJi
+       *
+       * Once two distinct non-empty Maharaj values exist,
+       * the temporary "पड़गाहन के बाद अपडेट होगा" message
+       * disappears from all remaining blank rows.
+       *
+       * Multiple rows for the same Maharaj count only once.
+       */
+
+      const updatedMaharajNames =
+        new Set(
+          result.rows
+            .map(row =>
+              String(row.maharaj || "").trim()
+            )
+            .filter(Boolean)
+        );
+
+      const bothMaharajUpdated =
+        updatedMaharajNames.size >= 2;
+
+
       tbody.innerHTML =
         result.rows
           .map(
@@ -232,7 +272,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
               return `
                 <tr class="${confirmed ? "maharaj-confirmed" : ""}">
-                  <td>${index + 1}</td>
+
+                  <td>
+                    ${index + 1}
+                  </td>
 
                   <td>
                     <strong>
@@ -253,18 +296,22 @@ document.addEventListener("DOMContentLoaded", () => {
                             ${esc(row.maharaj)}
                           </span>
                         `
-                        : `
-                          <span class="not-confirmed">
-                            पड़गाहन के बाद अपडेट होगा
-                          </span>
-                        `
+                        : bothMaharajUpdated
+                          ? ""
+                          : `
+                            <span class="not-confirmed">
+                              पड़गाहन के बाद अपडेट होगा
+                            </span>
+                          `
                     }
                   </td>
+
                 </tr>
               `;
             }
           )
           .join("");
+
 
     } catch (error) {
 
