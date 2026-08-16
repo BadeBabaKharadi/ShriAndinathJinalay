@@ -60,6 +60,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const mobileSection =
     document.getElementById("mobile-section");
+  const timetableSection =
+    document.getElementById("timetable-section");
+
+  const timetableList =
+    document.getElementById("timetable-list");
+
+  const timetableNote =
+    document.getElementById("timetable-note");
+
+  const timetableContinueButton =
+    document.getElementById(
+      "timetable-continue-button"
+    );
+
+  const timetableBackButton =
+    document.getElementById(
+      "timetable-back-button"
+    );
 
   const mobileInput =
     document.getElementById("mobile");
@@ -362,6 +380,63 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ============================================================
   // EVENT RENDERING
   // ============================================================
+  function renderTimetable(event) {
+
+    const timetable =
+      event.timetable;
+
+    const timetableList =
+      document.getElementById(
+        "timetable-list"
+      );
+
+
+    if (
+      !timetable ||
+      !Array.isArray(timetable.schedule) ||
+      timetable.schedule.length === 0
+    ) {
+
+      timetableList.innerHTML = `
+      <tr>
+        <td
+          colspan="2"
+          class="timetable-empty"
+        >
+          समय-सारणी उपलब्ध नहीं है।
+        </td>
+      </tr>
+    `;
+
+      return;
+    }
+
+
+    timetableList.innerHTML =
+      timetable.schedule.map(
+        item => `
+
+        <tr>
+
+          <td
+            class="timetable-time"
+          >
+            ${escapeHtml(item.time)}
+          </td>
+
+          <td
+            class="timetable-activity"
+          >
+            ${escapeHtml(item.activity)}
+          </td>
+
+        </tr>
+
+      `
+      ).join("");
+  }
+
+
 
   function renderEvent(event) {
 
@@ -551,8 +626,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     renderEvent(event);
-
     renderRules(event);
+    renderTimetable(event);
 
   } catch (error) {
 
@@ -664,6 +739,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   );
 
+  timetableBackButton.addEventListener(
+    "click",
+    () => {
+
+      timetableSection.classList.add("hidden");
+
+      rulesSection.classList.remove("hidden");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    }
+  );
+
+  timetableContinueButton.addEventListener(
+    "click",
+    () => {
+
+      timetableSection.classList.add("hidden");
+
+      mobileSection.classList.remove("hidden");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    }
+  );
+
 
   // ============================================================
   // CONTINUE FROM RULES
@@ -677,18 +784,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
+      rulesSection.classList.add("hidden");
 
-      rulesSection.classList.add(
-        "hidden"
-      );
+      timetableSection.classList.remove("hidden");
 
-
-      showOnly(
-        mobileSection
-      );
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
 
     }
   );
+
+
   successViewButton.addEventListener(
     "click",
     () => {
