@@ -229,8 +229,8 @@
 
               <thead>
                 <tr>
-                  <th>समय</th>
-                  <th>कार्यक्रम</th>
+                  <th scope="col">समय</th>
+                  <th scope="col">कार्यक्रम</th>
                 </tr>
               </thead>
 
@@ -242,13 +242,40 @@
 
           </div>
 
+          <div class="timetable-note">
+            <strong>नोट:</strong>
+            उपरोक्त समय-सारणी 16 सितम्बर 2026 से 25 सितम्बर 2026 तक लागू रहेगी।
+          </div>
+
+          <div class="timetable-acceptance">
+
+            <label class="accept-label" for="timetable-accepted">
+
+              <input
+                type="checkbox"
+                id="timetable-accepted"
+              >
+
+              <span>
+                मैंने ऊपर दी गई समय-सारणी पढ़ ली है और उसके अनुसार शिविर में भाग लेने के लिए सहमत हूँ।
+              </span>
+
+            </label>
+
+          </div>
+
           <div class="form-actions">
 
             <button type="button" id="timetable-back-button" class="button secondary">
               वापस जाएँ
             </button>
 
-            <button type="button" id="timetable-continue-button" class="button primary">
+            <button
+              type="button"
+              id="timetable-continue-button"
+              class="button primary"
+              disabled
+            >
               पंजीकरण के लिए आगे बढ़ें
             </button>
 

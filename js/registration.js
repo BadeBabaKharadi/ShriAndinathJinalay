@@ -74,6 +74,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       "timetable-continue-button"
     );
 
+  const timetableAccepted =
+    document.getElementById(
+      "timetable-accepted"
+    );
+
   const timetableBackButton =
     document.getElementById(
       "timetable-back-button"
@@ -753,9 +758,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   );
 
+  timetableAccepted.addEventListener(
+    "change",
+    () => {
+
+      timetableContinueButton.disabled =
+        !timetableAccepted.checked;
+
+    }
+  );
+
+
   timetableContinueButton.addEventListener(
     "click",
     () => {
+
+      if (!timetableAccepted.checked) {
+        return;
+      }
 
       timetableSection.classList.add("hidden");
 

@@ -428,6 +428,123 @@ a {
   font-weight: 600;
 }
 
+/* =========================================================
+   TIMETABLE
+   Shared styles - desktop and mobile
+   ========================================================= */
+
+.timetable-wrapper {
+  width: 100%;
+  margin-top: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--white);
+}
+
+.timetable-table {
+  width: 100%;
+  min-width: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.timetable-col-time {
+  width: 190px;
+}
+
+.timetable-col-program {
+  width: auto;
+}
+
+.timetable-table thead th {
+  background: var(--maroon);
+  color: var(--white);
+  padding: 14px 18px;
+  text-align: left;
+  font-family: "Noto Sans Devanagari", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 1px solid var(--maroon);
+}
+
+.timetable-table thead th:first-child {
+  width: 190px;
+  text-align: center;
+}
+
+.timetable-table tbody tr {
+  background: var(--white);
+}
+
+.timetable-table tbody tr:nth-child(even) {
+  background: var(--bg-soft);
+}
+
+.timetable-table td {
+  padding: 14px 18px;
+  vertical-align: middle;
+  line-height: 1.55;
+  border: 1px solid var(--line);
+}
+
+.timetable-table td.timetable-time {
+  width: 190px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--maroon);
+  white-space: nowrap;
+  background: rgba(255, 247, 232, 0.65);
+}
+
+.timetable-time .time-value {
+  display: inline-block;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+.timetable-table td.timetable-activity {
+  padding-left: 22px;
+  color: var(--text);
+  font-family: "Noto Sans Devanagari", sans-serif;
+  font-size: 1rem;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+.timetable-note {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-left: 4px solid var(--gold);
+  background: var(--saffron-soft);
+  color: var(--text-soft);
+  border-radius: 6px;
+  line-height: 1.6;
+}
+
+.timetable-acceptance {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-soft);
+}
+
+.timetable-acceptance .accept-label {
+  font-size: 0.9rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
 @media (max-width: 700px) {
   .container {
     width: min(100% - 28px, 1200px);
@@ -482,266 +599,57 @@ a {
     text-align: center;
   }
 
-  /* =========================================================
-   TIMETABLE
-   ========================================================= */
-  /* =========================================================
-   TIMETABLE
-   ========================================================= */
-
+  /* Timetable mobile */
   .timetable-wrapper {
-    width: 100%;
-    margin-top: 24px;
-
-    border: 1px solid var(--line);
-    border-radius: 14px;
-
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    background: var(--white);
+    border-radius: 12px;
   }
-
-
-  /* ---------------------------------------------------------
-   Table
-   --------------------------------------------------------- */
 
   .timetable-table {
     width: 100%;
-    min-width: 620px;
-
-    border-collapse: separate;
-    border-spacing: 0;
-
+    min-width: 0;
     table-layout: fixed;
   }
 
-
-  /* ---------------------------------------------------------
-   Header
-   --------------------------------------------------------- */
+  .timetable-col-time {
+    width: 145px;
+  }
 
   .timetable-table thead th {
-    background: var(--maroon);
-    color: var(--white);
-
-    padding: 14px 18px;
-
-    text-align: left;
-
-    font-family: "Noto Sans Devanagari", sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 10px;
+    font-size: 0.9rem;
   }
-
-
-  /*
- * Fixed column proportions.
- *
- * Time    = 180px
- * Program = remaining space
- */
 
   .timetable-table thead th:first-child {
-    width: 180px;
-    min-width: 180px;
-
-    text-align: center;
+    width: 145px;
   }
-
-
-  .timetable-table thead th:last-child {
-    border-right: none;
-  }
-
-
-  /* ---------------------------------------------------------
-   Rows
-   --------------------------------------------------------- */
-
-  .timetable-table tbody tr {
-    background: var(--white);
-  }
-
-
-  .timetable-table tbody tr:nth-child(even) {
-    background: var(--bg-soft);
-  }
-
-
-  /* ---------------------------------------------------------
-   Cells
-   --------------------------------------------------------- */
 
   .timetable-table td {
-    padding: 14px 18px;
-
-    vertical-align: middle;
-
-    line-height: 1.55;
-
-    border-bottom: 1px solid var(--line);
+    padding: 12px 10px;
+    line-height: 1.5;
   }
-
-
-  .timetable-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-
-  /* ---------------------------------------------------------
-   Time
-   --------------------------------------------------------- */
 
   .timetable-table td.timetable-time {
-    width: 180px;
-    min-width: 180px;
-
-    padding-left: 12px;
-    padding-right: 24px;
-
-    text-align: center;
-
-    font-family: "Poppins", sans-serif;
-
-    font-size: 0.92rem;
-    font-weight: 600;
-
-    color: var(--maroon);
-
-    white-space: nowrap;
-
-    border-right: 1px solid var(--line);
-
-    background: rgba(255, 247, 232, 0.65);
+    width: 145px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 0.78rem;
   }
-
-
-  /*
- * Keep complete time together.
- *
- * Example:
- *
- * 12:00–01:00 PM
- *
- * must stay on one line.
- */
-
-  .timetable-time .time-value {
-    display: inline-block;
-
-    white-space: nowrap;
-
-    word-break: keep-all;
-
-    overflow-wrap: normal;
-  }
-
-
-  /* ---------------------------------------------------------
-   Activity
-   --------------------------------------------------------- */
 
   .timetable-table td.timetable-activity {
-    padding-left: 24px;
-
-    color: var(--text);
-
-    font-size: 1rem;
-
-    text-align: left;
+    padding-left: 14px;
+    font-size: 0.9rem;
   }
-
-
-  /* ---------------------------------------------------------
-   Note
-   --------------------------------------------------------- */
 
   .timetable-note {
-    margin-top: 18px;
-
-    padding: 13px 16px;
-
-    border-left: 4px solid var(--gold);
-
-    background: var(--saffron-soft);
-
-    color: var(--text-soft);
-
-    border-radius: 6px;
-
-    line-height: 1.6;
+    font-size: 0.9rem;
   }
 
+  .timetable-acceptance {
+    padding: 12px 13px;
+  }
 
-  /* ---------------------------------------------------------
-   Mobile
-   --------------------------------------------------------- */
-
-  @media (max-width: 640px) {
-
-    .timetable-wrapper {
-      border-radius: 12px;
-    }
-
-
-    .timetable-table {
-      min-width: 620px;
-    }
-
-
-    .timetable-table thead th {
-      padding: 12px 10px;
-
-      font-size: 0.9rem;
-    }
-
-
-    .timetable-table thead th:first-child {
-      width: 160px;
-      min-width: 160px;
-    }
-
-
-    .timetable-table td {
-      padding-top: 12px;
-      padding-bottom: 12px;
-
-      line-height: 1.5;
-    }
-
-
-    .timetable-table td.timetable-time {
-      width: 160px;
-      min-width: 160px;
-
-      padding-left: 8px;
-      padding-right: 18px;
-
-      font-size: 0.82rem;
-
-      white-space: nowrap;
-    }
-
-
-    .timetable-time .time-value {
-      white-space: nowrap;
-    }
-
-
-    .timetable-table td.timetable-activity {
-      padding-left: 18px;
-
-      font-size: 0.9rem;
-    }
-
-
-    .timetable-note {
-      font-size: 0.9rem;
-    }
-
+  .timetable-acceptance .accept-label {
+    font-size: 0.85rem;
   }
 }
+
