@@ -33,9 +33,9 @@ html {
 body {
   color: var(--text);
   background:
-    radial-gradient(circle at 15% 6%, rgba(255,255,255,.88) 0%, transparent 14%),
-    radial-gradient(circle at 94% 2%, rgba(245,166,35,.08) 0%, transparent 12%),
-    repeating-linear-gradient(115deg, transparent 0 3px, rgba(79,46,25,.018) 3px 4px),
+    radial-gradient(circle at 15% 6%, rgba(255, 255, 255, .88) 0%, transparent 14%),
+    radial-gradient(circle at 94% 2%, rgba(245, 166, 35, .08) 0%, transparent 12%),
+    repeating-linear-gradient(115deg, transparent 0 3px, rgba(79, 46, 25, .018) 3px 4px),
     var(--bg);
   font-family: 'Poppins', 'Noto Sans Devanagari', Arial, sans-serif;
   line-height: 1.7;
@@ -48,8 +48,8 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    radial-gradient(rgba(110,26,20,.05) 1px, transparent 1px),
-    radial-gradient(rgba(245,166,35,.04) 1px, transparent 1px);
+    radial-gradient(rgba(110, 26, 20, .05) 1px, transparent 1px),
+    radial-gradient(rgba(245, 166, 35, .04) 1px, transparent 1px);
   background-position: 0 0, 10px 10px;
   background-size: 34px 34px, 34px 34px;
   opacity: .45;
@@ -74,7 +74,7 @@ a {
   letter-spacing: .02em;
   padding: 9px 16px;
   text-align: center;
-  border-bottom: 1px solid rgba(110,26,20,.20);
+  border-bottom: 1px solid rgba(110, 26, 20, .20);
 }
 
 .site-header {
@@ -90,9 +90,7 @@ a {
   right: 0;
   bottom: -1px;
   height: 3px;
-  background-image: repeating-linear-gradient(
-    90deg, transparent 0 2px, var(--gold-soft) 2px 3px
-  );
+  background-image: repeating-linear-gradient(90deg, transparent 0 2px, var(--gold-soft) 2px 3px);
 }
 
 .nav-wrapper {
@@ -112,7 +110,7 @@ a {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,.75);
+  border: 1px solid rgba(255, 255, 255, .75);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -139,8 +137,8 @@ a {
 .page-hero {
   padding: clamp(40px, 6vw, 70px) 0 30px;
   background:
-    linear-gradient(120deg, rgba(110,26,20,.05), transparent),
-    radial-gradient(circle at 90% 11%, rgba(245,166,35,.10) 0%, transparent 20%);
+    linear-gradient(120deg, rgba(110, 26, 20, .05), transparent),
+    radial-gradient(circle at 90% 11%, rgba(245, 166, 35, .10) 0%, transparent 20%);
 }
 
 .event-eyebrow {
@@ -218,7 +216,7 @@ a {
   border-radius: 99px;
   font-size: .72rem;
   font-weight: 700;
-  border: 1px solid rgba(245,166,35,.50);
+  border: 1px solid rgba(245, 166, 35, .50);
 }
 
 .rules-box {
@@ -249,7 +247,7 @@ a {
   margin-bottom: 9px;
   border-radius: 12px;
   background: linear-gradient(90deg, #FFFDF9, var(--bg-soft));
-  border: 1px solid rgba(245,166,35,.20);
+  border: 1px solid rgba(245, 166, 35, .20);
 }
 
 .rule-number {
@@ -358,7 +356,7 @@ a {
 .primary {
   background: var(--maroon);
   color: var(--white);
-  box-shadow: 0 8px 18px rgba(110,26,20,.14);
+  box-shadow: 0 8px 18px rgba(110, 26, 20, .14);
 }
 
 .primary:hover:not(:disabled) {
@@ -397,7 +395,7 @@ a {
 
 .input:focus {
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(200,155,60,.16);
+  box-shadow: 0 0 0 3px rgba(200, 155, 60, .16);
 }
 
 .form-message {
@@ -408,7 +406,7 @@ a {
 
 .footer {
   background: var(--maroon);
-  color: rgba(255,255,255,.92);
+  color: rgba(255, 255, 255, .92);
   border-top: 2px solid var(--gold);
   padding: 20px 0;
 }
@@ -482,5 +480,268 @@ a {
   .footer-content {
     flex-direction: column;
     text-align: center;
+  }
+
+  /* =========================================================
+   TIMETABLE
+   ========================================================= */
+  /* =========================================================
+   TIMETABLE
+   ========================================================= */
+
+  .timetable-wrapper {
+    width: 100%;
+    margin-top: 24px;
+
+    border: 1px solid var(--line);
+    border-radius: 14px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    background: var(--white);
+  }
+
+
+  /* ---------------------------------------------------------
+   Table
+   --------------------------------------------------------- */
+
+  .timetable-table {
+    width: 100%;
+    min-width: 620px;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    table-layout: fixed;
+  }
+
+
+  /* ---------------------------------------------------------
+   Header
+   --------------------------------------------------------- */
+
+  .timetable-table thead th {
+    background: var(--maroon);
+    color: var(--white);
+
+    padding: 14px 18px;
+
+    text-align: left;
+
+    font-family: "Noto Sans Devanagari", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+
+  /*
+ * Fixed column proportions.
+ *
+ * Time    = 180px
+ * Program = remaining space
+ */
+
+  .timetable-table thead th:first-child {
+    width: 180px;
+    min-width: 180px;
+
+    text-align: center;
+  }
+
+
+  .timetable-table thead th:last-child {
+    border-right: none;
+  }
+
+
+  /* ---------------------------------------------------------
+   Rows
+   --------------------------------------------------------- */
+
+  .timetable-table tbody tr {
+    background: var(--white);
+  }
+
+
+  .timetable-table tbody tr:nth-child(even) {
+    background: var(--bg-soft);
+  }
+
+
+  /* ---------------------------------------------------------
+   Cells
+   --------------------------------------------------------- */
+
+  .timetable-table td {
+    padding: 14px 18px;
+
+    vertical-align: middle;
+
+    line-height: 1.55;
+
+    border-bottom: 1px solid var(--line);
+  }
+
+
+  .timetable-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+
+  /* ---------------------------------------------------------
+   Time
+   --------------------------------------------------------- */
+
+  .timetable-table td.timetable-time {
+    width: 180px;
+    min-width: 180px;
+
+    padding-left: 12px;
+    padding-right: 24px;
+
+    text-align: center;
+
+    font-family: "Poppins", sans-serif;
+
+    font-size: 0.92rem;
+    font-weight: 600;
+
+    color: var(--maroon);
+
+    white-space: nowrap;
+
+    border-right: 1px solid var(--line);
+
+    background: rgba(255, 247, 232, 0.65);
+  }
+
+
+  /*
+ * Keep complete time together.
+ *
+ * Example:
+ *
+ * 12:00–01:00 PM
+ *
+ * must stay on one line.
+ */
+
+  .timetable-time .time-value {
+    display: inline-block;
+
+    white-space: nowrap;
+
+    word-break: keep-all;
+
+    overflow-wrap: normal;
+  }
+
+
+  /* ---------------------------------------------------------
+   Activity
+   --------------------------------------------------------- */
+
+  .timetable-table td.timetable-activity {
+    padding-left: 24px;
+
+    color: var(--text);
+
+    font-size: 1rem;
+
+    text-align: left;
+  }
+
+
+  /* ---------------------------------------------------------
+   Note
+   --------------------------------------------------------- */
+
+  .timetable-note {
+    margin-top: 18px;
+
+    padding: 13px 16px;
+
+    border-left: 4px solid var(--gold);
+
+    background: var(--saffron-soft);
+
+    color: var(--text-soft);
+
+    border-radius: 6px;
+
+    line-height: 1.6;
+  }
+
+
+  /* ---------------------------------------------------------
+   Mobile
+   --------------------------------------------------------- */
+
+  @media (max-width: 640px) {
+
+    .timetable-wrapper {
+      border-radius: 12px;
+    }
+
+
+    .timetable-table {
+      min-width: 620px;
+    }
+
+
+    .timetable-table thead th {
+      padding: 12px 10px;
+
+      font-size: 0.9rem;
+    }
+
+
+    .timetable-table thead th:first-child {
+      width: 160px;
+      min-width: 160px;
+    }
+
+
+    .timetable-table td {
+      padding-top: 12px;
+      padding-bottom: 12px;
+
+      line-height: 1.5;
+    }
+
+
+    .timetable-table td.timetable-time {
+      width: 160px;
+      min-width: 160px;
+
+      padding-left: 8px;
+      padding-right: 18px;
+
+      font-size: 0.82rem;
+
+      white-space: nowrap;
+    }
+
+
+    .timetable-time .time-value {
+      white-space: nowrap;
+    }
+
+
+    .timetable-table td.timetable-activity {
+      padding-left: 18px;
+
+      font-size: 0.9rem;
+    }
+
+
+    .timetable-note {
+      font-size: 0.9rem;
+    }
+
   }
 }

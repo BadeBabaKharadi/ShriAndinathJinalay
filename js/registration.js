@@ -382,14 +382,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ============================================================
   function renderTimetable(event) {
 
-    const timetable =
-      event.timetable;
+    const timetable = event.timetable;
 
     const timetableList =
-      document.getElementById(
-        "timetable-list"
-      );
-
+      document.getElementById("timetable-list");
 
     if (
       !timetable ||
@@ -411,29 +407,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-
     timetableList.innerHTML =
-      timetable.schedule.map(
-        item => `
+      timetable.schedule.map(item => {
 
+        // Keep the complete time together.
+        const safeTime =
+          escapeHtml(item.time)
+            .replace(/ /g, "&nbsp;");
+
+        return `
         <tr>
 
-          <td
-            class="timetable-time"
-          >
-            ${escapeHtml(item.time)}
+          <td class="timetable-time">
+            <span class="time-value">
+              ${safeTime}
+            </span>
           </td>
 
-          <td
-            class="timetable-activity"
-          >
+          <td class="timetable-activity">
             ${escapeHtml(item.activity)}
           </td>
 
         </tr>
+      `;
 
-      `
-      ).join("");
+      }).join("");
   }
 
 
