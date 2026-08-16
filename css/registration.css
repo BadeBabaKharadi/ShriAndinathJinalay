@@ -428,6 +428,224 @@ a {
   font-weight: 600;
 }
 
+
+/* =========================================================
+   REGISTRATION DETAILS & FAMILY MEMBERS
+   ========================================================= */
+
+.registration-summary,
+.registration-details,
+.family-members-details {
+  margin-top: 22px;
+}
+
+/* Existing-registration summary */
+.registration-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.registration-summary-item {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-soft);
+}
+
+.registration-summary-item span,
+.detail-label {
+  display: block;
+  color: var(--text-soft);
+  font-size: .78rem;
+  margin-bottom: 4px;
+}
+
+.registration-summary-item strong,
+.detail-item strong {
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+/* Full registration details */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.detail-item {
+  min-width: 0;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #FFFDFB, var(--bg-soft));
+}
+
+.detail-item.detail-full {
+  grid-column: 1 / -1;
+}
+
+.detail-item strong {
+  display: block;
+  font-size: .96rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+/* Family members shown in registration details */
+.family-members-details .form-section {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.family-members-details .form-section-title,
+.form-section-title {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  color: var(--maroon);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.family-members-details .form-section-description,
+.form-section-description {
+  margin-top: 5px;
+  color: var(--text-soft);
+  font-size: .84rem;
+}
+
+.family-members-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.family-member-card {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: 0 4px 14px var(--shadow);
+}
+
+.family-member-number {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--saffron-soft);
+  color: var(--maroon);
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+}
+
+.family-member-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.family-member-name {
+  color: var(--text-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.family-member-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 14px;
+  color: var(--text-soft);
+  font-size: .82rem;
+  line-height: 1.6;
+}
+
+.family-member-meta + .family-member-meta {
+  margin-top: 3px;
+}
+
+/* Family member editor */
+.family-member-form-row {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #FFFDFB, var(--bg-soft));
+}
+
+.family-member-form-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 2px;
+  color: var(--maroon);
+  font-weight: 700;
+}
+
+.remove-family-member {
+  appearance: none;
+  border: 1px solid rgba(110, 26, 20, .20);
+  border-radius: 8px;
+  background: rgba(110, 26, 20, .06);
+  color: var(--maroon);
+  padding: 5px 10px;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.remove-family-member:hover {
+  background: rgba(110, 26, 20, .11);
+  border-color: rgba(110, 26, 20, .35);
+}
+
+.family-member-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.check-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-size: .88rem;
+  cursor: pointer;
+}
+
+.check-option input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--maroon);
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.form-actions .button {
+  margin-top: 0;
+}
+
 /* =========================================================
    TIMETABLE
    Shared styles - desktop and mobile
@@ -597,6 +815,33 @@ a {
   .footer-content {
     flex-direction: column;
     text-align: center;
+  }
+
+  .registration-summary,
+  .details-grid,
+  .family-members-list {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-item.detail-full {
+    grid-column: auto;
+  }
+
+  .registration-summary-item,
+  .detail-item {
+    padding: 12px 13px;
+  }
+
+  .family-member-card {
+    padding: 13px;
+  }
+
+  .family-member-meta {
+    gap: 3px 10px;
+  }
+
+  .form-actions {
+    grid-template-columns: 1fr;
   }
 
   /* Timetable mobile */
