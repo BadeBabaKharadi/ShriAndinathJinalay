@@ -212,7 +212,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       "form-food"
     );
 
-
   const familyMembersForm =
     document.getElementById(
       "family-members-form"
@@ -222,7 +221,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById(
       "add-family-member"
     );
-
 
   const formBackButton =
     document.getElementById(
