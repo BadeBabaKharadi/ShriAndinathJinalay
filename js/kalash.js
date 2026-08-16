@@ -404,7 +404,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // -------------------------------------------------------
         // DISPLAY AMOUNT
         // -------------------------------------------------------
-
+        /*
         if (item.displayAmount) {
 
             const amount =
@@ -420,7 +420,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             body.appendChild(amount);
 
-        }
+        }*/
 
 
         // -------------------------------------------------------
@@ -451,7 +451,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // -------------------------------------------------------
         // COMMENTS
         // -------------------------------------------------------
-
+        /*
         if (
             item.comments &&
             String(item.comments).trim()
@@ -470,7 +470,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             body.appendChild(comments);
 
-        }
+        }*/
 
 
         card.appendChild(body);
