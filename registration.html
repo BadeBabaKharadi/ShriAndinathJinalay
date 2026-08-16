@@ -1,112 +1,231 @@
 <!doctype html>
 <html lang="hi">
+
 <head>
   <meta charset="utf-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <meta name="description" content="सर्वोदय श्रावक संस्कार शिविर २०२६ पंजीकरण">
-  <title>सर्वोदय श्रावक संस्कार शिविर २०२६ - पंजीकरण</title>
+
+  <title>
+    सर्वोदय श्रावक संस्कार शिविर २०२६ - पंजीकरण
+  </title>
+
   <link rel="icon" type="image/png" href="favicon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
 
   <link rel="stylesheet" href="css/registration.css">
 </head>
 
+
 <body>
+
+  <!-- =========================================================
+       ANNOUNCEMENT
+       ========================================================= -->
 
   <div class="announcement-bar">
     🙏 जिनधर्म आराधना चातुर्मास में आपका स्वागत है
   </div>
 
+
+  <!-- =========================================================
+       HEADER
+       ========================================================= -->
+
   <header class="site-header">
+
     <div class="container nav-wrapper">
+
       <a class="brand" href="index.html" aria-label="जिनधर्म आराधना">
-        <span class="brand-icon">🪔</span>
-        <span>
-          <span class="brand-title">जिनधर्म आराधना</span>
-          <span class="brand-subtitle">चातुर्मास २०२६</span>
+
+        <span class="brand-icon">
+          🪔
         </span>
+
+        <span>
+
+          <span class="brand-title">
+            जिनधर्म आराधना
+          </span>
+
+          <span class="brand-subtitle">
+            चातुर्मास २०२६
+          </span>
+
+        </span>
+
       </a>
+
     </div>
+
   </header>
 
+
+  <!-- =========================================================
+       MAIN
+       ========================================================= -->
+
   <main class="site-main">
+
+
+    <!-- =======================================================
+         PAGE HERO
+         ======================================================= -->
+
     <section class="page-hero">
+
       <div class="container">
-        <div class="event-eyebrow">पंजीकरण</div>
-        <h1 class="page-title">सर्वोदय श्रावक संस्कार शिविर</h1>
+
+        <div class="event-eyebrow">
+          पंजीकरण
+        </div>
+
+        <h1 class="page-title">
+          सर्वोदय श्रावक संस्कार शिविर
+        </h1>
+
         <p class="page-subtitle" id="venue-summary">
           आदिनाथ जिनालय, ड्रीम्स वीरोदय सोसाइटी · खराड़ी, पुणे
         </p>
+
       </div>
+
     </section>
 
+
+    <!-- =======================================================
+         REGISTRATION AREA
+         ======================================================= -->
+
     <section class="page-section">
+
       <div class="container">
+
+
+        <!-- =====================================================
+             STEP 1 — RULES
+             ===================================================== -->
 
         <div class="registration-panel">
 
           <div class="panel-head">
+
             <div>
-              <div class="panel-title">शिविर के नियम एवं निर्देश</div>
+
+              <div class="panel-title">
+                शिविर के नियम एवं निर्देश
+              </div>
+
               <p class="panel-description">
                 पंजीकरण आगे बढ़ाने से पहले कृपया सभी नियम एवं निर्देश ध्यानपूर्वक पढ़ें।
               </p>
+
             </div>
-            <span class="badge">16–25 सितम्बर २०२६</span>
+
+            <span class="badge">
+              16–25 सितम्बर २०२६
+            </span>
+
           </div>
 
+
+          <!-- RULES -->
+
           <div class="rules-box" id="rules-box" aria-label="शिविर के नियम">
-            <div class="rules-heading">शिविर के नियम</div>
+
+            <div class="rules-heading">
+              शिविर के नियम
+            </div>
+
             <div id="rules-list"></div>
+
           </div>
+
 
           <div class="scroll-status" id="scroll-status">
             कृपया नियमों को नीचे तक पढ़ें
           </div>
 
+
+          <!-- EVENT INFORMATION -->
+
           <div class="event-info" id="event-details"></div>
 
+
+          <!-- ACCEPTANCE -->
+
           <div class="acceptance">
+
             <label class="accept-label">
+
               <input type="checkbox" id="rules-accepted" disabled>
+
               <span>
                 मैंने ऊपर दिए गए सभी नियम एवं निर्देश पढ़ लिए हैं और उनका पालन करने के लिए सहमत हूँ।
               </span>
+
             </label>
+
 
             <button type="button" id="accept-button" class="button primary" disabled>
               स्वीकार करें
             </button>
 
+
             <button type="button" id="continue-button" class="button primary" disabled>
               आगे बढ़ें
             </button>
+
           </div>
 
         </div>
 
+
+        <!-- =====================================================
+             STEP 2 — MOBILE NUMBER
+             ===================================================== -->
+
         <div class="registration-panel hidden" id="mobile-section">
 
           <div class="panel-head">
+
             <div>
-              <div class="panel-title">पंजीकरण</div>
+
+              <div class="panel-title">
+                पंजीकरण
+              </div>
+
               <p class="panel-description">
                 आगे बढ़ने के लिए अपना मोबाइल नंबर दर्ज करें।
               </p>
+
             </div>
+
           </div>
 
+
           <div class="form-field">
-            <label for="mobile">मोबाइल नंबर</label>
-            <input type="tel" id="mobile" class="input"
-                   inputmode="numeric" maxlength="10"
-                   placeholder="10 अंकों का मोबाइल नंबर"
-                   autocomplete="tel">
+
+            <label for="mobile">
+              मोबाइल नंबर
+            </label>
+
+            <input type="tel" id="mobile" class="input" inputmode="numeric" maxlength="10"
+              placeholder="10 अंकों का मोबाइल नंबर" autocomplete="tel">
+
             <p class="form-message hidden" id="mobile-message"></p>
+
           </div>
+
 
           <button type="button" id="mobile-continue" class="button primary">
             आगे बढ़ें
@@ -114,32 +233,457 @@
 
         </div>
 
-        <div class="registration-panel hidden" id="placeholder-section">
+
+        <!-- =====================================================
+             STEP 3 — EXISTING REGISTRATION SUMMARY
+             ===================================================== -->
+
+        <div class="registration-panel hidden" id="existing-registration-section">
+
           <div class="panel-head">
+
             <div>
-              <div class="panel-title">पंजीकरण फॉर्म</div>
+
+              <div class="panel-title">
+                आपका पंजीकरण उपलब्ध है
+              </div>
+
               <p class="panel-description">
-                यह frontend चरण पूरा है। अगले चरण में इसी पेज को Google Apps Script API से जोड़ा जाएगा।
+                इस मोबाइल नंबर से पहले से पंजीकरण किया गया है।
               </p>
+
             </div>
+
           </div>
 
-          <button type="button" class="button secondary" id="back-button">
-            वापस जाएँ
-          </button>
+
+          <!-- SUMMARY WILL BE POPULATED BY JS -->
+
+          <div id="existing-registration-summary" class="registration-summary">
+          </div>
+
+
+          <div class="form-actions">
+
+            <button type="button" id="view-registration-button" class="button primary">
+              पंजीकरण देखें
+            </button>
+
+          </div>
+
         </div>
 
+
+        <!-- =====================================================
+             STEP 4 — EXISTING REGISTRATION DETAILS
+             ===================================================== -->
+
+        <div class="registration-panel hidden" id="registration-details-section">
+
+          <div class="panel-head">
+
+            <div>
+
+              <div class="panel-title">
+                पंजीकरण विवरण
+              </div>
+
+              <p class="panel-description">
+                आपके द्वारा दर्ज की गई पंजीकरण जानकारी नीचे दी गई है।
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- DETAILS WILL BE POPULATED BY JS -->
+
+          <div id="registration-details" class="registration-details">
+          </div>
+
+
+          <!-- FAMILY MEMBERS -->
+
+          <div id="family-members-details" class="family-members-details">
+          </div>
+
+
+          <div class="form-actions">
+
+            <button type="button" id="edit-registration-button" class="button primary">
+              जानकारी संशोधित करें
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             STEP 5 — REGISTRATION FORM
+             ===================================================== -->
+
+        <div class="registration-panel hidden" id="registration-form-section">
+
+          <div class="panel-head">
+
+            <div>
+
+              <div class="panel-title" id="registration-form-title">
+                नया पंजीकरण
+              </div>
+
+              <p class="panel-description" id="registration-form-description">
+                कृपया अपनी जानकारी भरें।
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!--
+
+            ACTUAL FORM WILL BE ADDED NEXT.
+
+            The same form will support:
+
+              NEW  → Empty fields
+              EDIT → Existing values pre-filled
+
+          -->
+
+
+          <form id="registration-form" novalidate>
+
+            <!-- =================================================
+                 PERSONAL DETAILS
+                 ================================================= -->
+
+            <div class="form-section">
+
+              <div class="form-section-title">
+                व्यक्तिगत जानकारी
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="form-name">
+                  नाम <span>*</span>
+                </label>
+
+                <input type="text" id="form-name" class="input" autocomplete="name">
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="form-father-name">
+                  पिता / पति का नाम <span>*</span>
+                </label>
+
+                <input type="text" id="form-father-name" class="input">
+
+              </div>
+
+
+              <div class="form-row">
+
+                <div class="form-field">
+
+                  <label for="form-age">
+                    आयु <span>*</span>
+                  </label>
+
+                  <input type="number" id="form-age" class="input" min="1" max="120">
+
+                </div>
+
+
+                <div class="form-field">
+
+                  <label for="form-mobile">
+                    मोबाइल नंबर
+                  </label>
+
+                  <input type="tel" id="form-mobile" class="input" readonly>
+
+                </div>
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="form-marital-status">
+                  वैवाहिक स्थिति
+                </label>
+
+                <select id="form-marital-status" class="input">
+
+                  <option value="">
+                    चयन करें
+                  </option>
+
+                  <option value="Married">
+                    विवाहित
+                  </option>
+
+                  <option value="Unmarried">
+                    अविवाहित
+                  </option>
+
+                  <option value="Other">
+                    अन्य
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="form-education">
+                  शिक्षा
+                </label>
+
+                <input type="text" id="form-education" class="input">
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="form-occupation">
+                  व्यवसाय
+                </label>
+
+                <input type="text" id="form-occupation" class="input">
+
+              </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ADDRESS
+                 ================================================= -->
+
+            <div class="form-section">
+
+              <div class="form-section-title">
+                पता
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="form-address">
+                  पूरा पता <span>*</span>
+                </label>
+
+                <textarea id="form-address" class="input" rows="3"></textarea>
+
+              </div>
+
+
+              <div class="form-row">
+
+                <div class="form-field">
+
+                  <label for="form-city">
+                    शहर <span>*</span>
+                  </label>
+
+                  <input type="text" id="form-city" class="input">
+
+                </div>
+
+
+                <div class="form-field">
+
+                  <label for="form-pincode">
+                    पिनकोड <span>*</span>
+                  </label>
+
+                  <input type="tel" id="form-pincode" class="input" inputmode="numeric" maxlength="6">
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACCOMMODATION / FOOD
+                 ================================================= -->
+
+            <div class="form-section">
+
+              <div class="form-section-title">
+                आवास एवं भोजन
+              </div>
+
+
+              <label class="check-option">
+
+                <input type="checkbox" id="form-accommodation">
+
+                <span>
+                  आवास की आवश्यकता है
+                </span>
+
+              </label>
+
+
+              <label class="check-option">
+
+                <input type="checkbox" id="form-food">
+
+                <span>
+                  भोजन की आवश्यकता है
+                </span>
+
+              </label>
+
+            </div>
+
+
+            <!-- =================================================
+                 FAMILY MEMBERS
+                 ================================================= -->
+
+            <div class="form-section">
+
+              <div class="form-section-title">
+                परिवार के सदस्य
+              </div>
+
+              <p class="form-section-description">
+                यदि आपके साथ परिवार का कोई सदस्य शिविर में आ रहा है, तो उसकी जानकारी जोड़ें।
+              </p>
+
+
+              <div id="family-members-form">
+              </div>
+
+
+              <button type="button" id="add-family-member" class="button secondary">
+                + परिवार का सदस्य जोड़ें
+              </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORM ACTIONS
+                 ================================================= -->
+
+            <div class="form-actions">
+
+              <button type="button" id="form-back-button" class="button secondary">
+                वापस जाएँ
+              </button>
+
+
+              <button type="submit" id="save-registration-button" class="button primary">
+                पंजीकरण सुरक्षित करें
+              </button>
+
+            </div>
+
+
+            <p id="form-message" class="form-message hidden"></p>
+
+          </form>
+
+        </div>
+        <!-- =====================================================
+     REGISTRATION SUCCESS
+     ===================================================== -->
+
+        <div class="registration-panel hidden" id="registration-success-section">
+
+          <div class="success-panel">
+
+            <div class="success-icon">
+              ✓
+            </div>
+
+            <div class="panel-title" id="success-title">
+              पंजीकरण सफलतापूर्वक हो गया
+            </div>
+
+            <p class="panel-description" id="success-description">
+              आपकी जानकारी सफलतापूर्वक सुरक्षित कर ली गई है।
+            </p>
+
+
+            <div class="registration-success-id">
+
+              <span>
+                पंजीकरण क्रमांक
+              </span>
+
+              <strong id="success-registration-id">
+                -
+              </strong>
+
+            </div>
+
+
+            <div class="form-actions">
+
+              <button type="button" id="success-view-button" class="button primary">
+                पंजीकरण देखें
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
       </div>
+
     </section>
+
   </main>
 
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+
   <footer class="footer">
+
     <div class="container footer-content">
-      <span>आदिनाथ जिनालय · ड्रीम्स वीरोदय सोसाइटी, खराड़ी, पुणे</span>
-      <span>चातुर्मास २०२६</span>
+
+      <span>
+        आदिनाथ जिनालय · ड्रीम्स वीरोदय सोसाइटी, खराड़ी, पुणे
+      </span>
+
+      <span>
+        चातुर्मास २०२६
+      </span>
+
     </div>
+
   </footer>
 
+
+  <!-- =========================================================
+       JAVASCRIPT
+       ========================================================= -->
+
   <script src="js/registration.js"></script>
+
 </body>
+
 </html>
