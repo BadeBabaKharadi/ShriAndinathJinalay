@@ -1,10 +1,12 @@
 [
   {
     "id": "dainik-karya-kram",
-    "name": "Dainik Karya Kram",
-    "hindiName": "दैनिक कार्यक्रम",
+    "name": "Dainik Karya Kram/Manch Sanchalan Team",
+    "hindiName": "दैनिक कार्यक्रम/मंच संचालन टीम",
     "icon": "📅",
-    "members": []
+    "members": [
+
+    ]
   },
   {
     "id": "awas-vyavatah",
@@ -33,13 +35,6 @@
         "mobile": "9892859085"
       }
     ] 
-  },
-  {
-    "id": "manch-sanchalan",
-    "name": "Manch Sanchalan Team",
-    "hindiName": "मंच संचालन टीम",
-    "icon": "🎤",
-    "members": []
   },
   {
     "id": "bhojanshala",
@@ -97,15 +92,53 @@
       {
         "name": "अंशुल जैन (बनारस)",
         "mobile": "9963762015"
+      },
+      {
+        "name": "अंकित चौधरी",
+        "mobile": "9871468598"
+      },
+      {
+        "name": "आकाश जैन",
+        "mobile": "7566565056"
+      },
+      {
+        "name": "श्रीमती नेहा मोदी जैन",
+        "mobile": "9011050486"
+      },
+      {
+        "name": "श्रीमती रूपल जैन",
+        "mobile": "8819800772"
+      },
+      {
+        "name": "सुमीत जैन (बाबा भैया)",
+        "mobile": "9657124488"
       }
     ]
   },
   {
     "id": "nihar-charya",
     "name": "Nihar Charya Team",
-    "hindiName": "निहार चर्या टीम",
+    "hindiName": "निहार चर्या/जंगल व्यवस्था टीम (जुड़ने के लिए संपर्क करें)",
     "icon": "🌅",
-    "members": []
+    "members": [
+      {
+        "name": "अतुल जैन",
+        "mobile": "8830272803"
+      },
+      {
+        "name": "हवीश जैन",
+        "mobile": "7878740041"
+      },
+      {
+        "name": "अनमोल जैन",
+        "mobile": "9112019821"
+      },
+      {
+        "name": "सुमीत जैन (बाबा भैया)",
+        "mobile": "9657124488"
+      }
+
+    ]
   },
   {
     "id": "finance",
