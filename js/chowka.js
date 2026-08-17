@@ -9,7 +9,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   const API_URL =
-    "https://script.google.com/macros/s/AKfycbxuy_L9ibu_lH0LzGC_skh3p8aBNpzfc_Zaa-A2AejiuLu2kdM5ISkWNa9VylRXGAO6IQ/exec";
+    "https://script.google.com/macros/s/AKfycbxprS-2iO3gQTSpFci2-DKhgOEZcbFS-Cc_WFpNw5nULHj6P4GLM1OiJn0EfN7-iSSu4Q/exec";
 
   const dateInput =
     document.getElementById("chowka-date");
