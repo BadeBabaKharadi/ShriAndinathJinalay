@@ -1,6 +1,6 @@
 
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbyKkCyUKvxiNq4ZdAv74ofzM53iOGJ-jL4z5aiZaJD9OcgNmmfdWKn6vHBZKs2Hmjix/exec";
+  "https://script.google.com/macros/s/AKfycbyGQYKZiPNolKZ0lqsQl4I2-odHhHhPpRmTPZphdbhmw6LSXCLLWrgPNToG4bhLF0ZZ/exec";
 
 const EVENT_ID =
   "shravak-sanskar-shivir-2026";
@@ -1636,13 +1636,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="form-field">
 
           <label>
-            आयु
+            आयु <span>*</span>
           </label>
 
           <input
             type="number"
             class="input family-age"
             min="0"
+            required
             max="120"
             value="${escapeHtml(
       member.age || ""
@@ -1989,6 +1990,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         return `परिवार सदस्य ${i + 1} का नाम दर्ज करें।`;
 
+      }
+
+      if (
+        !member.age ||
+        member.age < 1 ||
+        member.age > 120
+      ) {
+        return `कृपया परिवार सदस्य ${i + 1} की सही आयु दर्ज करें।`;
       }
 
 
@@ -2442,7 +2451,15 @@ function submitRegistration(action, data) {
     // ----------------------------------------------------------
     // Payload
     // ----------------------------------------------------------
+    console.log(
+      "SUBMIT DATA:",
+      JSON.stringify(data, null, 2)
+    );
 
+    console.log(
+      "SUBMIT FAMILY MEMBERS:",
+      data.familyMembers
+    );
     const payload = {
       action: action,
       data: data
