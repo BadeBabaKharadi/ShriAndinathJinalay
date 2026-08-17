@@ -49,13 +49,13 @@
   },
   {
     "id": "kalash-005",
-    "name": "श्री कमल ममता जैन, श्री अमन सुरभि जैन, निर्वाण जैन",
+    "name": "श्री कमल, ममता, अमन, सुरभि, निर्वाण जैन इंदौर",
     "kalashType": "करणानुयोग कलश",
     "category": "jinvani",
     "displayAmount": "५ कलश ५५ श्रीफल",
     "address": "ए-701, ड्रीम्स वीरोदय, खराड़ी",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_05.jpeg",
     "kalashNumber": 5,
     "amount": 555555
   },
@@ -115,7 +115,7 @@
     "displayAmount": "५ कलश ११ श्रीफल",
     "address": "ड्रीम्स वीरोदय, खराड़ी; तलवाड़ा, बांसवाड़ा (राज.)",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_10.jpeg",
     "kalashNumber": 10,
     "amount": 511511
   },
@@ -157,25 +157,25 @@
   },
   {
     "id": "kalash-014",
-    "name": "प्रभा जी, संदीप, सोनल, दिवित, दिवम सतभैया परिवार",
+    "name": "श्रीमती प्रभा जी, संदीप, सोनल, दिवित, दिवम सतभैया परिवार",
     "kalashType": "उत्तम तप आराधना कलश",
     "category": "das-lakshan-dharm",
     "displayAmount": "५ कलश ११ श्रीफल",
     "address": "ड्रीम्स वीरोदय, खराड़ी",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_14.jpeg",
     "kalashNumber": 14,
     "amount": 511511
   },
   {
     "id": "kalash-015",
-    "name": "श्री कुशाग्र चांदनी जैन, निहित जैन",
+    "name": "श्रीमती कामिनी जैन, कुशाग्र, चांदनी एवं निहित जैन (खुरई)",
     "kalashType": "उत्तम त्याग आराधना कलश",
     "category": "das-lakshan-dharm",
     "displayAmount": "५ कलश ११ श्रीफल",
     "address": "मेजेस्टिक टावर्स, खराड़ी",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_15.jpeg",
     "kalashNumber": 15,
     "amount": 511511
   },
@@ -505,7 +505,7 @@
   },
   {
     "id": "kalash-046",
-    "name": "सारांश जी जैन, बोरिया वाले",
+    "name": "श्री सारांश जी जैन, बोरिया वाले",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
@@ -541,7 +541,7 @@
   },
   {
     "id": "kalash-049",
-    "name": "गौरव जैन",
+    "name": "श्री गौरव जैन",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
@@ -553,13 +553,13 @@
   },
   {
     "id": "kalash-050",
-    "name": "श्रीमती शिखा सिद्धार्थ जैन",
+    "name": "श्री सिद्धार्थ शिखा सिया सुपार्श्व जैन",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
     "address": "वीरोदय 2, खराड़ी",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_47.jpeg",
     "kalashNumber": 47,
     "amount": 111111
   },
@@ -601,7 +601,7 @@
   },
   {
     "id": "kalash-054",
-    "name": "अंकुर जैन, वैशाली जैन, अहर्न जैन",
+    "name": "श्री अंकुर जैन, वैशाली जैन, अहर्न जैन",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
@@ -649,13 +649,13 @@
   },
   {
     "id": "kalash-057",
-    "name": "ऊषाकरण जी, वरुण जी, निखिल, स्वाती, रुचि, अंशिका, अवार्थ, चेरी, अवि जैन हिनोतिया परिवार",
+    "name": "श्रीमती ऊषाकरण जी, वरुण जी, निखिल, स्वाती, रुचि, अंशिका, अवार्थ, चेरी, अवि जैन हिनोतिया परिवार",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
     "address": "वीरोदय 1, खराड़ी",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_55.jpeg",
     "kalashNumber": 55,
     "amount": 111111
   },
@@ -697,7 +697,7 @@
   },
   {
     "id": "kalash-061",
-    "name": "पुष्पलता जी, शिरीश जी, सौरभ जी, पूनम जी, अविका, सिद्धि सिया जैन",
+    "name": "श्रीमती पुष्पलता जी, शिरीश जी, सौरभ जी, पूनम जी, अविका, सिद्धि सिया जैन",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
@@ -721,7 +721,7 @@
   },
   {
     "id": "kalash-027",
-    "name": "स्वप्नील जी शाह परिवार",
+    "name": "श्री स्वप्नील जी शाह परिवार",
     "kalashType": "चातुर्मास स्मृति विद्या कलश",
     "category": "chaturmas-smriti-vidhya",
     "displayAmount": "२ कलश ११ श्रीफल",
@@ -745,7 +745,7 @@
   },
   {
     "id": "kalash-064",
-    "name": "वीरेंद्र जैन, सौरभ जैन, रैनी जैन, सारवी, रेयांश जैन",
+    "name": "श्री वीरेंद्र जैन, सौरभ जैन, रैनी जैन, सारवी, रेयांश जैन",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
@@ -769,7 +769,7 @@
   },
   {
     "id": "kalash-029",
-    "name": "श्री अर्पित जी, निकिता जी नौगांव परिवार",
+    "name": "श्री जिनेंद्र, सुधा, अर्पित, निकिता, अंकित, निष्ठा, आंचल, नैंसी, निपुण, निक्षित नौगांव परिवार",
     "kalashType": "चातुर्मास स्मृति विद्या कलश",
     "category": "chaturmas-smriti-vidhya",
     "displayAmount": "२ कलश ११ श्रीफल",
@@ -781,7 +781,7 @@
   },
   {
     "id": "kalash-066",
-    "name": "श्री अमित जी निधि जैन",
+    "name": "श्री अमित, निधि, अन्वेषा जैन, अशोकनगर",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
@@ -793,7 +793,7 @@
   },
   {
     "id": "kalash-067",
-    "name": "श्री अंकित रेनु जैन",
+    "name": "श्री अंकित, रेनु जैन",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
@@ -805,19 +805,19 @@
   },
   {
     "id": "kalash-068",
-    "name": "श्री संवेग श्रुति हरसूले एवं परिवार",
+    "name": "श्री अतुल जी, श्रीमती प्रणिता जी, संवेग एवं श्रुति हरसुले - वाशिम",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
     "address": "ड्रीम्स वीरोदय, खराड़ी; वाशिम (महाराष्ट्र)",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_68.jpeg",
     "kalashNumber": 68,
     "amount": 111111
   },
   {
     "id": "kalash-069",
-    "name": "श्री सचिन सिमी जैन",
+    "name": "श्री सचिन, सिमी जैन",
     "kalashType": "चातुर्मास स्मृति अजित कलश",
     "category": "chaturmas-smriti-ajit",
     "displayAmount": "५१ श्रीफल",
