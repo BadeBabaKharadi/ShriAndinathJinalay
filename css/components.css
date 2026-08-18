@@ -1,3 +1,15 @@
+/* =========================================================
+   GLOBAL CONTENT WIDTH
+   ========================================================= */
+
+.container {
+  width: min(1200px, calc(100% - 48px));
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
 /* Component layer: homepage modules and reusable UI */
 .hero-section {
   padding: clamp(48px, 7vw, 96px) 0 46px;
@@ -82,12 +94,6 @@
   padding: 24px 0 72px;
 }
 
-.hero-layout {
-  display: grid;
-  grid-template-columns: minmax(400px, 0.92fr) minmax(500px, 1.08fr);
-  align-items: center;
-  gap: clamp(34px, 5vw, 74px);
-}
 
 .hero-image-panel {
   position: relative;
@@ -415,6 +421,33 @@
   line-height: 1.14;
 }
 
+.hero-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: start;
+  column-gap: 36px;
+  row-gap: 28px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-image-panel {
+  position: relative;
+  min-width: 0;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+/* Chowka panel below the hero image */
+.hero-layout > .chowka-date-panel {
+  grid-column: 1;
+  margin-top: 0;
+}
+
+/* Navigation tiles */
 .nav-card-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -428,11 +461,7 @@
   min-height: 195px;
   height: 100%;
   box-sizing: border-box;
-}
-
-.nav-card {
   background: var(--white);
-  min-height: 195px;
   border-radius: 24px;
   padding: 24px 20px;
   border: 1px solid var(--line);
@@ -1052,63 +1081,5 @@
 
   opacity:
     .8;
-
-}
-
-
-/* ==========================================
-   MOBILE
-========================================== */
-
-@media(max-width:800px) {
-
-  .nav-toggle {
-
-    display: block;
-
-    color:
-      #6E1A14;
-
-  }
-
-
-  .nav-links {
-
-    position: absolute;
-
-    top: 100%;
-
-    left: 0;
-
-    right: 0;
-
-    display: none;
-
-    flex-direction: column;
-
-    background:
-      #fff8ed;
-
-    padding: 12px;
-
-    border-bottom:
-      1px solid #e4c98e;
-
-  }
-
-
-  .nav-links.open {
-
-    display: flex;
-
-  }
-
-
-  .nav-links a {
-
-    padding:
-      14px;
-
-  }
 
 }
