@@ -826,5 +826,89 @@
     "familyImage": null,
     "kalashNumber": "i",
     "amount": 51515
+  },
+  {
+    "id": "kalash-070",
+    "name": "श्री प्रिंगल जैन, श्रीमती युक्ति जैन, कुमारी मिश्का जैन एवं चिरंजीव वीरांश जैन",
+   "kalashType": "चातुर्मास स्मृति विद्या कलश",
+    "category": "chaturmas-smriti-vidhya",
+    "displayAmount": "२ कलश ११ श्रीफल",
+    "address": "स्पैन ओ लाइफ, खराड़ी",
+    "comments": "",
+    "familyImage": null,
+    "kalashNumber": "72",
+    "amount": 211211
+  },
+  {
+    "id": "kalash-071",
+    "name": "श्री अंकित जी चौधरी",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "C-601, ड्रीम्स वीरोदय, खराड़ी, जबलपुर, मध्य प्रदेश",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 69,
+    "amount": 111111
+  },
+  {
+    "id": "kalash-072",
+    "name": "श्रीमान आदित्य जैन, पूर्वा जैन, आरवी जैन, काशवी जैन",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "वीरोदय 2, खराड़ी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 70,
+    "amount": 111111
+  },
+  {
+    "id": "kalash-073",
+    "name": "श्री अंकित जैन, श्रीमती आराधना जैन और अरहम जैन",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "फ़ॉरेस्ट काउंटी, खराड़ी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 71,
+    "amount": 111111
+  },
+  {
+    "id": "kalash-074",
+    "name": "श्री प्रेरक शाह, श्रीमती डिंकल शाह, मार्मिक शाह, दीपक और अंजना शाह",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "गंगा प्लैटिनो, खराड़ी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 73,
+    "amount": 111111
+  },
+  {
+    "id": "kalash-075",
+    "name": "श्री चितरंजन जी, अक्षय जी जैन",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "ब्लूबेरी सोसायटी, खराड़ी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 74,
+    "amount": 111111
+  },
+  {
+    "id": "kalash-076",
+    "name": "श्री ओनील जैन, श्वेता, अंतिम्बाला, मायरा, विहाना जैन",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "अरबन निर्वाना सोसायटी, खराड़ी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 75,
+    "amount": 111111
   }
 ]
