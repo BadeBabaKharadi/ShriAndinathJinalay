@@ -93,11 +93,25 @@
 
   .nameplate-title {
     font-size: 1rem;
-    line-height: 1.36;
+    line-height: 1.36;            
   }
 
-  .nav-card-grid {
-    grid-template-columns: 1fr;
+  @media (max-width: 1200px) {
+    .nav-card-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .nav-card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    .nav-card-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .gallery-grid {
