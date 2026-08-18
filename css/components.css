@@ -140,11 +140,15 @@
 .image-stage.image-stage-dual {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+
   align-items: center;
   justify-content: center;
-  padding: 26px 24px;
-  min-height: 500px;
+
+  padding: 22px 20px;
+
+  min-height: 430px;
+
+  box-sizing: border-box;
 }
 
 .image-stage::before {
@@ -165,13 +169,6 @@
   font-size: 2rem;
 }
 
-.maharaj-gallery {
-  width: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 24px;
-}
 
 .nameplate {
   width: 100%;
@@ -191,13 +188,105 @@
   margin-top: 0;
 }
 
+/* =========================================================
+   MAHARAJ IMAGE + NAME LAYOUT
+   ========================================================= */
+
+.maharaj-gallery {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  gap: 22px;
+}
+
 .maharaj-figure {
   position: relative;
+
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  flex: 1;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: flex-start;
+
   min-width: 0;
+
+  text-align: center;
+}
+
+.maharaj-figure.senior-figure {
+  flex: 1.24;
+}
+
+.maharaj-figure.junior-figure {
+  flex: 0.94;
+}
+
+
+/* Images */
+
+.maharaj-image {
+  position: relative;
+
+  height: auto;
+
+  object-fit: contain;
+
+  display: block;
+
+  margin: 0 auto;
+
+  z-index: 1;
+}
+
+.senior-image {
+  width: clamp(230px, 28vw, 315px);
+  max-height: 450px;
+}
+
+.junior-image {
+  width: clamp(190px, 22vw, 230px);
+  max-height: 370px;
+}
+
+
+/* Individual name underneath each image */
+
+.maharaj-nameplate {
+  width: 100%;
+
+  margin-top: 8px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  text-align: center;
+}
+
+.maharaj-nameplate .nameplate-title {
+  display: block;
+
+  width: 100%;
+
+  font-family:
+    'Noto Sans Devanagari',
+    serif;
+
+  font-size: clamp(0.78rem, 1.16vw, 1rem);
+
+  line-height: 1.35;
+
+  color: var(--maroon);
+
+  font-weight: 700;
+}
+
+.junior-figure .maharaj-nameplate .nameplate-title {
+  color: #765b43;
 }
 
 .maharaj-figure.senior-figure {
@@ -1082,4 +1171,303 @@
   opacity:
     .8;
 
+}
+/* =========================================================
+   FINAL HOMEPAGE LAYOUT FIXES
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   HEADER
+   Keep the temple branding centered
+   --------------------------------------------------------- */
+
+.site-header .nav-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center !important;
+}
+
+.site-header .brand {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* ---------------------------------------------------------
+   REDUCE EXCESSIVE SPACE ABOVE HOMEPAGE
+   --------------------------------------------------------- */
+
+.hero-section {
+  padding-top: 28px;
+}
+
+
+/* ---------------------------------------------------------
+   HOMEPAGE CARD GRID
+   Consistent spacing between every card
+   --------------------------------------------------------- */
+
+.home-dashboard {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  column-gap: 24px;
+  row-gap: 24px;
+
+  align-items: start;
+
+  width: min(1200px, calc(100% - 48px));
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  box-sizing: border-box;
+}
+
+
+/* Every card starts and ends cleanly */
+
+.home-card {
+  margin: 0 !important;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+
+/* ---------------------------------------------------------
+   MAHARAJ IMAGES
+   --------------------------------------------------------- */
+
+.maharaj-gallery {
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+
+  align-items: flex-start;
+  justify-content: center;
+
+  gap: 24px;
+
+  box-sizing: border-box;
+}
+
+
+/*
+   Each Maharaj gets a fixed image area.
+
+   This is the important part:
+   both images are aligned to the SAME bottom line,
+   even though their actual heights are different.
+*/
+
+.maharaj-figure {
+  display: grid !important;
+
+  grid-template-rows: 300px auto;
+
+  align-items: end;
+
+  justify-items: center;
+
+  min-width: 0;
+
+  text-align: center;
+
+  flex: 1;
+}
+
+
+.maharaj-figure.senior-figure {
+  flex: 1.25;
+}
+
+
+.maharaj-figure.junior-figure {
+  flex: 0.95;
+}
+
+
+/* ---------------------------------------------------------
+   IMAGE AREA
+   --------------------------------------------------------- */
+
+.maharaj-image {
+  display: block;
+
+  width: auto;
+  height: auto;
+
+  object-fit: contain;
+
+  align-self: end;
+
+  justify-self: center;
+
+  margin: 0;
+}
+
+
+/* Big Maharaj */
+
+.senior-image {
+  width: clamp(220px, 27vw, 315px);
+
+  max-width: 100%;
+  max-height: 300px;
+}
+
+
+/* Smaller Maharaj */
+
+.junior-image {
+  width: clamp(175px, 21vw, 225px);
+
+  max-width: 100%;
+  max-height: 300px;
+}
+
+
+/* ---------------------------------------------------------
+   NAMES
+   --------------------------------------------------------- */
+
+.maharaj-nameplate {
+  width: 100%;
+
+  min-height: 42px;
+
+  margin-top: 8px;
+
+  display: flex !important;
+
+  flex-direction: column !important;
+
+  align-items: center !important;
+
+  justify-content: flex-start !important;
+
+  text-align: center;
+
+  box-sizing: border-box;
+}
+
+
+.maharaj-nameplate .nameplate-title {
+  display: block;
+
+  width: 100%;
+
+  margin: 0;
+
+  font-family:
+    'Noto Sans Devanagari',
+    serif;
+
+  font-size: clamp(0.76rem, 1.05vw, 0.96rem);
+
+  line-height: 1.35;
+
+  font-weight: 700;
+
+  color: var(--maroon);
+
+  text-align: center;
+}
+
+
+.junior-figure .maharaj-nameplate .nameplate-title {
+  color: #765b43;
+}
+
+
+/* ---------------------------------------------------------
+   IMAGE CARD
+   --------------------------------------------------------- */
+
+.home-images-card {
+  padding: 14px !important;
+}
+
+
+/* Don't let the image stage create unnecessary height */
+
+.home-images-card .image-stage.image-stage-dual {
+  min-height: 0 !important;
+
+  padding: 18px 16px !important;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  box-sizing: border-box;
+}
+
+
+/* ---------------------------------------------------------
+   MAIN POINTS CARD
+   --------------------------------------------------------- */
+
+.home-mukhya-card {
+  padding: 14px !important;
+}
+
+.home-mukhya-card .highlight-card {
+  margin: 0 !important;
+}
+
+
+/* ---------------------------------------------------------
+   CHOWKA CARD
+   --------------------------------------------------------- */
+
+.home-chowka-card {
+  padding: 0 !important;
+}
+
+.home-chowka-card .content-panel {
+  margin: 0 !important;
+}
+
+
+/* ---------------------------------------------------------
+   REGISTRATION CARD
+   --------------------------------------------------------- */
+
+.home-registration-card {
+  padding: 0 !important;
+}
+
+.home-registration-card .registration-cta {
+  margin: 0 !important;
+}
+
+
+/* ---------------------------------------------------------
+   TABLE SCROLLING
+   --------------------------------------------------------- */
+
+.table-scroll,
+.chowka-table-wrap {
+  width: 100%;
+  max-width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  -webkit-overflow-scrolling: touch;
+
+  box-sizing: border-box;
+}
+
+.table-scroll table,
+.chowka-table-wrap table {
+  min-width: 620px;
 }

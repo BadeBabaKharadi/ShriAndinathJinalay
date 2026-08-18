@@ -549,3 +549,248 @@
     scroll-behavior: auto !important;
   }
 }
+
+
+/* =========================================================
+   FINAL HOMEPAGE RESPONSIVE FIXES
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   TABLET / MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 780px) {
+
+  /* Header centered */
+
+  .site-header .nav-wrapper {
+    justify-content: center !important;
+  }
+
+  .site-header .brand {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+
+  /* Reduce empty space above first card */
+
+  .hero-section {
+    padding-top: 20px !important;
+  }
+
+
+  /* Single column */
+
+  .home-dashboard {
+    width: calc(100% - 28px) !important;
+
+    display: grid !important;
+
+    grid-template-columns: 1fr !important;
+
+    gap: 18px !important;
+
+    align-items: start !important;
+  }
+
+
+  /* Explicit order */
+
+  .home-title-card {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    order: 1 !important;
+  }
+
+  .home-images-card {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    order: 2 !important;
+  }
+
+  .home-mukhya-card {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    order: 3 !important;
+  }
+
+  .home-chowka-card {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    order: 4 !important;
+  }
+
+  .home-registration-card {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    order: 5 !important;
+  }
+
+
+  /* -------------------------------------------------------
+     MAHARAJ IMAGES
+     ------------------------------------------------------- */
+
+  .home-images-card {
+    padding: 10px !important;
+  }
+
+  .home-images-card .image-stage.image-stage-dual {
+    min-height: 0 !important;
+
+    padding: 16px 10px !important;
+  }
+
+  .maharaj-gallery {
+    gap: 10px;
+
+    align-items: flex-start;
+  }
+
+
+  /*
+     Smaller image area on mobile.
+
+     Both images still use the same row height,
+     therefore their bottoms remain aligned.
+  */
+
+  .maharaj-figure {
+    grid-template-rows: 190px auto;
+
+    align-items: end;
+
+    justify-items: center;
+  }
+
+
+  .senior-image {
+    width: min(220px, 42vw);
+
+    max-height: 190px;
+  }
+
+
+  .junior-image {
+    width: min(170px, 34vw);
+
+    max-height: 190px;
+  }
+
+
+  .maharaj-nameplate {
+    min-height: 40px;
+
+    margin-top: 7px;
+  }
+
+
+  .maharaj-nameplate .nameplate-title {
+    font-size: clamp(
+      0.70rem,
+      2.2vw,
+      0.88rem
+    );
+
+    line-height: 1.35;
+  }
+
+
+  /* -------------------------------------------------------
+     CARD SPACING
+     ------------------------------------------------------- */
+
+  .home-card {
+    margin: 0 !important;
+  }
+
+  .home-mukhya-card {
+    padding: 10px !important;
+  }
+
+  .home-mukhya-card .highlight-card {
+    margin: 0 !important;
+  }
+
+  .home-chowka-card {
+    margin-top: 0 !important;
+  }
+
+  .home-registration-card {
+    margin-top: 0 !important;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   SMALL MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 540px) {
+
+  .hero-section {
+    padding-top: 16px !important;
+  }
+
+  .home-dashboard {
+    width: calc(100% - 24px) !important;
+
+    gap: 16px !important;
+  }
+
+
+  .home-title-card {
+    padding: 20px !important;
+  }
+
+
+  .home-images-card {
+    padding: 8px !important;
+  }
+
+
+  .home-images-card .image-stage.image-stage-dual {
+    padding: 12px 6px !important;
+  }
+
+
+  .maharaj-gallery {
+    gap: 5px;
+  }
+
+
+  .maharaj-figure {
+    grid-template-rows: 165px auto;
+  }
+
+
+  .senior-image {
+    width: min(190px, 44vw);
+
+    max-height: 165px;
+  }
+
+
+  .junior-image {
+    width: min(150px, 35vw);
+
+    max-height: 165px;
+  }
+
+
+  .maharaj-nameplate {
+    min-height: 42px;
+  }
+
+
+  .maharaj-nameplate .nameplate-title {
+    font-size: 0.68rem;
+  }
+
+
+  .home-mukhya-card {
+    padding: 8px !important;
+  }
+}

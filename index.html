@@ -6,7 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="जिनधर्म आराधना चातुर्मास २०२६">
   <title>जिनधर्म आराधना चातुर्मास २०२६</title>
+
   <link rel="icon" type="image/png" href="favicon.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -20,6 +22,7 @@
 </head>
 
 <body>
+
   <div class="announcement-bar">
     <span id="announce-text">🙏 जिनधर्म आराधना चातुर्मास में आपका स्वागत है</span>
   </div>
@@ -37,66 +40,224 @@
   </header>
 
   <main class="site-main">
-    <section class="hero-section">
-      <div class="container hero-layout">
-        <aside class="hero-image-panel">
-          <div class="image-stage image-stage-dual">
-            <div class="maharaj-gallery">
-              <div class="maharaj-figure senior-figure">
-                <img class="maharaj-image senior-image" src="images/AjitSagarJi.png"
-                  alt="पूज्य मुनि श्री १०८ अजित सागर जी महाराज">
-              </div>
-              <div class="maharaj-figure junior-figure">
-                <img class="maharaj-image junior-image" src="images/Vivekanad.png"
-                  alt="पूज्य ऐलक १०५ श्री विवेकानंद सागर जी">
-              </div>
-            </div>
-            <div class="nameplate">
-              <span class="nameplate-title">१०८ मुनि श्री अजित सागर जी</span>
-              <span class="nameplate-title nameplate-subtitle">१०५ ऐलक श्री विवेकानंद सागर जी</span>
-            </div>
-          </div>
-        </aside>
 
-        <section class="hero-copy">
-          <div class="event-eyebrow">जिनधर्म आराधना</div>
-          <h1 class="hero-title">जिनधर्म आराधना<br>चातुर्मास २०२६</h1>
+    <section class="hero-section">
+
+      <div class="container home-dashboard">
+
+        <!-- =====================================================
+             1. JINDHARM TITLE
+             ===================================================== -->
+        <section class="home-card home-title-card">
+
+          <div class="event-eyebrow">
+            जिनधर्म आराधना
+          </div>
+
+          <h1 class="hero-title">
+            जिनधर्म आराधना<br>
+            चातुर्मास २०२६
+          </h1>
 
           <div class="location-block">
-            <div class="location-name">आदिनाथ जिनालय, ड्रीम्स वीरोदय सोसाइटी</div>
-            <div class="location-place">खराड़ी, पुणे</div>
+            <div class="location-name">
+              आदिनाथ जिनालय, ड्रीम्स वीरोदय सोसाइटी
+            </div>
+
+            <div class="location-place">
+              खराड़ी, पुणे
+            </div>
           </div>
 
-          <aside class="highlight-card">
+        </section>
+
+
+        <!-- =====================================================
+             2. MAHARAJ IMAGES
+             ===================================================== -->
+        <section class="home-card home-images-card">
+          <div class="image-stage image-stage-dual">
+
+            <div class="maharaj-gallery">
+
+              <!-- BIG / SENIOR MAHARAJ -->
+              <div class="maharaj-figure senior-figure">
+
+                <img class="maharaj-image senior-image" src="images/AjitSagarJi.png"
+                  alt="पूज्य मुनि श्री १०८ अजित सागर जी महाराज">
+
+                <div class="maharaj-nameplate">
+                  <span class="nameplate-title">
+                    १०८ मुनि श्री अजित सागर जी
+                  </span>
+                </div>
+
+              </div>
+
+
+              <!-- SMALL / JUNIOR MAHARAJ -->
+              <div class="maharaj-figure junior-figure">
+
+                <img class="maharaj-image junior-image" src="images/Vivekanad.png"
+                  alt="पूज्य ऐलक १०५ श्री विवेकानंद सागर जी">
+
+                <div class="maharaj-nameplate">
+                  <span class="nameplate-title">
+                    १०५ ऐलक श्री विवेकानंद सागर जी
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             3. MUKHYA BAATEIN
+             ===================================================== -->
+        <section class="home-card home-mukhya-card">
+
+          <div class="highlight-card">
+
             <div class="card-header">
               <span class="card-icon">☀️</span>
               <span class="card-title">आज की मुख्य बातें</span>
             </div>
 
             <div class="highlight-list">
+
               <div class="highlight-row">
                 <span class="lbl">दिनांक</span>
                 <span id="todays-date" class="value"></span>
               </div>
+
               <div class="highlight-row">
                 <span class="lbl">आज के श्रावक श्रेष्ठी</span>
                 <span id="todays-shrav" class="value"></span>
               </div>
+
               <div class="highlight-row announcement-row">
                 <span class="lbl">पर्व एवं विशेष सूचना</span>
                 <span id="todays-announcement" class="value"></span>
               </div>
-            </div>
-          </aside>
-        </section>
-        
-      </div>
-      <!-- =========================================================
-     REGISTRATION CTA
-     ========================================================= -->
 
-      <section class="registration-cta-section">
-        <div class="container">
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             4. CHOWKA
+             ===================================================== -->
+        <section class="home-card home-chowka-card">
+
+          <div class="content-panel chowka-date-panel">
+
+            <div class="chowka-date-head">
+
+              <div>
+                <span class="panel-kicker">
+                  चौका जानकारी
+                </span>
+
+                <h2 class="section-title" id="selected-date-title">
+                  आज के चौके
+                </h2>
+
+                <p class="section-description" id="selected-date-subtitle">
+                  आज की उपलब्ध जानकारी
+                </p>
+              </div>
+
+              <div class="date-picker-wrap">
+                <label for="chowka-date">
+                  तिथि देखें
+                </label>
+
+                <input type="date" id="chowka-date" class="chowka-date-input" aria-label="चौका देखने के लिए तिथि चुनें">
+              </div>
+
+            </div>
+
+
+            <div id="chowka-status" class="chowka-status hidden">
+            </div>
+
+
+            <div id="chowka-table-section" class="chowka-table-section hidden">
+
+              <div class="table-heading-row">
+
+                <div>
+                  <h3>चौका सूची</h3>
+                  <p id="table-date-label"></p>
+                </div>
+
+                <span id="chowka-count" class="count-badge">
+                </span>
+
+              </div>
+
+
+              <div class="chowka-table-wrap table-scroll">
+
+                <table class="chowka-table">
+
+                  <thead>
+                    <tr>
+                      <th class="serial-col">क्र.</th>
+                      <th>चौका देने वाले</th>
+                      <th>पता</th>
+                      <th>महाराज श्री</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="chowka-table-body"></tbody>
+
+                </table>
+
+              </div>
+
+
+              <p class="table-help">
+                🟢 जिन चौकों के सामने महाराज श्री का नाम दिखाई दे रहा है,
+                उनका आहार सम्पन्न हो चुका है।
+              </p>
+
+            </div>
+
+
+            <div id="chowka-empty" class="empty-state hidden">
+
+              <div class="empty-icon">
+                🙏
+              </div>
+
+              <h3>
+                चौका जानकारी उपलब्ध नहीं है
+              </h3>
+
+              <p id="empty-message">
+                इस तिथि के लिए अभी कोई चौका जानकारी उपलब्ध नहीं है।
+              </p>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             5. REGISTRATION
+             ===================================================== -->
+        <section class="home-card home-registration-card">
 
           <div class="registration-cta">
 
@@ -126,22 +287,27 @@
               <a href="registration.html" class="button primary">
                 पंजीकरण करें
               </a>
+
             </div>
+
           </div>
-        </div>
-      </section>
+
+        </section>
+
+      </div>
+
     </section>
 
   </main>
 
-
-
   <div id="footer"></div>
   <div id="navbar"></div>
+
   <script src="js/components.js"></script>
   <script src="js/daily-data.js"></script>
   <script src="js/app.js"></script>
   <script src="js/chowka.js"></script>
+
 </body>
 
 </html>
