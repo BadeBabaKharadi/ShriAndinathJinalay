@@ -41,7 +41,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     // =========================================================
 
     let kalashData = [];
+    // =========================================================
+    // FIXED COLOR BY KALASH TYPE
+    // =========================================================
+    // Each category always gets the same color class.
+    // No random colors are used, so refreshes remain consistent.
 
+    const KALASH_COLOR_CLASS = {
+        "jin-dharm-aaradhana": "kalash-card--mangal",
+        "samayak-darshan": "kalash-card--darshan",
+        "samayak-gyan": "kalash-card--gyan",
+        "jinvani": "kalash-card--jinvani",
+        "das-lakshan-dharm": "kalash-card--das-lakshan",
+        "chaturmas-smriti-vidhya": "kalash-card--vidhya",
+        "chaturmas-smriti-samay": "kalash-card--samay"
+    };
+
+    const DEFAULT_KALASH_COLOR_CLASS = "kalash-card--default";
+
+    function getKalashColorClass(item) {
+        const category = String(item?.category || "").trim();
+
+        return (
+            KALASH_COLOR_CLASS[category] ||
+            DEFAULT_KALASH_COLOR_CLASS
+        );
+    }
 
     // =========================================================
     // LOADER
@@ -309,10 +334,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const card =
             document.createElement("article");
 
+        //card.className ="kalash-card";
+
         card.className =
-            "kalash-card";
-
-
+            `kalash-card ${getKalashColorClass(item)}`;
         // -------------------------------------------------------
         // OPTIONAL FAMILY IMAGE
         // -------------------------------------------------------

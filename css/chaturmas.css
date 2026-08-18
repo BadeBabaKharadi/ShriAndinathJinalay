@@ -223,6 +223,48 @@
     border-color 0.22s ease;
 }
 
+/* =========================================================
+   KALASH CARD TYPE COLORS
+   Fixed subtle shades by Kalash category
+   ========================================================= */
+.kalash-card--mangal {
+  background: #fff8ed;
+  border-color: rgba(184, 102, 40, 0.20);
+}
+
+.kalash-card--darshan {
+  background: #fffbea;
+  border-color: rgba(170, 135, 40, 0.20);
+}
+
+.kalash-card--gyan {
+  background: #f3f8fc;
+  border-color: rgba(75, 115, 145, 0.20);
+}
+
+.kalash-card--jinvani {
+  background: #f3f9f4;
+  border-color: rgba(78, 125, 88, 0.20);
+}
+
+.kalash-card--das-lakshan {
+  background: #fff5f3;
+  border-color: rgba(170, 90, 75, 0.20);
+}
+
+.kalash-card--vidhya {
+  background: #f7f3fb;
+  border-color: rgba(115, 88, 145, 0.20);
+}
+
+.kalash-card--samay {
+  background: #f8f4ed;
+  border-color: rgba(125, 96, 58, 0.20);
+}
+
+.kalash-card--default {
+  background: #fffdf9;
+}
 
 .kalash-card:hover {
   transform: translateY(-3px);
@@ -382,8 +424,7 @@
    DISPLAY AMOUNT
    ========================================================= */
 
-.kalash-type
-{
+.kalash-type {
   display: inline-flex;
   align-self: flex-start;
 
