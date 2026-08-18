@@ -139,12 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
-  closeDetailsButton.addEventListener(
-    "click",
-    closeMaharajDetails
-  );
-
-
   async function renderDate(key) {
 
     const d =

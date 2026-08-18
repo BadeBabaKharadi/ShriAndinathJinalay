@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/chowka.css">
 </head>
 
 <body>
@@ -88,6 +89,45 @@
             </div>
           </aside>
         </section>
+        <section class="content-panel chowka-date-panel">
+          <div class="chowka-date-head">
+            <div><span class="panel-kicker">चौका जानकारी</span>
+              <h2 class="section-title" id="selected-date-title">आज के चौके</h2>
+              <p class="section-description" id="selected-date-subtitle">आज की उपलब्ध जानकारी</p>
+            </div>
+            <div class="date-picker-wrap"><label for="chowka-date">तिथि देखें</label><input type="date" id="chowka-date"
+                class="chowka-date-input" aria-label="चौका देखने के लिए तिथि चुनें"></div>
+          </div>
+          <div id="chowka-status" class="chowka-status hidden"></div>
+          <div id="chowka-table-section" class="chowka-table-section hidden">
+            <div class="table-heading-row">
+              <div>
+                <h3>चौका सूची</h3>
+                <p id="table-date-label"></p>
+              </div><span id="chowka-count" class="count-badge"></span>
+            </div>
+            <div class="chowka-table-wrap">
+              <table class="chowka-table">
+                <thead>
+                  <tr>
+                    <th class="serial-col">क्र.</th>
+                    <th>चौका देने वाले</th>
+                    <th>पता</th>
+                    <th>महाराज श्री</th>
+                  </tr>
+                </thead>
+                <tbody id="chowka-table-body"></tbody>
+              </table>
+            </div>
+            <p class="table-help">🟢 जिन चौकों के सामने महाराज श्री का नाम दिखाई दे रहा है, उनका आहार सम्पन्न हो चुका
+              है।</p>
+          </div>
+          <div id="chowka-empty" class="empty-state hidden">
+            <div class="empty-icon">🙏</div>
+            <h3>चौका जानकारी उपलब्ध नहीं है</h3>
+            <p id="empty-message">इस तिथि के लिए अभी कोई चौका जानकारी उपलब्ध नहीं है।</p>
+          </div>
+        </section>
       </div>
       <!-- =========================================================
      REGISTRATION CTA
@@ -139,6 +179,7 @@
   <script src="js/components.js"></script>
   <script src="js/daily-data.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/chowka.js"></script>
 </body>
 
 </html>
