@@ -222,7 +222,12 @@
     box-shadow 0.22s ease,
     border-color 0.22s ease;
 }
-
+.kalash-sort-note {
+  margin: -12px 0 20px;
+  color: #806d5b;
+  font-size: 15px;
+  line-height: 1.5;
+}
 /* =========================================================
    KALASH CARD TYPE COLORS
    Fixed subtle shades by Kalash category
