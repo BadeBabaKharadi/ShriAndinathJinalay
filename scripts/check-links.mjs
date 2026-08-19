@@ -22,7 +22,10 @@ async function findHtmlFiles(directory) {
   const nestedFiles = await Promise.all(
     entries
       .filter(
-        (entry) => !entry.name.startsWith(".") && entry.name !== "node_modules",
+        (entry) =>
+          !entry.name.startsWith(".") &&
+          entry.name !== "node_modules" &&
+          entry.name !== "dist",
       )
       .map(async (entry) => {
         const fullPath = path.join(directory, entry.name);

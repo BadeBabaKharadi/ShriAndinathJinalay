@@ -37,6 +37,7 @@ Individual commands are also available:
 - `npm run test:unit` — run unit tests
 - `npm run test:links` — find broken local links and assets
 - `npm run test:ui` — run browser smoke tests
+- `npm run build` — create the clean static artifact used by GitHub Pages
 
 ## Safe-change rule
 

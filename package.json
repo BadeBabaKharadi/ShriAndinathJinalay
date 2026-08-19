@@ -10,12 +10,14 @@
     "lint": "eslint scripts tests",
     "test:unit": "vitest run",
     "test:links": "node scripts/check-links.mjs",
-    "test:ui": "set PLAYWRIGHT_BROWSERS_PATH=0&& playwright test",
+    "test:ui": "cross-env PLAYWRIGHT_BROWSERS_PATH=0 playwright test",
+    "build": "node scripts/build-pages.mjs",
     "check": "npm run format:check && npm run lint && npm run test:unit && npm run test:links && npm run test:ui"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@eslint/js": "^9.35.0",
+    "cross-env": "^7.0.3",
     "eslint": "^9.35.0",
     "prettier": "^3.6.2",
     "vite": "^7.1.5",
