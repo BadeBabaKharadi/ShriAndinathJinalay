@@ -422,6 +422,7 @@ The platform operator shall retain a central, strictly audited support role. Tem
 | Donation ledger, payment reconciliation, and immutable audit logging | Before finance/admin donations release | Controlled donation operations |
 | Inventory ledger, stock-take workflow, and low-stock notifications | After authenticated admin foundation | Reliable physical stock operations |
 | Error monitoring and analytics with privacy review | Before authenticated/public scale-up | Production diagnostics and release monitoring |
+| Google Analytics 4 / Firebase Analytics adapter and event schema | After public routes are protected, before temple-home launch | Privacy-aware feature-adoption measurement |
 
 ### 10.6 Mobile-app channel strategy
 
@@ -456,6 +457,48 @@ Commission the Flutter app once at least two of these conditions are true:
 - The member web portal has stable workflows and verified shared backend contracts.
 
 Before app-store release, add Android/iOS device testing, crash reporting, privacy policy/support links, app-store account ownership, notification consent, deep-link tests, and release-signing/rollback procedures. A Flutter app does not remove the need for the responsive web site: public pages, payments, shared links, and search discovery continue to need the web channel.
+
+### 10.7 Privacy-aware product analytics
+
+The platform shall measure anonymous and authenticated **feature usage** so each temple can understand what is helpful, what needs improvement, and what is unused. Analytics is for product improvement and operational decisions; it must not become a record of individual religious practice, financial information, or personal communications.
+
+Google Analytics 4 / Firebase Analytics is the recommended first analytics provider because it supports web and future Flutter/mobile clients, standard page/screen measurement, custom events, and export to BigQuery if later analysis requires it. The implementation shall use one centrally maintained analytics adapter so a different provider can be substituted without changing feature code.
+
+#### Event taxonomy
+
+Every tracked event shall use a stable, documented name and only approved non-sensitive parameters:
+
+| Area | Events to measure | Safe parameters |
+|---|---|---|
+| Public site | `page_view`, `navigation_clicked`, `cta_clicked`, `event_viewed` | `temple_id`, `page_type`, `route`, `cta_name`, `event_id` |
+| Event content | `timetable_viewed`, `gallery_viewed`, `contact_clicked` | `temple_id`, `event_id`, `module`, `contact_method` |
+| Forms | `form_started`, `form_step_completed`, `form_submission_succeeded`, `form_submission_failed` | `temple_id`, `event_id`, `form_id`, `step_name`, `failure_category` |
+| Members | `login_succeeded`, `member_feature_viewed`, `niyam_checkin_completed` | `temple_id`, `feature_name`, `member_state` |
+| Donations/payments | `pledge_viewed`, `payment_started`, `payment_verified`, `receipt_downloaded` | `temple_id`, `campaign_id`, `payment_method`, `outcome` |
+| Administration | `admin_feature_viewed`, `report_exported`, `inventory_movement_created` | `temple_id`, `module`, `report_type`, `movement_type` |
+
+`temple_id` is an internal non-human-readable identifier. Event values must never include name, phone number, email, full address, registration answers, receipt number, payment identifier, exact donation amount, Niyam text, free-form form content, WhatsApp message content, or authentication tokens. Analytics user identifiers must be pseudonymous and must not reuse a phone number or email address.
+
+#### Reporting requirements
+
+The initial product dashboard shall answer:
+
+1. Which public pages and calls to action are used most and least?
+2. Which event modules (timetable, gallery, contacts, forms) have usage?
+3. Where do users abandon a form, based on step—not entered values?
+4. How many members return daily/weekly and which member features are used?
+5. Which admin modules are active for each temple?
+
+Reports shall be filterable by temple, date range, platform (web/mobile when available), and event/campaign. A monthly review should produce a short decision: improve, promote, keep, or retire a low-use feature. Counts must be treated as directional evidence alongside temple feedback, not as the only measure of community value.
+
+#### Privacy, control, and tests
+
+- Each tenant can enable/disable analytics and configure consent/notice wording.
+- Add a visible privacy notice and obtain consent where applicable before non-essential analytics collection; the final wording and legal obligations require local legal review.
+- Analytics must be disabled in local development and test environments by default.
+- Analytics calls must be non-blocking: a failed provider request must never break a page, form, payment, or member action.
+- Unit tests verify event name/parameter allowlists; integration tests verify key actions emit the expected safe event; browser tests stub analytics and never transmit test data.
+- Financial truth remains in the payment ledger; analytics events are never used for reconciliation, receipt generation, authorization, or payment status.
 
 ## 11. Iterative delivery and acceptance gates
 
@@ -618,11 +661,12 @@ The website remains static where it should be public. Only protected/member/admi
 | 7 | Event data contract | Define and validate Chaturmas event configuration; create read-only event overview preview | Preview route renders from event data; old pages remain untouched |
 | 8 | First reusable event module | Migrate one low-risk module—gallery or contacts/team—onto the reusable event renderer | Preview and legacy module display equivalent approved data/content |
 | 9 | Temple-home preview | Build `/temple/` from the site/event configuration with links back to Chaturmas | Stakeholder can review it; root and all current URLs remain unchanged |
-| 10 | Public release hardening | Accessibility pass, responsive checks, content review, rollback instructions, deployment rehearsal | Green CI, approved preview checklist, and documented root-switch decision gate |
+| 10 | Analytics foundation | Add consent-aware analytics adapter, approved event schema, and page/CTA tracking tests | Dashboard identifies public-page and CTA usage without transmitting personal data |
+| 11 | Public release hardening | Accessibility pass, responsive checks, content review, rollback instructions, deployment rehearsal | Green CI, approved preview checklist, and documented root-switch decision gate |
 
-At the end of Week 10, decide whether to make the temple page the home page. This is the first safe public milestone. It must not be delayed by login, payments, inventory, WhatsApp, or Flutter work.
+At the end of Week 11, decide whether to make the temple page the home page. This is the first safe public milestone. It must not be delayed by login, payments, inventory, WhatsApp, or Flutter work.
 
-### 13.4 Phase B — authenticated multi-tenant foundation (Weeks 11–16)
+### 13.4 Phase B — authenticated multi-tenant foundation (Weeks 12–17)
 
 | Week | Small weekly feature/outcome | Definition of done |
 |---|---|---|
