@@ -49,7 +49,7 @@
   },
   {
     "id": "kalash-005",
-    "name": "श्री कमल, ममता, अमन, सुरभि, निर्वाण जैन इंदौर",
+    "name": "श्री कमल, श्रीमती ममता, श्री अमन, श्रीमती सुरभी, निर्वान जैन इंदोर",
     "kalashType": "करणानुयोग कलश",
     "category": "jinvani",
     "displayAmount": "५ कलश ५५ श्रीफल",
@@ -67,19 +67,19 @@
     "displayAmount": "५ कलश ५५ श्रीफल",
     "address": "ए-203, ड्रीम्स वीरोदय, खराड़ी",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_06.jpeg",
     "kalashNumber": 6,
     "amount": 555555
   },
   {
     "id": "kalash-007",
-    "name": "श्री प्रियंत अदिति दोसी (बांसवाड़ा राज.)",
+    "name": "श्री प्रियंत,अदिति,चंद्रकांत,संगीता,अत्यंत दोसी एवं समस्त दोसी परिवार (बांसवाड़ा राज.)",
     "kalashType": "द्रव्यानुयोग कलश",
     "category": "jinvani",
     "displayAmount": "५ कलश ५५ श्रीफल",
     "address": "एल्कॉन रेनेसां, खराड़ी (बांसवाड़ा राज.)",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_07.jpeg",
     "kalashNumber": 7,
     "amount": 555555
   },
@@ -121,13 +121,13 @@
   },
   {
     "id": "kalash-011",
-    "name": "श्रीमती पुष्पा देवी, श्री अनिल ममता जैन, श्री अंकुर अंकिता जैन, आर्जव, अन्वित, अंकित, हर्षित समस्त टोंग्या परिवार",
+    "name": "श्रीमती पुष्पा देवी, श्री अनिल कुमार जी, ममता जी, अंकुर, अंकिता, आर्जव, अन्वित एवं समस्त टोंगिया परिवार कोटा राजस्थान",
     "kalashType": "उत्तम शौच आराधना कलश",
     "category": "das-lakshan-dharm",
     "displayAmount": "५ कलश ११ श्रीफल",
     "address": "एल्कॉन रेनेसां, खराड़ी; कोटा (राज.)",
     "comments": "",
-    "familyImage": null,
+    "familyImage": "kalash_11.jpeg",
     "kalashNumber": 11,
     "amount": 511511
   },
