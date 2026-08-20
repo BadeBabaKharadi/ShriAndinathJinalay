@@ -1,8 +1,636 @@
-.team-site-header{background:#7f1d16;color:#fff;border-bottom:3px solid #d9a441}.team-nav-container{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}.team-brand{display:inline-flex;align-items:center;gap:12px;color:#fff;text-decoration:none}.team-brand-icon{width:42px;height:42px;border:1px solid rgba(255,255,255,.45);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08)}.team-brand strong,.team-brand small{display:block}.team-brand strong{font-size:17px}.team-brand small{margin-top:2px;font-size:12px;opacity:.85}.team-main-nav{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px}.team-main-nav a{color:#fff;text-decoration:none;padding:9px 12px;border-radius:8px;font-weight:600;font-size:14px}.team-main-nav a:hover,.team-main-nav a.active{background:rgba(255,255,255,.14);color:#ffd978}
-.team-hero{padding:58px 0 42px;background:radial-gradient(circle at 10% 20%,rgba(224,168,72,.12),transparent 30%),linear-gradient(135deg,#fffaf2,#f8efe2);border-bottom:1px solid #ead8bd}.team-eyebrow{display:inline-block;color:#a05a19;font-weight:700;margin-bottom:10px}.team-hero h1{margin:0;color:#6f2418;font-size:clamp(32px,5vw,48px);line-height:1.15}.team-hero p{max-width:720px;margin:16px 0 0;color:#6f5a48;font-size:17px;line-height:1.7}
-.team-section{padding:42px 0 70px;background:#fffaf3}.team-section-heading{margin-bottom:24px}.team-section-heading>span{color:#a05a19;font-weight:700;font-size:14px}.team-section-heading h2{margin:5px 0 0;color:#5f261a;font-size:30px}.team-list{display:flex;flex-direction:column;gap:16px}
-.team-card{position:relative;overflow:hidden;background:#fffdf9;border:1px solid #ead8bd;border-radius:16px;box-shadow:0 5px 18px rgba(105,61,25,.07);transition:transform .2s ease,box-shadow .2s ease}.team-card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:linear-gradient(to bottom,#b76b22,#d9a441)}.team-card:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(105,61,25,.11)}
-.team-card-header{min-height:82px;padding:16px 20px 16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #f0e3d1}.team-title-block{display:flex;align-items:center;gap:13px;min-width:0}.team-icon{width:46px;height:46px;flex:0 0 46px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;background:#fff0dc;border:1px solid #efd3ad;font-size:22px}.team-title-names{min-width:0}.team-hindi-name{color:#6f2418;font-size:19px;font-weight:800;line-height:1.3}.team-english-name{margin-top:3px;color:#92745d;font-size:12px;line-height:1.3}.team-badge{flex-shrink:0;padding:7px 11px;border-radius:999px;background:#fff1df;border:1px solid #efd3ad;color:#8b4a18;font-size:12px;font-weight:700}
-.team-members{padding:5px 20px 8px 24px}.team-member{min-height:56px;display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid #f2e8da}.team-member:last-child{border-bottom:0}.team-member-name{min-width:0;color:#4f2b20;font-size:16px;font-weight:650;line-height:1.5}.team-member-actions{margin-left:auto;display:flex;align-items:center;gap:8px}.team-contact-button{width:38px;height:38px;flex:0 0 38px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;text-decoration:none;border:1px solid transparent;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.team-contact-button:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.12)}.team-contact-button:focus-visible{outline:3px solid rgba(190,119,38,.28);outline-offset:2px}.call-button{background:#fff0dc;border-color:#efd3ad;color:#8b4a18}.whatsapp-button{background:#edf7ee;border-color:#cce7cf;color:#24833b}.team-no-member{padding:16px 0;color:#a08369;font-size:14px;font-style:italic}.team-status{padding:18px;text-align:center;color:#8d7158}.team-status.is-hidden{display:none}.team-footer{background:#7f1d16;color:rgba(255,255,255,.9);border-top:3px solid #d9a441}.team-footer .container{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:20px;font-size:13px}
-@media(max-width:900px){.team-nav-container{align-items:flex-start;flex-direction:column;padding-top:14px;padding-bottom:14px}.team-main-nav{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}.team-main-nav a{white-space:nowrap}}
-@media(max-width:640px){.team-hero{padding:40px 0 32px}.team-hero h1{font-size:34px}.team-hero p{font-size:15px}.team-section{padding:32px 0 50px}.team-card-header{padding:14px 15px 14px 19px}.team-members{padding-left:19px;padding-right:15px}.team-hindi-name{font-size:17px}.team-english-name{font-size:11px}.team-icon{width:42px;height:42px;flex-basis:42px}.team-badge{font-size:11px;padding:6px 8px}.team-member-name{font-size:15px}.team-contact-button{width:40px;height:40px;flex-basis:40px}.team-footer .container{min-height:auto;padding-top:16px;padding-bottom:16px;flex-direction:column;align-items:flex-start;gap:5px}}
+/* =========================================================
+   TEAM PAGE
+   ========================================================= */
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.team-site-header {
+  background: #7f1d16;
+  color: #fff;
+  border-bottom: 3px solid #d9a441;
+}
+
+.team-nav-container {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.team-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.team-brand-icon {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.team-brand strong,
+.team-brand small {
+  display: block;
+}
+
+.team-brand strong {
+  font-size: 17px;
+}
+
+.team-brand small {
+  margin-top: 2px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.team-main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.team-main-nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.team-main-nav a:hover,
+.team-main-nav a.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffd978;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.team-hero {
+  padding: 58px 0 42px;
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(224, 168, 72, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #fffaf2,
+      #f8efe2
+    );
+  border-bottom: 1px solid #ead8bd;
+}
+
+.team-eyebrow {
+  display: inline-block;
+  color: #a05a19;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.team-hero h1 {
+  margin: 0;
+  color: #6f2418;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.15;
+}
+
+.team-hero p {
+  max-width: 720px;
+  margin: 16px 0 0;
+  color: #6f5a48;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   TEAM SECTION
+   ========================================================= */
+
+.team-section {
+  padding: 42px 0 70px;
+  background: #fffaf3;
+}
+
+.team-section-heading {
+  margin-bottom: 24px;
+}
+
+.team-section-heading > span {
+  color: #a05a19;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.team-section-heading h2 {
+  margin: 5px 0 0;
+  color: #5f261a;
+  font-size: 30px;
+}
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* =========================================================
+   TEAM CARD
+   ========================================================= */
+
+.team-card {
+  position: relative;
+  overflow: hidden;
+  background: #fffdf9;
+  border: 1px solid #ead8bd;
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(105, 61, 25, 0.07);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.team-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background:
+    linear-gradient(
+      to bottom,
+      #b76b22,
+      #d9a441
+    );
+}
+
+.team-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(105, 61, 25, 0.1);
+}
+
+
+/* =========================================================
+   TEAM HEADER / ACCORDION BUTTON
+   ========================================================= */
+
+.team-card-header {
+  width: 100%;
+  min-height: 82px;
+
+  padding: 16px 20px 16px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  border: 0;
+  border-bottom: 1px solid #f0e3d1;
+
+  background: transparent;
+
+  color: inherit;
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease;
+}
+
+.team-card-header:hover {
+  background: rgba(255, 245, 228, 0.55);
+}
+
+.team-card-header:focus-visible {
+  outline: 3px solid rgba(190, 119, 38, 0.28);
+  outline-offset: -3px;
+}
+
+
+/* =========================================================
+   TEAM TITLE
+   ========================================================= */
+
+.team-title-block {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  flex: 1;
+}
+
+.team-icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #fff0dc;
+  border: 1px solid #efd3ad;
+
+  font-size: 22px;
+}
+
+.team-title-names {
+  min-width: 0;
+}
+
+.team-hindi-name {
+  color: #6f2418;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.team-english-name {
+  margin-top: 3px;
+  color: #92745d;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   MEMBER COUNT
+   ========================================================= */
+
+.team-badge {
+  flex-shrink: 0;
+
+  padding: 7px 11px;
+
+  border-radius: 999px;
+
+  background: #fff1df;
+  border: 1px solid #efd3ad;
+
+  color: #8b4a18;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   EXPAND / COLLAPSE ICON
+   ========================================================= */
+
+.team-toggle {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: 2px;
+
+  border-radius: 50%;
+
+  background: #fff1df;
+  border: 1px solid #efd3ad;
+
+  color: #8b4a18;
+
+  font-size: 20px;
+  line-height: 1;
+
+  transition:
+    transform 0.2s ease,
+    background 0.18s ease;
+}
+
+.team-card-header:hover .team-toggle {
+  background: #ffebce;
+}
+
+.team-card.is-expanded .team-toggle {
+  transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   MEMBERS
+   ========================================================= */
+
+.team-members {
+  padding: 5px 20px 8px 24px;
+
+  animation: team-members-open 0.18s ease-out;
+}
+
+.team-members[hidden] {
+  display: none;
+}
+
+@keyframes team-members-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   MEMBER ROW
+   ========================================================= */
+
+.team-member {
+  min-height: 56px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 11px 0;
+
+  border-bottom: 1px solid #f2e8da;
+}
+
+.team-member:last-child {
+  border-bottom: 0;
+}
+
+.team-member-name {
+  min-width: 0;
+
+  color: #4f2b20;
+
+  font-size: 16px;
+  font-weight: 650;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   CONTACT ACTIONS
+   ========================================================= */
+
+.team-member-actions {
+  margin-left: auto;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.team-contact-button {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  text-decoration: none;
+
+  border: 1px solid transparent;
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.team-contact-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.team-contact-button:focus-visible {
+  outline: 3px solid rgba(190, 119, 38, 0.28);
+  outline-offset: 2px;
+}
+
+.call-button {
+  background: #fff0dc;
+  border-color: #efd3ad;
+  color: #8b4a18;
+}
+
+.whatsapp-button {
+  background: #edf7ee;
+  border-color: #cce7cf;
+  color: #24833b;
+}
+
+
+/* =========================================================
+   EMPTY MEMBER STATE
+   ========================================================= */
+
+.team-no-member {
+  padding: 16px 0;
+
+  color: #a08369;
+
+  font-size: 14px;
+  font-style: italic;
+}
+
+
+/* =========================================================
+   LOADING / STATUS
+   ========================================================= */
+
+.team-status {
+  padding: 18px;
+
+  text-align: center;
+
+  color: #8d7158;
+}
+
+.team-status.is-hidden {
+  display: none;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.team-footer {
+  background: #7f1d16;
+  color: rgba(255, 255, 255, 0.9);
+
+  border-top: 3px solid #d9a441;
+}
+
+.team-footer .container {
+  min-height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .team-nav-container {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .team-main-nav {
+    width: 100%;
+
+    justify-content: flex-start;
+
+    overflow-x: auto;
+
+    flex-wrap: nowrap;
+
+    padding-bottom: 3px;
+  }
+
+  .team-main-nav a {
+    white-space: nowrap;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .team-hero {
+    padding: 40px 0 32px;
+  }
+
+  .team-hero h1 {
+    font-size: 34px;
+  }
+
+  .team-hero p {
+    font-size: 15px;
+  }
+
+  .team-section {
+    padding: 32px 0 50px;
+  }
+
+  .team-list {
+    gap: 10px;
+  }
+
+  .team-card-header {
+    min-height: 72px;
+
+    padding: 13px 12px 13px 18px;
+
+    gap: 9px;
+  }
+
+  .team-members {
+    padding-left: 18px;
+    padding-right: 12px;
+  }
+
+  .team-hindi-name {
+    font-size: 17px;
+  }
+
+  .team-english-name {
+    font-size: 11px;
+  }
+
+  .team-icon {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+
+    font-size: 20px;
+  }
+
+  .team-badge {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .team-toggle {
+    width: 29px;
+    height: 29px;
+    flex-basis: 29px;
+
+    font-size: 18px;
+  }
+
+  .team-member-name {
+    font-size: 15px;
+  }
+
+  .team-contact-button {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .team-footer .container {
+    min-height: auto;
+
+    padding-top: 16px;
+    padding-bottom: 16px;
+
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 5px;
+  }
+}
