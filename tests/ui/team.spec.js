@@ -35,7 +35,9 @@ test.describe("Team page", () => {
     await expect(card).not.toHaveClass(/is-expanded/);
   });
 
-  test("renders member contact actions when a mobile number exists", async ({ page }) => {
+  test("renders member contact actions when a mobile number exists", async ({
+    page,
+  }) => {
     await page.goto("/team.html");
 
     const card = page.locator(".team-card").first();
@@ -48,6 +50,9 @@ test.describe("Team page", () => {
     const whatsapp = member.locator(".whatsapp-button");
 
     await expect(call).toHaveAttribute("href", /^tel:\d{10}$/);
-    await expect(whatsapp).toHaveAttribute("href", /^https:\/\/wa\.me\/91\d{10}$/);
+    await expect(whatsapp).toHaveAttribute(
+      "href",
+      /^https:\/\/wa\.me\/91\d{10}$/,
+    );
   });
 });

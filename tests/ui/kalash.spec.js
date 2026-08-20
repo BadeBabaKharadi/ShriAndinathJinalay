@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Kalash directory", () => {
-  test("loads Kalash records and displays the sorting note", async ({ page }) => {
+  test("loads Kalash records and displays the sorting note", async ({
+    page,
+  }) => {
     await page.goto("/kalash.html");
 
     await expect(page).toHaveTitle(/कलश/);
@@ -13,7 +15,9 @@ test.describe("Kalash directory", () => {
     await expect(page.locator("#kalash-result-count")).not.toBeEmpty();
   });
 
-  test("filters Kalash records by name and can clear filters", async ({ page }) => {
+  test("filters Kalash records by name and can clear filters", async ({
+    page,
+  }) => {
     await page.goto("/kalash.html");
 
     const nameFilter = page.locator("#kalash-name-filter");
@@ -32,18 +36,32 @@ test.describe("Kalash directory", () => {
     await expect(count).toHaveText(initialCount || "");
   });
 
-  test("uses stable color classes for rendered Kalash cards", async ({ page }) => {
+  test("uses stable color classes for rendered Kalash cards", async ({
+    page,
+  }) => {
     await page.goto("/kalash.html");
 
-    const classesBefore = await page.locator(".kalash-card").evaluateAll((cards) =>
-      cards.map((card) => [...card.classList].filter((name) => name.startsWith("kalash-card--"))),
-    );
+    const classesBefore = await page
+      .locator(".kalash-card")
+      .evaluateAll((cards) =>
+        cards.map((card) =>
+          [...card.classList].filter((name) =>
+            name.startsWith("kalash-card--"),
+          ),
+        ),
+      );
 
     await page.reload();
 
-    const classesAfter = await page.locator(".kalash-card").evaluateAll((cards) =>
-      cards.map((card) => [...card.classList].filter((name) => name.startsWith("kalash-card--"))),
-    );
+    const classesAfter = await page
+      .locator(".kalash-card")
+      .evaluateAll((cards) =>
+        cards.map((card) =>
+          [...card.classList].filter((name) =>
+            name.startsWith("kalash-card--"),
+          ),
+        ),
+      );
 
     expect(classesAfter).toEqual(classesBefore);
   });
