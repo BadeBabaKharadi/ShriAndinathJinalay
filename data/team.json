@@ -1,7 +1,7 @@
 [
   {
     "id": "pramukh-chaturmas-sanyojak",
-    "name": "Pramukh Chaturmas Sanyojak Team",
+    "name": "Chaturmas mukhya Sanyojak Team",
     "hindiName": "चातुर्मास मुख्य संयोजक",
     "icon": "👥",
     "members": [
@@ -28,13 +28,17 @@
       {
         "name": "अमित जैन (अशोकनगर)",
         "mobile": "9881125825"
+      },
+      {
+        "name": "सुष्मित खेड़कर (कारंजा)",
+        "mobile": "8007733008"
       }
     ]
   },
   {
     "id": "finance",
     "name": "Finance Team",
-    "hindiName": "वित्त टीम",
+    "hindiName": "वित्त संयोजक",
     "icon": "💰",
     "members": [
       {
@@ -86,7 +90,7 @@
   {
     "id": "awas-vyavatah",
     "name": "Awas Vyavatah Team",
-    "hindiName": "आवास व्यवस्था टीम",
+    "hindiName": "आवास संयोजक",
     "icon": "🏠",
     "members": [
       {
@@ -114,7 +118,7 @@
   {
     "id": "bhojanshala",
     "name": "Bhojanshla Team",
-    "hindiName": "भोजनशाला टीम",
+    "hindiName": "भोजनशाला संयोजक",
     "icon": "🍲",
     "members": [
       {
@@ -154,7 +158,7 @@
   {
     "id": "chowka",
     "name": "Chowka Team",
-    "hindiName": "चौका टीम",
+    "hindiName": "चौका संयोजक",
     "icon": "🍽️",
     "members": [
       {
@@ -194,7 +198,7 @@
   {
     "id": "chowka_samgri",
     "name": "Chowka Samagri Team",
-    "hindiName": "चौका सामग्री (दूध/पानी)",
+    "hindiName": "चौका सामग्री (दूध/पानी) संयोजक",
     "icon": "🍽️",
     "members": [
       {
@@ -211,7 +215,7 @@
   {
     "id": "dainik-karya-kram",
     "name": "Dainik Karya Kram/Manch Sanchalan Team",
-    "hindiName": "दैनिक कार्यक्रम/मंच संचालन टीम",
+    "hindiName": "दैनिक कार्यक्रम/मंच संयोजक",
     "icon": "📅",
     "members": [
       {
@@ -235,7 +239,7 @@
   {
     "id": "aahar-charya",
     "name": "Aahar Charya Team",
-    "hindiName": "आहार चर्या टीम",
+    "hindiName": "आहार चर्या संयोजक",
     "icon": "🙏",
     "members": [
       {
@@ -267,7 +271,7 @@
   {
     "id": "nihar-charya",
     "name": "Nihar Charya Team",
-    "hindiName": "निहार चर्या/जंगल व्यवस्था टीम (जुड़ने के लिए संपर्क करें)",
+    "hindiName": "निहार/जंगल चर्या संयोजक (जुड़ने के लिए संपर्क करें)",
     "icon": "🌅",
     "members": [
       {
@@ -291,7 +295,7 @@
   {
     "id": "print-digital-media",
     "name": "Print/Digital Media Team",
-    "hindiName": "प्रिंट / डिजिटल मीडिया टीम",
+    "hindiName": "प्रिंट/डिजिटल मीडिया संयोजक",
     "icon": "📱",
     "members": [
       {
@@ -327,7 +331,7 @@
   {
     "id": "website",
     "name": "Website Team",
-    "hindiName": "वेबसाइट टीम",
+    "hindiName": "वेबसाइट संयोजक",
     "icon": "🌐",
     "members": [
       {
