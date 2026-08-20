@@ -1,11 +1,86 @@
 [
   {
-    "id": "dainik-karya-kram",
-    "name": "Dainik Karya Kram/Manch Sanchalan Team",
-    "hindiName": "दैनिक कार्यक्रम/मंच संचालन टीम",
-    "icon": "📅",
+    "id": "pramukh-chaturmas-sanyojak",
+    "name": "Pramukh Chaturmas Sanyojak Team",
+    "hindiName": "प्रमुख चातुर्मास संयोजक",
+    "icon": "👥",
     "members": [
-
+      {
+        "name": "अभय जैन (बांसवाड़ा)",
+        "mobile": "9921922199"
+      },
+      {
+        "name": "विनय जैन (बुढ़ार)",
+        "mobile": "9407070560"
+      },
+      {
+        "name": "मनीष जैन (बमनावर)",
+        "mobile": "9766304279"
+      },
+      {
+        "name": "अभिषेक जैन (बालाघाट)",
+        "mobile": "8308819368"
+      },
+      {
+        "name": "सुमीत जैन (बाबा भैया)",
+        "mobile": "9657124488"
+      },
+      {
+        "name": "अमित जैन (अशोकनगर)",
+        "mobile": "9881125825"
+      }
+    ]
+  },
+  {
+    "id": "finance",
+    "name": "Finance Team",
+    "hindiName": "वित्त टीम",
+    "icon": "💰",
+    "members": [
+      {
+        "name": "टीकम चंद जैन (अंकल जी)",
+        "mobile": "9783773435"
+      },
+      {
+        "name": "वीरेंद्र जैन सहारनपुर(अंकल जी)",
+        "mobile": "9456271295"
+      },
+      {
+        "name": "अभिषेक जैन (बालाघाट)",
+        "mobile": "8308819368"
+      },
+      {
+        "name": "अमित जैन (अशोकनगर)",
+        "mobile": "9881125825"
+      },
+      {
+        "name": "विवेक जैन (आगरा)",
+        "mobile": "9320212037"
+      },
+      {
+        "name": "अभय जैन (बांसवाड़ा)",
+        "mobile": "9921922199"
+      },
+      {
+        "name": "राजेंद्र जैन (सर्रा)",
+        "mobile": "9527770936"
+      },
+      {
+        "name": "विनय जैन (बुढ़ार)",
+        "mobile": "9407070560"
+      },
+      {
+        "name": "सागर जैन CA (वीरोदय)",
+        "mobile": "9850445508"
+      },
+      {
+        "name": "एकांत जैन (दमोह)",
+        "mobile": "9604567192"
+      },
+      {
+        "name": "आशीष जैन (वडागांव)",
+        "mobile": "9021288774"
+      }
     ]
   },
   {
@@ -34,7 +109,7 @@
         "name": "संयोग जैन (वीरोदय)",
         "mobile": "9892859085"
       }
-    ] 
+    ]
   },
   {
     "id": "bhojanshala",
@@ -117,6 +192,47 @@
     ]
   },
   {
+    "id": "chowka_samgri",
+    "name": "Chowka Samagri Team",
+    "hindiName": "चौका सामग्री (दूध/पानी)",
+    "icon": "🍽️",
+    "members": [
+      {
+        "name": "सुनील जैन",
+        "mobile": "9926374889"
+      },
+      {
+        "name": "आशीष जैन (बुढ़ार)",
+        "mobile": "9035411001"
+      }
+      
+    ]
+  },
+  {
+    "id": "dainik-karya-kram",
+    "name": "Dainik Karya Kram/Manch Sanchalan Team",
+    "hindiName": "दैनिक कार्यक्रम/मंच संचालन टीम",
+    "icon": "📅",
+    "members": [
+      {
+        "name": "अभिषेक जैन (बालाघाट)",
+        "mobile": "8308819368"
+      },
+      {
+        "name": "संवेग हरसुले (वाशिम)",
+        "mobile": "9422920882"
+      },
+      {
+        "name": "विनय जैन (बुढ़ार)",
+        "mobile": "9407070560"
+      },
+      {
+        "name": "सचिन जैन (बंडा)",
+        "mobile": "8055320443"
+      }
+    ]
+  },
+  {
     "id": "aahar-charya",
     "name": "Aahar Charya Team",
     "hindiName": "आहार चर्या टीम",
@@ -170,15 +286,7 @@
         "name": "सुमीत जैन (बाबा भैया)",
         "mobile": "9657124488"
       }
-
     ]
-  },
-  {
-    "id": "finance",
-    "name": "Finance Team",
-    "hindiName": "वित्त टीम",
-    "icon": "💰",
-    "members": []
   },
   {
     "id": "print-digital-media",
@@ -214,7 +322,6 @@
         "name": "मनीष शाह (V2)",
         "mobile": "8600268778"
       }
-      
     ]
   },
   {
