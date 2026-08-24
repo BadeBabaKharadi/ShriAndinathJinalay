@@ -824,16 +824,16 @@
     "address": "वोस्की एमराल्ड, खराड़ी",
     "comments": "",
     "familyImage": null,
-    "kalashNumber": "i",
+    "kalashNumber": "80",
     "amount": 51515
   },
   {
     "id": "kalash-070",
-    "name": "श्री प्रिंगल जैन, श्रीमती युक्ति जैन, कुमारी मिश्का जैन एवं चिरंजीव वीरांश जैन",
+    "name": "श्री अंकित जी प्रिया, चार्विक चौधरी",
    "kalashType": "चातुर्मास स्मृति विद्या कलश",
     "category": "chaturmas-smriti-vidhya",
     "displayAmount": "२ कलश ११ श्रीफल",
-    "address": "स्पैन ओ लाइफ, खराड़ी",
+    "address": "C-601, ड्रीम्स वीरोदय, खराड़ी जबलपुर, मध्य प्रदेश",
     "comments": "",
     "familyImage": null,
     "kalashNumber": "72",
@@ -841,11 +841,11 @@
   },
   {
     "id": "kalash-071",
-    "name": "श्री अंकित जी चौधरी",
+    "name": "श्री प्रिंगल जैन, श्रीमती युक्ति जैन, कुमारी मिश्का जैन एवं चिरंजीव वीरांश जैन",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
-    "address": "C-601, ड्रीम्स वीरोदय, खराड़ी, जबलपुर, मध्य प्रदेश",
+    "address": "स्पैन ओ लाइफ, खराड़ी",
     "comments": "",
     "familyImage": "",
     "kalashNumber": 69,
@@ -910,5 +910,54 @@
     "familyImage": "",
     "kalashNumber": 75,
     "amount": 111111
+  },
+  {
+    "id": "kalash-077",
+    "name": "श्री मनीष जैन साक्षी जैन",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "साटिन ब्रिक सोसाइटीी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 76,
+    "amount": 111111
+  },
+  {
+    "id": "kalash-078",
+    "name": "श्री प्रवीण पाटनी श्रीमती प्रियंका पाटनी",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "ड्रीम्स वीरोदय, खराड़ीी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 77,
+    "amount": 111111
+  },
+  {
+    "id": "kalash-079",
+    "name": "श्रीमान चंपालाल जी जैन, श्रीमति मंजू जैन, श्री नितिन जैन, श्रीमति स्मिता जैन, आँचल, झलक जैन",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "A-503, ड्रीम्स वीरोदय, खराड़ी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 78,
+    "amount": 111111
+  },
+  {
+    "id": "kalash-080",
+    "name": "श्री अभय कुमार सुलोचन, चिन्मय, प्राची, देशना, निवेन जैन समस्त कासलीवाल परिवार",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "ट्रिनिटी गेरा सोसाइटी, खराड़ीी",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 79,
+    "amount": 111111
   }
+  
 ]
