@@ -1,4 +1,17 @@
 [
+ 
+  {
+    "id": "pramukh-chaturmas-karyalay",
+    "name": "Chaturmas mukhya Karyalay",
+    "hindiName": "चातुर्मास मुख्य कार्यालय",
+    "icon": "🏢",
+    "members": [
+      {
+        "name": "सुनील चौधरी",
+        "mobile": "9926374889"
+      }
+    ]
+  }, 
   {
     "id": "pramukh-chaturmas-sanyojak",
     "name": "Chaturmas mukhya Sanyojak Team",
@@ -202,7 +215,7 @@
     "icon": "🍽️",
     "members": [
       {
-        "name": "सुनील जैन",
+        "name": "सुनील चौधरी",
         "mobile": "9926374889"
       },
       {
