@@ -11,7 +11,6 @@ const publishPaths = [
   "CNAME",
   "favicon.png",
   "index.html",
-  "chowka.html",
   "dainik-karyakram.html",
   "gallery.html",
   "kalash.html",
