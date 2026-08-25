@@ -76,7 +76,6 @@ function resolveReference(sourceFile, reference) {
    *
    * components/navbar.html
    *     -> index.html
-   *     -> chowka.html
    *     -> kalash.html
    */
   if (relativeSource.startsWith(`components${path.sep}`)) {
