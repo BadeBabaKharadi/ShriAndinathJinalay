@@ -13,6 +13,7 @@ const publishPaths = [
   "index.html",
   "dainik-karyakram.html",
   "gallery.html",
+  "404.html",
   "kalash.html",
   "registration.html",
   "team.html",
