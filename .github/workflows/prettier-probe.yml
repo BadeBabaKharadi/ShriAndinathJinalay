@@ -1,0 +1,19 @@
+name: Temporary Prettier probe
+
+on:
+  push:
+    branches:
+      - fix/kshamawani-registration-update-flow
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx prettier --write tests/unit/kshamawani-data.test.js
+      - name: Show formatted diff
+        run: git diff -- tests/unit/kshamawani-data.test.js
