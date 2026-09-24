@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { URL } from "node:url";
+import { performance } from "node:perf_hooks";
 
 const DEFAULT_REQUESTS = 300;
 const DEFAULT_CONCURRENCY = 10;
