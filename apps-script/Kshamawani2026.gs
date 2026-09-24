@@ -10,7 +10,9 @@ const AUDIT_SHEET = "Kshamawani Audit";
 function doGet(e) {
   const p = (e && e.parameter) || {};
   if (p.api === "lookupRegistration") {
-    const result = lookupRegistration_(p.eventId, p.mobile);
+    const result = p.code
+      ? lookupRegistrationByCode_(p.eventId, p.code)
+      : lookupRegistration_(p.eventId, p.mobile);
     return jsonp_(e, result);
   }
   return json_( { success: true, service: "kshamawani-2026" } );
@@ -149,6 +151,27 @@ function lookupRegistration_(eventId, mobile) {
   for (let i = 1; i < values.length; i++) {
     if (String(values[i][1]) === EVENT_ID && String(values[i][3]) === normalized) {
       return { success: true, exists: true, registration: rowToRegistration_(values[i]) };
+    }
+  }
+  return { success: true, exists: false };
+}
+
+function lookupRegistrationByCode_(eventId, code) {
+  if (eventId !== EVENT_ID) return { success: false, error: "Invalid event." };
+  const normalizedCode = String(code || "").trim().toUpperCase();
+  if (!normalizedCode) return { success: true, exists: false };
+
+  const values = registrationsSheet_().getDataRange().getValues();
+  for (let i = 1; i < values.length; i++) {
+    if (
+      String(values[i][1]) === EVENT_ID &&
+      String(values[i][2]).trim().toUpperCase() === normalizedCode
+    ) {
+      return {
+        success: true,
+        exists: true,
+        registration: rowToRegistration_(values[i]),
+      };
     }
   }
   return { success: true, exists: false };
