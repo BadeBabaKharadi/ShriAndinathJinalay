@@ -53,7 +53,9 @@ describe("Kshamawani configuration", () => {
     );
     expect(coordinator).toContain('compact[0] === "KW26"');
     expect(coordinator).toContain("lookupByCode(code)");
-    expect(backend).toContain("function lookupRegistrationByCode_(eventId, code)");
+    expect(backend).toContain(
+      "function lookupRegistrationByCode_(eventId, code)",
+    );
     expect(backend).toContain("p.code");
   });
 });
