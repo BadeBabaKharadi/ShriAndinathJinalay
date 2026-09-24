@@ -39,7 +39,7 @@ function createRegistration_(data) {
   assert_(String(data.name || "").trim(), "Name is required.");
   assert_(String(data.address || "").trim(), "Address is required.");
   const coupons = Number(data.coupons);
-  assert_(Number.isInteger(coupons) && coupons >= 1 && coupons <= 20, "Invalid coupon count.");
+  assert_(Number.isInteger(coupons) && coupons >= 1 && coupons <= 4, "Invalid coupon count.");
 
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -71,7 +71,7 @@ function updateRegistration_(data) {
   assert_(String(data.address || "").trim(), "Address is required.");
   const coupons = Number(data.coupons);
   assert_(
-    Number.isInteger(coupons) && coupons >= 1 && coupons <= 20,
+    Number.isInteger(coupons) && coupons >= 1 && coupons <= 4,
     "Invalid coupon count.",
   );
 
