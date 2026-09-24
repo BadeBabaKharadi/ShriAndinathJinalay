@@ -6,6 +6,10 @@
 const EVENT_ID = "kshamawani-2026";
 const REGISTRATIONS_SHEET = "Kshamawani Registrations";
 const AUDIT_SHEET = "Kshamawani Audit";
+const LOOKUP_CACHE_TTL_SECONDS = 300;
+const MOBILE_INDEX_CACHE_KEY = "k26:lookup:mobile:v2";
+const CODE_INDEX_CACHE_KEY = "k26:lookup:code:v2";
+const NEXT_CODE_PROPERTY = "k26:nextApplicationNumber";
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
@@ -15,10 +19,11 @@ function doGet(e) {
       : lookupRegistration_(p.eventId, p.mobile);
     return jsonp_(e, result);
   }
-  return json_( { success: true, service: "kshamawani-2026" } );
+  return json_({ success: true, service: "kshamawani-2026" });
 }
 
 function doPost(e) {
+  const startedAt = Date.now();
   try {
     const payload = JSON.parse((e.parameter && e.parameter.payload) || "{}");
     const action = payload.action;
@@ -28,8 +33,10 @@ function doPost(e) {
     else if (action === "updateRegistration") result = updateRegistration_(data);
     else if (action === "markTokensIssued") result = markTokensIssued_(data);
     else throw new Error("Unsupported action.");
+    logPerformance_(action || "POST", result.success ? "success" : "failure", startedAt);
     return json_(result);
   } catch (error) {
+    logPerformance_("POST", "error", startedAt);
     return json_({ success: false, error: error.message });
   }
 }
@@ -41,7 +48,10 @@ function createRegistration_(data) {
   assert_(String(data.name || "").trim(), "Name is required.");
   assert_(String(data.address || "").trim(), "Address is required.");
   const coupons = Number(data.coupons);
-  assert_(Number.isInteger(coupons) && coupons >= 1 && coupons <= 4, "Invalid coupon count.");
+  assert_(
+    Number.isInteger(coupons) && coupons >= 1 && coupons <= 4,
+    "Invalid coupon count.",
+  );
 
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -57,7 +67,19 @@ function createRegistration_(data) {
 
     const code = nextApplicationCode_(sheet);
     const now = new Date();
-    sheet.appendRow([now, EVENT_ID, code, mobile, String(data.name).trim(), String(data.address).trim(), coupons, "NO", "", ""]);
+    sheet.appendRow([
+      now,
+      EVENT_ID,
+      code,
+      mobile,
+      String(data.name).trim(),
+      String(data.address).trim(),
+      coupons,
+      "NO",
+      "",
+      "",
+    ]);
+    invalidateLookupCaches_();
     audit_("CREATE", code, mobile, coupons, "PUBLIC");
     return { success: true, registrationId: code, applicationCode: code };
   } finally {
@@ -106,6 +128,7 @@ function updateRegistration_(data) {
           coupons,
         ],
       ]);
+      invalidateLookupCaches_();
       audit_("UPDATE", existingCode, mobile, coupons, "PUBLIC");
 
       return {
@@ -132,6 +155,7 @@ function updateRegistration_(data) {
       "",
       "",
     ]);
+    invalidateLookupCaches_();
     audit_("CREATE", code, mobile, coupons, "PUBLIC");
     return {
       success: true,
@@ -145,36 +169,128 @@ function updateRegistration_(data) {
 }
 
 function lookupRegistration_(eventId, mobile) {
+  const startedAt = Date.now();
   if (eventId !== EVENT_ID) return { success: false, error: "Invalid event." };
+
   const normalized = normalizeMobile_(mobile);
-  const values = registrationsSheet_().getDataRange().getValues();
-  for (let i = 1; i < values.length; i++) {
-    if (String(values[i][1]) === EVENT_ID && String(values[i][3]) === normalized) {
-      return { success: true, exists: true, registration: rowToRegistration_(values[i]) };
-    }
+  const lookup = findRegistrationRow_("mobile", normalized);
+  if (!lookup.rowNumber) {
+    logPerformance_("lookup-mobile", "miss", startedAt, lookup.cacheHit);
+    return { success: true, exists: false };
   }
-  return { success: true, exists: false };
+
+  const registration = rowToRegistration_(
+    registrationsSheet_().getRange(lookup.rowNumber, 1, 1, 10).getValues()[0],
+  );
+  logPerformance_("lookup-mobile", "hit", startedAt, lookup.cacheHit);
+  return { success: true, exists: true, registration };
 }
 
 function lookupRegistrationByCode_(eventId, code) {
+  const startedAt = Date.now();
   if (eventId !== EVENT_ID) return { success: false, error: "Invalid event." };
-  const normalizedCode = String(code || "").trim().toUpperCase();
-  if (!normalizedCode) return { success: true, exists: false };
 
-  const values = registrationsSheet_().getDataRange().getValues();
-  for (let i = 1; i < values.length; i++) {
-    if (
-      String(values[i][1]) === EVENT_ID &&
-      String(values[i][2]).trim().toUpperCase() === normalizedCode
-    ) {
-      return {
-        success: true,
-        exists: true,
-        registration: rowToRegistration_(values[i]),
-      };
+  const normalizedCode = String(code || "").trim().toUpperCase();
+  if (!normalizedCode) {
+    logPerformance_("lookup-code", "miss", startedAt, true);
+    return { success: true, exists: false };
+  }
+
+  const lookup = findRegistrationRow_("code", normalizedCode);
+  if (!lookup.rowNumber) {
+    logPerformance_("lookup-code", "miss", startedAt, lookup.cacheHit);
+    return { success: true, exists: false };
+  }
+
+  const registration = rowToRegistration_(
+    registrationsSheet_().getRange(lookup.rowNumber, 1, 1, 10).getValues()[0],
+  );
+  logPerformance_("lookup-code", "hit", startedAt, lookup.cacheHit);
+  return { success: true, exists: true, registration };
+}
+
+function findRegistrationRow_(type, key) {
+  if (!key) return { rowNumber: 0, cacheHit: true };
+
+  const cache = CacheService.getScriptCache();
+  const cacheKey =
+    type === "mobile" ? MOBILE_INDEX_CACHE_KEY : CODE_INDEX_CACHE_KEY;
+  const cached = cache.get(cacheKey);
+
+  if (cached) {
+    const index = JSON.parse(cached);
+    return {
+      rowNumber: Number(index[key] || 0),
+      cacheHit: true,
+    };
+  }
+
+  const indexes = buildLookupIndexes_();
+  return {
+    rowNumber: Number(
+      (type === "mobile" ? indexes.mobile : indexes.code)[key] || 0,
+    ),
+    cacheHit: false,
+  };
+}
+
+function buildLookupIndexes_() {
+  const startedAt = Date.now();
+  const sheet = registrationsSheet_();
+  const lastRow = sheet.getLastRow();
+  const mobile = {};
+  const code = {};
+
+  if (lastRow > 1) {
+    const values = sheet.getRange(2, 2, lastRow - 1, 3).getValues();
+    for (let i = 0; i < values.length; i++) {
+      const rowNumber = i + 2;
+      const eventId = String(values[i][0]);
+      if (eventId !== EVENT_ID) continue;
+
+      const applicationCode = String(values[i][1]).trim().toUpperCase();
+      const mobileNumber = normalizeMobile_(values[i][2]);
+
+      if (applicationCode) code[applicationCode] = rowNumber;
+      if (mobileNumber) mobile[mobileNumber] = rowNumber;
     }
   }
-  return { success: true, exists: false };
+
+  const cache = CacheService.getScriptCache();
+  const payloads = {
+    [MOBILE_INDEX_CACHE_KEY]: JSON.stringify(mobile),
+    [CODE_INDEX_CACHE_KEY]: JSON.stringify(code),
+  };
+
+  try {
+    cache.putAll(payloads, LOOKUP_CACHE_TTL_SECONDS);
+  } catch (error) {
+    console.log(
+      JSON.stringify({
+        event: "kshamawani.lookup_cache_write_failed",
+        error: error.message,
+      }),
+    );
+  }
+
+  console.log(
+    JSON.stringify({
+      event: "kshamawani.lookup_index_built",
+      rows: Math.max(0, lastRow - 1),
+      mobileEntries: Object.keys(mobile).length,
+      codeEntries: Object.keys(code).length,
+      durationMs: Date.now() - startedAt,
+    }),
+  );
+
+  return { mobile, code };
+}
+
+function invalidateLookupCaches_() {
+  CacheService.getScriptCache().removeAll([
+    MOBILE_INDEX_CACHE_KEY,
+    CODE_INDEX_CACHE_KEY,
+  ]);
 }
 
 function markTokensIssued_(data) {
@@ -189,12 +305,18 @@ function markTokensIssued_(data) {
     const sheet = registrationsSheet_();
     const values = sheet.getDataRange().getValues();
     for (let i = 1; i < values.length; i++) {
-      if (String(values[i][1]) === EVENT_ID && String(values[i][2]) === code && String(values[i][3]) === mobile) {
+      if (
+        String(values[i][1]) === EVENT_ID &&
+        String(values[i][2]) === code &&
+        String(values[i][3]) === mobile
+      ) {
         if (String(values[i][7]) === "YES") {
           return { success: true, alreadyIssued: true };
         }
         const timestamp = new Date();
-        sheet.getRange(i + 1, 8, 1, 3).setValues([["YES", timestamp, "COORDINATOR"]]);
+        sheet.getRange(i + 1, 8, 1, 3).setValues([
+          ["YES", timestamp, "COORDINATOR"],
+        ]);
         audit_("TOKENS_ISSUED", code, mobile, Number(values[i][6]), "COORDINATOR");
         return { success: true, alreadyIssued: false };
       }
@@ -210,7 +332,18 @@ function registrationsSheet_() {
   let sheet = ss.getSheetByName(REGISTRATIONS_SHEET);
   if (!sheet) {
     sheet = ss.insertSheet(REGISTRATIONS_SHEET);
-    sheet.appendRow(["Timestamp", "EventId", "ApplicationCode", "Mobile", "Name", "Address", "Coupons", "TokensIssued", "IssuedAt", "IssuedBy"]);
+    sheet.appendRow([
+      "Timestamp",
+      "EventId",
+      "ApplicationCode",
+      "Mobile",
+      "Name",
+      "Address",
+      "Coupons",
+      "TokensIssued",
+      "IssuedAt",
+      "IssuedBy",
+    ]);
     sheet.setFrozenRows(1);
   }
   return sheet;
@@ -221,23 +354,38 @@ function audit_(action, code, mobile, coupons, actor) {
   let sheet = ss.getSheetByName(AUDIT_SHEET);
   if (!sheet) {
     sheet = ss.insertSheet(AUDIT_SHEET);
-    sheet.appendRow(["Timestamp", "Action", "ApplicationCode", "Mobile", "Coupons", "Actor"]);
+    sheet.appendRow([
+      "Timestamp",
+      "Action",
+      "ApplicationCode",
+      "Mobile",
+      "Coupons",
+      "Actor",
+    ]);
     sheet.setFrozenRows(1);
   }
   sheet.appendRow([new Date(), action, code, mobile, coupons, actor]);
 }
 
 function nextApplicationCode_(sheet) {
-  const rows = sheet.getLastRow();
-  let max = 0;
-  if (rows > 1) {
-    const codes = sheet.getRange(2, 3, rows - 1, 1).getValues().flat();
-    for (const code of codes) {
-      const match = String(code).match(/^KW26-(\d+)$/);
-      if (match) max = Math.max(max, Number(match[1]));
+  const properties = PropertiesService.getScriptProperties();
+  let nextNumber = Number(properties.getProperty(NEXT_CODE_PROPERTY));
+
+  if (!Number.isInteger(nextNumber) || nextNumber < 1) {
+    const rows = sheet.getLastRow();
+    let max = 0;
+    if (rows > 1) {
+      const codes = sheet.getRange(2, 3, rows - 1, 1).getValues().flat();
+      for (const code of codes) {
+        const match = String(code).match(/^KW26-(\d+)$/);
+        if (match) max = Math.max(max, Number(match[1]));
+      }
     }
+    nextNumber = max + 1;
   }
-  return "KW26-" + String(max + 1).padStart(4, "0");
+
+  properties.setProperty(NEXT_CODE_PROPERTY, String(nextNumber + 1));
+  return "KW26-" + String(nextNumber).padStart(4, "0");
 }
 
 function rowToRegistration_(row) {
@@ -250,25 +398,44 @@ function rowToRegistration_(row) {
     address: row[5],
     coupons: Number(row[6]),
     tokensIssued: String(row[7]) === "YES",
-    issuedAt: row[8] ? String(row[8]) : ""
+    issuedAt: row[8] ? String(row[8]) : "",
   };
 }
 
-function normalizeMobile_(value) { return String(value || "").replace(/\D/g, ""); }
-function assert_(condition, message) { if (!condition) throw new Error(message); }
-function json_(value) { return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON); }
+function logPerformance_(operation, outcome, startedAt, cacheHit) {
+  console.log(
+    JSON.stringify({
+      event: "kshamawani.performance",
+      operation,
+      outcome,
+      cacheHit: cacheHit === undefined ? null : cacheHit,
+      durationMs: Date.now() - startedAt,
+    }),
+  );
+}
+
+function normalizeMobile_(value) {
+  return String(value || "").replace(/\D/g, "");
+}
+function assert_(condition, message) {
+  if (!condition) throw new Error(message);
+}
+function json_(value) {
+  return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(
+    ContentService.MimeType.JSON,
+  );
+}
 function jsonp_(e, value) {
   const callback = String((e.parameter || {}).callback || "");
   if (!/^[A-Za-z_$][\w$]*$/.test(callback)) return json_(value);
-  return ContentService.createTextOutput(callback + "(" + JSON.stringify(value) + ")").setMimeType(ContentService.MimeType.JAVASCRIPT);
+  return ContentService.createTextOutput(
+    callback + "(" + JSON.stringify(value) + ")",
+  ).setMimeType(ContentService.MimeType.JAVASCRIPT);
 }
-
 
 /**
  * Run this function manually from the Apps Script editor to verify
  * that the spreadsheet tabs can be opened/created.
- * The doGet/doPost functions themselves are invoked by the deployed
- * Web App and receive an event object automatically.
  */
 function testKshamawaniSetup() {
   const registrations = registrationsSheet_();
@@ -278,4 +445,27 @@ function testKshamawaniSetup() {
     registrationsSheet: registrations.getName(),
     auditSheet: AUDIT_SHEET,
   };
+}
+
+/**
+ * Run manually to inspect the current dataset size and lookup-index state.
+ * This does not expose registration or mobile data.
+ */
+function getKshamawaniHealth() {
+  const sheet = registrationsSheet_();
+  const rows = Math.max(0, sheet.getLastRow() - 1);
+  const cache = CacheService.getScriptCache();
+  const mobileIndex = cache.get(MOBILE_INDEX_CACHE_KEY);
+  const codeIndex = cache.get(CODE_INDEX_CACHE_KEY);
+
+  const result = {
+    success: true,
+    eventId: EVENT_ID,
+    registrationRows: rows,
+    mobileIndexCached: Boolean(mobileIndex),
+    codeIndexCached: Boolean(codeIndex),
+    checkedAt: new Date().toISOString(),
+  };
+  console.log(JSON.stringify(result));
+  return result;
 }
