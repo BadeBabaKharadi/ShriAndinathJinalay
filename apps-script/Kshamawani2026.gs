@@ -23,6 +23,7 @@ function doPost(e) {
     const data = payload.data || {};
     let result;
     if (action === "createRegistration") result = createRegistration_(data);
+    else if (action === "updateRegistration") result = updateRegistration_(data);
     else if (action === "markTokensIssued") result = markTokensIssued_(data);
     else throw new Error("Unsupported action.");
     return json_(result);
@@ -57,6 +58,65 @@ function createRegistration_(data) {
     sheet.appendRow([now, EVENT_ID, code, mobile, String(data.name).trim(), String(data.address).trim(), coupons, "NO", "", ""]);
     audit_("CREATE", code, mobile, coupons, "PUBLIC");
     return { success: true, registrationId: code, applicationCode: code };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function updateRegistration_(data) {
+  assert_(data.eventId === EVENT_ID, "Invalid event.");
+  const mobile = normalizeMobile_(data.mobile);
+  assert_(/^[6-9]\d{9}$/.test(mobile), "Invalid mobile number.");
+  assert_(String(data.name || "").trim(), "Name is required.");
+  assert_(String(data.address || "").trim(), "Address is required.");
+  const coupons = Number(data.coupons);
+  assert_(
+    Number.isInteger(coupons) && coupons >= 1 && coupons <= 20,
+    "Invalid coupon count.",
+  );
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = registrationsSheet_();
+    const values = sheet.getDataRange().getValues();
+
+    for (let i = 1; i < values.length; i++) {
+      const row = values[i];
+      if (String(row[1]) !== EVENT_ID || String(row[3]) !== mobile) continue;
+
+      if (String(row[7]) === "YES") {
+        throw new Error(
+          "इस मोबाइल नंबर के लिए टोकन पहले ही जारी हो चुके हैं। अब पंजीकरण अपडेट नहीं किया जा सकता।",
+        );
+      }
+
+      const existingCode = String(row[2]);
+      const registrationId = String(data.registrationId || "").trim();
+      if (registrationId && registrationId !== existingCode) {
+        throw new Error("Application code does not match the mobile number.");
+      }
+
+      sheet.getRange(i + 1, 5, 1, 3).setValues([
+        [
+          String(data.name).trim(),
+          String(data.address).trim(),
+          coupons,
+        ],
+      ]);
+      audit_("UPDATE", existingCode, mobile, coupons, "PUBLIC");
+
+      return {
+        success: true,
+        updated: true,
+        registrationId: existingCode,
+        applicationCode: existingCode,
+      };
+    }
+
+    // The mobile number is the source of truth. If it was not found,
+    // create a new registration rather than relying on a stale client lookup.
+    return createRegistration_(data);
   } finally {
     lock.releaseLock();
   }
