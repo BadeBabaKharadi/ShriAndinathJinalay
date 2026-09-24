@@ -138,7 +138,7 @@ function updateRegistration_(data) {
       const registration = rowToRegistration_(
         sheet.getRange(i + 1, 1, 1, 10).getValues()[0],
       );
-      invalidateLookupCaches_();
+      invalidateLookupCaches_(mobile, existingCode);
       cacheRegistration_(registration);
       audit_("UPDATE", existingCode, mobile, coupons, "PUBLIC");
 
@@ -169,7 +169,7 @@ function updateRegistration_(data) {
     const registration = rowToRegistration_(
       sheet.getRange(sheet.getLastRow(), 1, 1, 10).getValues()[0],
     );
-    invalidateLookupCaches_();
+    invalidateLookupCaches_(mobile, code);
     cacheRegistration_(registration);
     audit_("CREATE", code, mobile, coupons, "PUBLIC");
     return {
