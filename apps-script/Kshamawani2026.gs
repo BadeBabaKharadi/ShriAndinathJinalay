@@ -8,7 +8,7 @@ const REGISTRATIONS_SHEET = "Kshamawani Registrations";
 const AUDIT_SHEET = "Kshamawani Audit";
 
 function doGet(e) {
-  const p = e.parameter || {};
+  const p = (e && e.parameter) || {};
   if (p.api === "lookupRegistration") {
     const result = lookupRegistration_(p.eventId, p.mobile);
     return jsonp_(e, result);
@@ -238,4 +238,21 @@ function jsonp_(e, value) {
   const callback = String((e.parameter || {}).callback || "");
   if (!/^[A-Za-z_$][\w$]*$/.test(callback)) return json_(value);
   return ContentService.createTextOutput(callback + "(" + JSON.stringify(value) + ")").setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+
+/**
+ * Run this function manually from the Apps Script editor to verify
+ * that the spreadsheet tabs can be opened/created.
+ * The doGet/doPost functions themselves are invoked by the deployed
+ * Web App and receive an event object automatically.
+ */
+function testKshamawaniSetup() {
+  const registrations = registrationsSheet_();
+  audit_("SETUP_TEST", "", "", 0, "ADMIN");
+  return {
+    success: true,
+    registrationsSheet: registrations.getName(),
+    auditSheet: AUDIT_SHEET,
+  };
 }
