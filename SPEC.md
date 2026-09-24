@@ -124,6 +124,25 @@ The initial reusable-form implementation shall preserve the existing registratio
 
 No live request payload change is permitted without explicit approval and an integration test proving the new contract.
 
+
+## 5.3 Kshamawani 2026 food registration
+
+For the 27 September 2026 Kshamawani programme, the former Shravak Sanskar Shivir registration screen is replaced by a lightweight food-interest registration.
+
+The public form captures:
+- Name
+- Address
+- Mobile number (unique registration key)
+- Number of food coupons required
+
+On successful registration, the service returns an application code. The confirmation screen renders a QR containing the event id, application code and mobile number so the attendee can keep a screenshot and show it at the venue.
+
+A deliberately non-navigated coordinator route (`/coordinator-7x9p2.html`) provides camera/file QR scanning plus manual application-code entry. The coordinator view verifies the scanned mobile/application-code pair against the registration service and records physical-token issuance.
+
+Registration and audit records are stored in Google Sheets through the repository's Apps Script backend contract. The audit sheet records creation and token-issuance events. The backend uses a script lock when enforcing mobile uniqueness and token issuance to avoid duplicate concurrent writes.
+
+The Apps Script backend must be deployed as the web app behind the `apiUrl` in `data/kshamawani-2026.json` before the live flow is used.
+
 ## 6. Temple home page specification
 
 The new temple home page shall be temple-first, not tied to one event. It shall include:
