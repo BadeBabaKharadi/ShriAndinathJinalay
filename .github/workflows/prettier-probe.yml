@@ -1,9 +1,9 @@
 name: Temporary Prettier probe
 
 on:
-  push:
+  pull_request:
     branches:
-      - fix/kshamawani-registration-update-flow
+      - master
 
 jobs:
   probe:
