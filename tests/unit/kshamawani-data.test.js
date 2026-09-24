@@ -34,7 +34,7 @@ describe("Kshamawani configuration", () => {
     expect(html).toContain("html5-qrcode");
   });
 
-  it("uses mobile lookup and update-or-create behaviour", async () => {
+  it("uses indexed mobile and application-code lookups", async () => {
     const client = await readFileText("js/registration.js");
     const backend = await readFileText("apps-script/Kshamawani2026.gs");
     const page = await readFileText("registration.html");
@@ -48,6 +48,9 @@ describe("Kshamawani configuration", () => {
     expect(backend).toContain('action === "updateRegistration"');
     expect(backend).toContain("function updateRegistration_(data)");
     expect(backend).toContain("coupons <= 4");
+    expect(backend).toContain("CacheService.getScriptCache()");
+    expect(backend).toContain("buildLookupIndexes_()");
+    expect(backend).toContain("function getKshamawaniHealth()");
     expect(page).toContain(
       "cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js",
     );
@@ -57,5 +60,14 @@ describe("Kshamawani configuration", () => {
       "function lookupRegistrationByCode_(eventId, code)",
     );
     expect(backend).toContain("p.code");
+  });
+
+  it("does not log registration PII in performance telemetry", async () => {
+    const backend = await readFileText("apps-script/Kshamawani2026.gs");
+
+    expect(backend).toContain('event: "kshamawani.performance"');
+    expect(backend).toContain("durationMs");
+    expect(backend).not.toContain('console.log(mobile');
+    expect(backend).not.toContain('console.log(code');
   });
 });
