@@ -7,8 +7,11 @@ const EVENT_ID = "kshamawani-2026";
 const REGISTRATIONS_SHEET = "Kshamawani Registrations";
 const AUDIT_SHEET = "Kshamawani Audit";
 const LOOKUP_CACHE_TTL_SECONDS = 300;
+const REGISTRATION_CACHE_TTL_SECONDS = 300;
 const MOBILE_INDEX_CACHE_KEY = "k26:lookup:mobile:v2";
 const CODE_INDEX_CACHE_KEY = "k26:lookup:code:v2";
+const MOBILE_REGISTRATION_CACHE_PREFIX = "k26:registration:mobile:v1:";
+const CODE_REGISTRATION_CACHE_PREFIX = "k26:registration:code:v1:";
 const NEXT_CODE_PROPERTY = "k26:nextApplicationNumber";
 
 function doGet(e) {
@@ -79,7 +82,11 @@ function createRegistration_(data) {
       "",
       "",
     ]);
+    const registration = rowToRegistration_(
+      sheet.getRange(sheet.getLastRow(), 1, 1, 10).getValues()[0],
+    );
     invalidateLookupCaches_();
+    cacheRegistration_(registration);
     audit_("CREATE", code, mobile, coupons, "PUBLIC");
     return { success: true, registrationId: code, applicationCode: code };
   } finally {
@@ -128,7 +135,11 @@ function updateRegistration_(data) {
           coupons,
         ],
       ]);
+      const registration = rowToRegistration_(
+        sheet.getRange(i + 1, 1, 1, 10).getValues()[0],
+      );
       invalidateLookupCaches_();
+      cacheRegistration_(registration);
       audit_("UPDATE", existingCode, mobile, coupons, "PUBLIC");
 
       return {
@@ -155,7 +166,11 @@ function updateRegistration_(data) {
       "",
       "",
     ]);
+    const registration = rowToRegistration_(
+      sheet.getRange(sheet.getLastRow(), 1, 1, 10).getValues()[0],
+    );
     invalidateLookupCaches_();
+    cacheRegistration_(registration);
     audit_("CREATE", code, mobile, coupons, "PUBLIC");
     return {
       success: true,
@@ -173,6 +188,12 @@ function lookupRegistration_(eventId, mobile) {
   if (eventId !== EVENT_ID) return { success: false, error: "Invalid event." };
 
   const normalized = normalizeMobile_(mobile);
+  const cached = getCachedRegistration_("mobile", normalized);
+  if (cached) {
+    logPerformance_("lookup-mobile", "hit", startedAt, true);
+    return { success: true, exists: true, registration: cached };
+  }
+
   const lookup = findRegistrationRow_("mobile", normalized);
   if (!lookup.rowNumber) {
     logPerformance_("lookup-mobile", "miss", startedAt, lookup.cacheHit);
@@ -182,6 +203,7 @@ function lookupRegistration_(eventId, mobile) {
   const registration = rowToRegistration_(
     registrationsSheet_().getRange(lookup.rowNumber, 1, 1, 10).getValues()[0],
   );
+  cacheRegistration_(registration);
   logPerformance_("lookup-mobile", "hit", startedAt, lookup.cacheHit);
   return { success: true, exists: true, registration };
 }
@@ -196,6 +218,12 @@ function lookupRegistrationByCode_(eventId, code) {
     return { success: true, exists: false };
   }
 
+  const cached = getCachedRegistration_("code", normalizedCode);
+  if (cached) {
+    logPerformance_("lookup-code", "hit", startedAt, true);
+    return { success: true, exists: true, registration: cached };
+  }
+
   const lookup = findRegistrationRow_("code", normalizedCode);
   if (!lookup.rowNumber) {
     logPerformance_("lookup-code", "miss", startedAt, lookup.cacheHit);
@@ -205,8 +233,67 @@ function lookupRegistrationByCode_(eventId, code) {
   const registration = rowToRegistration_(
     registrationsSheet_().getRange(lookup.rowNumber, 1, 1, 10).getValues()[0],
   );
+  cacheRegistration_(registration);
   logPerformance_("lookup-code", "hit", startedAt, lookup.cacheHit);
   return { success: true, exists: true, registration };
+}
+
+function registrationCacheKey_(type, key) {
+  const normalized = String(key || "").trim().toUpperCase();
+  const prefix =
+    type === "mobile"
+      ? MOBILE_REGISTRATION_CACHE_PREFIX
+      : CODE_REGISTRATION_CACHE_PREFIX;
+  return prefix + normalized;
+}
+
+function getCachedRegistration_(type, key) {
+  if (!key) return null;
+
+  const cache = CacheService.getScriptCache();
+  const cacheKey = registrationCacheKey_(type, key);
+  const cached = cache.get(cacheKey);
+  if (!cached) return null;
+
+  try {
+    return JSON.parse(cached);
+  } catch (error) {
+    cache.remove(cacheKey);
+    console.log(
+      JSON.stringify({
+        event: "kshamawani.registration_cache_invalid",
+        type,
+        error: error.message,
+      }),
+    );
+    return null;
+  }
+}
+
+function cacheRegistration_(registration) {
+  if (!registration || !registration.mobile || !registration.applicationCode) {
+    return;
+  }
+
+  const cache = CacheService.getScriptCache();
+  const payload = JSON.stringify(registration);
+
+  try {
+    cache.putAll(
+      {
+        [registrationCacheKey_("mobile", registration.mobile)]: payload,
+        [registrationCacheKey_("code", registration.applicationCode)]: payload,
+      },
+      REGISTRATION_CACHE_TTL_SECONDS,
+    );
+  } catch (error) {
+    console.log(
+      JSON.stringify({
+        event: "kshamawani.registration_cache_write_failed",
+        error: error.message,
+      }),
+    );
+  }
 }
 
 function findRegistrationRow_(type, key) {
@@ -311,12 +398,18 @@ function markTokensIssued_(data) {
         String(values[i][3]) === mobile
       ) {
         if (String(values[i][7]) === "YES") {
+          const registration = rowToRegistration_(values[i]);
+          cacheRegistration_(registration);
           return { success: true, alreadyIssued: true };
         }
         const timestamp = new Date();
         sheet.getRange(i + 1, 8, 1, 3).setValues([
           ["YES", timestamp, "COORDINATOR"],
         ]);
+        const updatedRegistration = rowToRegistration_(
+          sheet.getRange(i + 1, 1, 1, 10).getValues()[0],
+        );
+        cacheRegistration_(updatedRegistration);
         audit_("TOKENS_ISSUED", code, mobile, Number(values[i][6]), "COORDINATOR");
         return { success: true, alreadyIssued: false };
       }
