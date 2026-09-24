@@ -7,9 +7,9 @@
     "place": "खराड़ी, पुणे"
   },
   "registration": {
-    "apiUrl": "https://script.google.com/macros/s/AKfycbyrj2mgW81bzMxYXHxpfkm_h0v4DoB2-Uen10ooiqDhT_KCVpJ9OnhD9Ee0ypfijRhT/exec",
-    "deadline": "2026-09-28",
-    "maxCoupons": 2000
+    "apiUrl": "https://script.google.com/macros/s/AKfycbyGQYKZiPNolKZ0lqsQl4I2-odHhHhPpRmTPZphdbhmw6LSXCLLWrgPNToG4bhLF0ZZ/exec",
+    "deadline": "2026-09-27",
+    "maxCoupons": 4
   },
   "messages": {
     "intro": "क्षमावाणी २०२६ के अवसर पर भोजन व्यवस्था के लिए आपकी उपस्थिति जानने हेतु यह पंजीकरण है।",

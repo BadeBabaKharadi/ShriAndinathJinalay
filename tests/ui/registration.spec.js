@@ -1,35 +1,36 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Kshamawani registration page", () => {
-  test("shows the food registration form with useful guidance", async ({
+  test("starts with mobile lookup and hides registration details", async ({
     page,
   }) => {
     await page.goto("/registration.html");
 
-    await expect(page.locator("h1")).toHaveText("क्षमावाणी २०२६");
-    await expect(page.locator("#kshamawani-form")).toBeVisible();
-    await expect(page.locator("#name")).toBeVisible();
+    await expect(page.locator("#lookup-mobile")).toBeVisible();
+    await expect(page.locator("#lookup-button")).toBeVisible();
+    await expect(page.locator("#details-section")).toBeHidden();
+    await expect(page.locator("#success-section")).toBeHidden();
+  });
+
+  test("shows address guidance and four-coupon maximum in the registration form", async ({
+    page,
+  }) => {
+    await page.goto("/registration.html");
+
     await expect(page.locator("#address")).toHaveAttribute(
       "placeholder",
       "उदा. फ्लैट 101, ABC सोसाइटी, खराड़ी, पुणे",
     );
-    await expect(page.locator("#mobile")).toBeVisible();
-    await expect(page.locator("#coupons")).toBeVisible();
-    await expect(page.locator("#submit-button")).toHaveCSS(
-      "border-radius",
-      "12px",
-    );
+    await expect(page.locator("#coupons")).toHaveAttribute("max", "4");
   });
 
-  test("validates the required fields without calling the service", async ({
-    page,
-  }) => {
+  test("validates the mobile number before lookup", async ({ page }) => {
     await page.goto("/registration.html");
 
-    await page.locator("#submit-button").click();
+    await page.locator("#lookup-button").click();
 
-    await expect(page.locator("#form-message")).toHaveText(
-      "कृपया नाम दर्ज करें।",
+    await expect(page.locator("#lookup-message")).toHaveText(
+      "कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।",
     );
   });
 });

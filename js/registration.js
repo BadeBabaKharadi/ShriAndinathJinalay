@@ -2,37 +2,47 @@ const KSHAMAWANI_CONFIG = "data/kshamawani-2026.json";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("kshamawani-form");
+  const lookupMobile = document.getElementById("lookup-mobile");
+  const lookupButton = document.getElementById("lookup-button");
+  const lookupMessage = document.getElementById("lookup-message");
+  const lookupPanel = document.getElementById("mobile-lookup-panel");
+  const details = document.getElementById("details-section");
   const message = document.getElementById("form-message");
   const button = document.getElementById("submit-button");
   const success = document.getElementById("success-section");
   const intro = document.getElementById("intro");
   const instruction = document.getElementById("venue-instruction");
+  const editButton = document.getElementById("edit-button");
   let config;
-
-  const showMessage = (text) => {
-    message.textContent = text;
-    message.classList.remove("hidden");
-  };
-
-  const clearMessage = () => {
-    message.textContent = "";
-    message.classList.add("hidden");
-  };
+  let existingRegistration = null;
 
   const cleanMobile = (value) => String(value || "").replace(/\D/g, "");
 
-  const validate = (data) => {
+  const showMessage = (element, text) => {
+    element.textContent = text;
+    element.classList.remove("hidden");
+  };
+
+  const clearMessage = (element) => {
+    element.textContent = "";
+    element.classList.add("hidden");
+  };
+
+  const validateMobile = (mobile) =>
+    /^[6-9]\d{9}$/.test(cleanMobile(mobile));
+
+  const validateDetails = (data) => {
     if (!data.name.trim()) return "कृपया नाम दर्ज करें।";
     if (!data.address.trim()) return "कृपया पूरा पता दर्ज करें।";
-    if (!/^[6-9]\d{9}$/.test(data.mobile)) {
+    if (!validateMobile(data.mobile)) {
       return "कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।";
     }
     if (
       !Number.isInteger(data.coupons) ||
       data.coupons < 1 ||
-      data.coupons > config.registration.maxCoupons
+      data.coupons > 4
     ) {
-      return "कृपया कूपन की सही संख्या दर्ज करें।";
+      return "एक पंजीकरण में अधिकतम 4 भोजन कूपन लिए जा सकते हैं।";
     }
     return null;
   };
@@ -42,33 +52,57 @@ document.addEventListener("DOMContentLoaded", async () => {
     holder.innerHTML = "";
 
     if (typeof window.qrcode !== "function") {
-      showMessage("QR कोड तैयार नहीं हो सका। कृपया पुनः प्रयास करें।");
+      showMessage(message, "QR कोड तैयार नहीं हो सका। कृपया पुनः प्रयास करें।");
       return;
     }
 
-    const generator = window.qrcode(0, "M");
-    generator.addData(
-      JSON.stringify({
-        v: 1,
-        eventId: config.id,
-        applicationCode: code,
-        mobile,
-      }),
-    );
+    // Keep the QR payload deliberately short so generation and scanning are fast.
+    const payload = `KW26|${code}|${mobile}`;
+    const generator = window.qrcode(0, "L");
+    generator.addData(payload);
     generator.make();
-    holder.innerHTML = generator.createSvgTag({ scalable: true, margin: 4 });
+    holder.innerHTML = generator.createSvgTag({
+      scalable: true,
+      margin: 3,
+    });
   };
 
   const showSuccess = (registration, updated) => {
-    const code = registration.registrationId || registration.applicationCode;
+    const code =
+      registration.registrationId || registration.applicationCode || "";
     document.getElementById("application-code").textContent = code || "—";
     document.getElementById("success-summary").textContent =
-      `${registration.name || "आवेदक"} के लिए ${registration.coupons || 1} भोजन कूपन ${updated ? "अपडेट" : "दर्ज"} किए गए हैं।`;
+      `${registration.name || "आवेदक"} के लिए ${registration.coupons || 1} भोजन कूपन ${updated ? "अपडेट किए गए हैं" : "दर्ज किए गए हैं"}।`;
     qr(code, registration.mobile);
     instruction.textContent = config.messages.venueInstruction;
-    form.classList.add("hidden");
+    lookupPanel.classList.add("hidden");
+    details.classList.add("hidden");
     success.classList.remove("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const showDetails = (registration) => {
+    existingRegistration = registration || null;
+    document.getElementById("name").value = registration?.name || "";
+    document.getElementById("address").value = registration?.address || "";
+    document.getElementById("mobile").value =
+      registration?.mobile || cleanMobile(lookupMobile.value);
+    document.getElementById("coupons").value = registration?.coupons || "";
+    lookupPanel.classList.add("hidden");
+    success.classList.add("hidden");
+    details.classList.remove("hidden");
+    clearMessage(message);
+    document.getElementById("name").focus();
+  };
+
+  const resetToMobileLookup = () => {
+    existingRegistration = null;
+    success.classList.add("hidden");
+    details.classList.add("hidden");
+    lookupPanel.classList.remove("hidden");
+    clearMessage(message);
+    clearMessage(lookupMessage);
+    lookupMobile.focus();
   };
 
   const lookup = (mobile) =>
@@ -145,13 +179,61 @@ document.addEventListener("DOMContentLoaded", async () => {
     config = await response.json();
     intro.textContent = config.messages.intro;
   } catch {
-    showMessage("फॉर्म की जानकारी लोड नहीं हो सकी। कृपया पृष्ठ पुनः खोलें।");
+    showMessage(
+      lookupMessage,
+      "फॉर्म की जानकारी लोड नहीं हो सकी। कृपया पृष्ठ पुनः खोलें।",
+    );
     return;
   }
 
+  lookupButton.addEventListener("click", async () => {
+    clearMessage(lookupMessage);
+    const mobile = cleanMobile(lookupMobile.value);
+
+    if (!validateMobile(mobile)) {
+      showMessage(lookupMessage, "कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।");
+      return;
+    }
+
+    lookupButton.disabled = true;
+    lookupButton.textContent = "जाँच हो रही है...";
+
+    try {
+      const response = await lookup(mobile);
+      if (!response?.success) {
+        throw new Error(response?.error || "पंजीकरण की जाँच नहीं हो सकी।");
+      }
+
+      if (response.exists) {
+        existingRegistration = response.registration;
+        showSuccess(response.registration, false);
+      } else {
+        showDetails(null);
+      }
+    } catch (error) {
+      showMessage(
+        lookupMessage,
+        error.message || "पंजीकरण की जाँच नहीं हो सकी।",
+      );
+    } finally {
+      lookupButton.disabled = false;
+      lookupButton.textContent = "पंजीकरण जाँचें";
+    }
+  });
+
+  lookupMobile.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") lookupButton.click();
+  });
+
+  editButton.addEventListener("click", () => {
+    if (existingRegistration) {
+      showDetails(existingRegistration);
+    }
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    clearMessage();
+    clearMessage(message);
 
     const data = {
       name: document.getElementById("name").value,
@@ -160,66 +242,46 @@ document.addEventListener("DOMContentLoaded", async () => {
       coupons: Number(document.getElementById("coupons").value),
     };
 
-    const error = validate(data);
+    const error = validateDetails(data);
     if (error) {
-      showMessage(error);
+      showMessage(message, error);
       return;
     }
 
     button.disabled = true;
-    button.textContent = "जाँच हो रही है...";
+    button.textContent = existingRegistration
+      ? "पंजीकरण अपडेट हो रहा है..."
+      : "पंजीकरण दर्ज हो रहा है...";
 
     try {
-      // Mobile number is the unique key. Always check the server first:
-      // existing -> update the same application; missing -> create a new one.
-      const existingResponse = await lookup(data.mobile);
-
-      if (!existingResponse?.success) {
-        throw new Error(
-          existingResponse?.error || "पंजीकरण की जाँच नहीं हो सकी।",
-        );
-      }
-
-      const existing = existingResponse.exists
-        ? existingResponse.registration
-        : null;
-
-      button.textContent = existing
-        ? "पंजीकरण अपडेट हो रहा है..."
-        : "पंजीकरण दर्ज हो रहा है...";
-
-      const action = existing ? "updateRegistration" : "createRegistration";
+      const action = existingRegistration
+        ? "updateRegistration"
+        : "createRegistration";
       const payload = {
+        ...data,
         eventId: config.id,
-        mobile: data.mobile,
-        name: data.name.trim(),
-        address: data.address.trim(),
-        coupons: data.coupons,
         foodRequired: true,
         consentAccepted: true,
       };
 
-      if (existing) {
+      if (existingRegistration) {
         payload.registrationId =
-          existing.registrationId || existing.applicationCode;
+          existingRegistration.registrationId ||
+          existingRegistration.applicationCode;
       }
 
-      const saveResponse = await post(action, payload);
-
-      // POST is intentionally fire-and-forget because the browser submits
-      // to a hidden iframe. Re-read the record to verify the actual sheet state.
-      if (saveResponse?.success === false) {
-        throw new Error(saveResponse.error || "पंजीकरण सुरक्षित नहीं हो सका।");
-      }
+      await post(action, payload);
 
       const saved = await lookup(data.mobile);
       if (!saved?.success || !saved.exists) {
         throw new Error("पंजीकरण सुरक्षित होने की पुष्टि नहीं हो सकी।");
       }
 
-      showSuccess(saved.registration, Boolean(existing));
+      existingRegistration = saved.registration;
+      showSuccess(saved.registration, Boolean(action === "updateRegistration"));
     } catch (saveError) {
       showMessage(
+        message,
         saveError.message ||
           "पंजीकरण सुरक्षित नहीं हो सका। कृपया पुनः प्रयास करें।",
       );
