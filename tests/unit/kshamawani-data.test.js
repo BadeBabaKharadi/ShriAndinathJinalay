@@ -52,5 +52,8 @@ describe("Kshamawani configuration", () => {
       "cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js",
     );
     expect(coordinator).toContain('compact[0] === "KW26"');
+    expect(coordinator).toContain("lookupByCode(code)");
+    expect(backend).toContain("function lookupRegistrationByCode_(eventId, code)");
+    expect(backend).toContain("p.code");
   });
 });
