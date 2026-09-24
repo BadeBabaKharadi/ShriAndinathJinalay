@@ -1,18 +1,19 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Registration page", () => {
-  test("shows that registration is closed", async ({ page }) => {
+test.describe("Kshamawani registration page", () => {
+  test("shows the food registration form", async ({ page }) => {
     await page.goto("/registration.html");
+    await expect(page.locator("h1")).toHaveText("क्षमावाणी २०२६");
+    await expect(page.locator("#kshamawani-form")).toBeVisible();
+    await expect(page.locator("#name")).toBeVisible();
+    await expect(page.locator("#address")).toBeVisible();
+    await expect(page.locator("#mobile")).toBeVisible();
+    await expect(page.locator("#coupons")).toBeVisible();
+  });
 
-    const closedMessage = page.locator("#registration-closed-message");
-    const closedTitle = page.locator("#registration-closed-title");
-
-    await expect(closedMessage).toBeVisible();
-    await expect(closedTitle).toHaveText("पंजीकरण बंद है");
-    await expect(closedMessage).toContainText(
-      "पंजीकरण अब स्वीकार नहीं किए जा रहे हैं",
-    );
-    await expect(page.locator("#registration-form")).toHaveCount(0);
-    await expect(page.locator("#rules-box")).toHaveCount(0);
+  test("validates the required fields without calling the service", async ({ page }) => {
+    await page.goto("/registration.html");
+    await page.locator("#submit-button").click();
+    await expect(page.locator("#form-message")).toHaveText("कृपया नाम दर्ज करें।");
   });
 });
