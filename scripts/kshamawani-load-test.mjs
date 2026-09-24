@@ -60,7 +60,13 @@ async function request(url, parameterName, parameterValue) {
   }
 }
 
-async function runPhase({ url, parameterName, parameterValue, requests, concurrency }) {
+async function runPhase({
+  url,
+  parameterName,
+  parameterValue,
+  requests,
+  concurrency,
+}) {
   const results = [];
   let next = 0;
 
@@ -73,10 +79,7 @@ async function runPhase({ url, parameterName, parameterValue, requests, concurre
   }
 
   await Promise.all(
-    Array.from(
-      { length: Math.min(concurrency, requests) },
-      () => worker(),
-    ),
+    Array.from({ length: Math.min(concurrency, requests) }, () => worker()),
   );
 
   return results;
