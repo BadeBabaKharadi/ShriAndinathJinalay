@@ -33,9 +33,14 @@ test.describe("Kshamawani registration page", () => {
       "कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।",
     );
   });
-  test("shows that an existing mobile number is already registered", async ({ page }) => {
+
+  test("shows that an existing mobile number is already registered", async ({
+    page,
+  }) => {
     await page.route("**/exec?api=lookupRegistration*", async (route) => {
-      const callback = new URL(route.request().url()).searchParams.get("callback");
+      const callback = new URL(route.request().url()).searchParams.get(
+        "callback",
+      );
       await route.fulfill({
         contentType: "application/javascript",
         body: `${callback}(${JSON.stringify({
@@ -64,5 +69,4 @@ test.describe("Kshamawani registration page", () => {
     );
     await expect(page.locator("#edit-button")).toBeVisible();
   });
-
 });
