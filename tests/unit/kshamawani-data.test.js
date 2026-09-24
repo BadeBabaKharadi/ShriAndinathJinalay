@@ -41,9 +41,9 @@ describe("Kshamawani configuration", () => {
     const coordinator = await readFileText("js/coordinator.js");
 
     expect(client).toContain("const response = await lookup(mobile)");
-    expect(client).toContain(
-      'const action = existingRegistration ? "updateRegistration" : "createRegistration";',
-    );
+    expect(client).toContain("const action = existingRegistration");
+    expect(client).toContain('? "updateRegistration"');
+    expect(client).toContain(': "createRegistration";');
     expect(client).toContain("KW26|");
     expect(backend).toContain('action === "updateRegistration"');
     expect(backend).toContain("function updateRegistration_(data)");
