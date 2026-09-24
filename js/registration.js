@@ -67,12 +67,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   };
 
-  const showSuccess = (registration, updated) => {
+  const showSuccess = (registration, status = "created") => {
     const code =
       registration.registrationId || registration.applicationCode || "";
+    const title = document.getElementById("success-title");
+    const summary = document.getElementById("success-summary");
+
+    if (status === "existing") {
+      title.textContent = "आपका पंजीकरण पहले से दर्ज है";
+      summary.textContent =
+        `${registration.name || "आवेदक"} के लिए ${registration.coupons || 1} भोजन कूपन पहले से दर्ज हैं।`;
+    } else if (status === "updated") {
+      title.textContent = "पंजीकरण सफलतापूर्वक अपडेट हुआ";
+      summary.textContent =
+        `${registration.name || "आवेदक"} के लिए ${registration.coupons || 1} भोजन कूपन अपडेट किए गए हैं।`;
+    } else {
+      title.textContent = "पंजीकरण सफल रहा";
+      summary.textContent =
+        `${registration.name || "आवेदक"} के लिए ${registration.coupons || 1} भोजन कूपन दर्ज किए गए हैं।`;
+    }
+
     document.getElementById("application-code").textContent = code || "—";
-    document.getElementById("success-summary").textContent =
-      `${registration.name || "आवेदक"} के लिए ${registration.coupons || 1} भोजन कूपन ${updated ? "अपडेट किए गए हैं" : "दर्ज किए गए हैं"}।`;
     qr(code, registration.mobile);
     instruction.textContent = config.messages.venueInstruction;
     lookupPanel.classList.add("hidden");
@@ -206,7 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (response.exists) {
         existingRegistration = response.registration;
-        showSuccess(response.registration, false);
+        showSuccess(response.registration, "existing");
       } else {
         showDetails(null);
       }
@@ -278,7 +293,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       existingRegistration = saved.registration;
-      showSuccess(saved.registration, Boolean(action === "updateRegistration"));
+      showSuccess(saved.registration, action === "updateRegistration" ? "updated" : "created");
     } catch (saveError) {
       showMessage(
         message,
