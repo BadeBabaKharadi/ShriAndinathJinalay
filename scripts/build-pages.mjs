@@ -16,6 +16,7 @@ const publishPaths = [
   "404.html",
   "kalash.html",
   "registration.html",
+  "coordinator-7x9p2.html",
   "team.html",
   "components",
   "css",
