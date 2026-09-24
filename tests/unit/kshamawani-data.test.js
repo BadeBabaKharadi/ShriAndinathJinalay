@@ -46,9 +46,7 @@ describe("Kshamawani configuration", () => {
     );
     expect(client).toContain("KW26|");
     expect(backend).toContain('action === "updateRegistration"');
-    expect(backend).toContain(
-      "function updateRegistration_(data)",
-    );
+    expect(backend).toContain("function updateRegistration_(data)");
     expect(backend).toContain("coupons <= 4");
     expect(backend).toContain("CacheService.getScriptCache()");
     expect(backend).toContain("buildLookupIndexes_()");
