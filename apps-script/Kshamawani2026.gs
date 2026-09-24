@@ -85,7 +85,7 @@ function createRegistration_(data) {
     const registration = rowToRegistration_(
       sheet.getRange(sheet.getLastRow(), 1, 1, 10).getValues()[0],
     );
-    invalidateLookupCaches_();
+    invalidateLookupCaches_(mobile, code);
     cacheRegistration_(registration);
     audit_("CREATE", code, mobile, coupons, "PUBLIC");
     return { success: true, registrationId: code, applicationCode: code };
@@ -373,11 +373,18 @@ function buildLookupIndexes_() {
   return { mobile, code };
 }
 
-function invalidateLookupCaches_() {
-  CacheService.getScriptCache().removeAll([
-    MOBILE_INDEX_CACHE_KEY,
-    CODE_INDEX_CACHE_KEY,
-  ]);
+function invalidateLookupCaches_(mobile, code) {
+  const cache = CacheService.getScriptCache();
+  const keys = [MOBILE_INDEX_CACHE_KEY, CODE_INDEX_CACHE_KEY];
+
+  if (mobile) {
+    keys.push(registrationCacheKey_("mobile", mobile));
+  }
+  if (code) {
+    keys.push(registrationCacheKey_("code", code));
+  }
+
+  cache.removeAll(keys);
 }
 
 function markTokensIssued_(data) {
@@ -399,6 +406,7 @@ function markTokensIssued_(data) {
       ) {
         if (String(values[i][7]) === "YES") {
           const registration = rowToRegistration_(values[i]);
+          invalidateLookupCaches_(mobile, code);
           cacheRegistration_(registration);
           return { success: true, alreadyIssued: true };
         }
@@ -409,6 +417,7 @@ function markTokensIssued_(data) {
         const updatedRegistration = rowToRegistration_(
           sheet.getRange(i + 1, 1, 1, 10).getValues()[0],
         );
+        invalidateLookupCaches_(mobile, code);
         cacheRegistration_(updatedRegistration);
         audit_("TOKENS_ISSUED", code, mobile, Number(values[i][6]), "COORDINATOR");
         return { success: true, alreadyIssued: false };
