@@ -67,7 +67,7 @@ describe("Kshamawani configuration", () => {
 
     expect(backend).toContain('event: "kshamawani.performance"');
     expect(backend).toContain("durationMs");
-    expect(backend).not.toContain('console.log(mobile');
-    expect(backend).not.toContain('console.log(code');
+    expect(backend).not.toContain("console.log(mobile");
+    expect(backend).not.toContain("console.log(code");
   });
 });
