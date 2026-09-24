@@ -8,12 +8,17 @@ const repositoryRoot = path.resolve(
   "../..",
 );
 
-async function readConfig() {
-  const content = await readFile(
-    path.join(repositoryRoot, "data/kshamawani-2026.json"),
+async function readFileText(relativePath) {
+  return readFile(
+    path.join(repositoryRoot, relativePath),
     "utf8",
   );
-  return JSON.parse(content);
+}
+
+async function readConfig() {
+  return JSON.parse(
+    await readFileText("data/kshamawani-2026.json"),
+  );
 }
 
 describe("Kshamawani configuration", () => {
@@ -27,14 +32,22 @@ describe("Kshamawani configuration", () => {
   });
 
   it("keeps the coordinator route out of search indexes", async () => {
-    const html = await readFile(
-      path.join(repositoryRoot, "coordinator-7x9p2.html"),
-      "utf8",
-    );
+    const html = await readFileText("coordinator-7x9p2.html");
 
     expect(html).toContain(
       'name="robots" content="noindex,nofollow,noarchive"',
     );
     expect(html).toContain("html5-qrcode");
+  });
+
+  it("uses the mobile number as the update-or-create key", async () => {
+    const client = await readFileText("js/registration.js");
+    const backend = await readFileText("apps-script/Kshamawani2026.gs");
+
+    expect(client).toContain("const existingResponse = await lookup(data.mobile)");
+    expect(client).toContain('const action = existing ? "updateRegistration" : "createRegistration";');
+    expect(backend).toContain('action === "updateRegistration"');
+    expect(backend).toContain("function updateRegistration_(data)");
+    expect(backend).toContain('audit_("UPDATE"');
   });
 });
