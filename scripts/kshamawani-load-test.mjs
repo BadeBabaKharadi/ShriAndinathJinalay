@@ -52,6 +52,7 @@ async function request(url, parameterName, parameterValue) {
       error: body.success === true ? null : body.error || "API failure",
     };
   } catch (error) {
+    const elapsedMs = performance.now() - started;
     return {
       ok: false,
       elapsedMs,
