@@ -39,7 +39,7 @@ async function request(url, parameterName, parameterValue) {
 
   const started = performance.now();
   try {
-    const response = await fetch(target);
+    const response = await globalThis.fetch(target);
     const elapsedMs = performance.now() - started;
     if (!response.ok) {
       return { ok: false, elapsedMs, error: `HTTP ${response.status}` };
