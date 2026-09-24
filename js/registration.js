@@ -90,6 +90,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("application-code").textContent = code || "—";
     qr(code, registration.mobile);
     instruction.textContent = config.messages.venueInstruction;
+
+    const canEdit = !registration.tokensIssued;
+    editButton.classList.toggle("hidden", !canEdit);
+    editButton.disabled = !canEdit;
     lookupPanel.classList.add("hidden");
     details.classList.add("hidden");
     success.classList.remove("hidden");
@@ -97,6 +101,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const showDetails = (registration) => {
+    if (registration?.tokensIssued) {
+      showMessage(
+        lookupMessage,
+        "इस पंजीकरण के लिए टोकन पहले ही जारी हो चुके हैं। अब पंजीकरण अपडेट नहीं किया जा सकता।",
+      );
+      return;
+    }
     existingRegistration = registration || null;
     document.getElementById("name").value = registration?.name || "";
     document.getElementById("address").value = registration?.address || "";
@@ -241,9 +252,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   editButton.addEventListener("click", () => {
-    if (existingRegistration) {
-      showDetails(existingRegistration);
+    if (existingRegistration?.tokensIssued) {
+      showMessage(
+        lookupMessage,
+        "इस पंजीकरण के लिए टोकन पहले ही जारी हो चुके हैं। अब पंजीकरण अपडेट नहीं किया जा सकता।",
+      );
+      return;
     }
+    if (existingRegistration) showDetails(existingRegistration);
   });
 
   form.addEventListener("submit", async (event) => {
