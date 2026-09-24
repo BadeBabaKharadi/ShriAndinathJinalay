@@ -33,4 +33,36 @@ test.describe("Kshamawani registration page", () => {
       "कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।",
     );
   });
+  test("shows that an existing mobile number is already registered", async ({ page }) => {
+    await page.route("**/exec?api=lookupRegistration*", async (route) => {
+      const callback = new URL(route.request().url()).searchParams.get("callback");
+      await route.fulfill({
+        contentType: "application/javascript",
+        body: `${callback}(${JSON.stringify({
+          success: true,
+          exists: true,
+          registration: {
+            registrationId: "KW26-TEST01",
+            applicationCode: "KW26-TEST01",
+            mobile: "9860699870",
+            name: "Arpit Jain",
+            coupons: 4,
+          },
+        })})`,
+      });
+    });
+
+    await page.goto("/registration.html");
+    await page.locator("#lookup-mobile").fill("9860699870");
+    await page.locator("#lookup-button").click();
+
+    await expect(page.locator("#success-title")).toHaveText(
+      "आपका पंजीकरण पहले से दर्ज है",
+    );
+    await expect(page.locator("#success-summary")).toHaveText(
+      "Arpit Jain के लिए 4 भोजन कूपन पहले से दर्ज हैं।",
+    );
+    await expect(page.locator("#edit-button")).toBeVisible();
+  });
+
 });
