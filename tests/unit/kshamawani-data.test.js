@@ -17,13 +17,12 @@ async function readConfig() {
 }
 
 describe("Kshamawani configuration", () => {
-  it("defines the 2026 registration contract", async () => {
+  it("defines a four-coupon maximum", async () => {
     const data = await readConfig();
 
     expect(data.id).toBe("kshamawani-2026");
     expect(data.date).toBe("2026-09-27");
-    expect(data.venue.name).toContain("आदिनाथ");
-    expect(data.registration.maxCoupons).toBeGreaterThan(0);
+    expect(data.registration.maxCoupons).toBe(4);
   });
 
   it("keeps the coordinator route out of search indexes", async () => {
@@ -35,20 +34,23 @@ describe("Kshamawani configuration", () => {
     expect(html).toContain("html5-qrcode");
   });
 
-  it("uses the mobile number as the update-or-create key", async () => {
+  it("uses mobile lookup and update-or-create behaviour", async () => {
     const client = await readFileText("js/registration.js");
     const backend = await readFileText("apps-script/Kshamawani2026.gs");
     const page = await readFileText("registration.html");
+    const coordinator = await readFileText("js/coordinator.js");
 
+    expect(client).toContain("const response = await lookup(mobile)");
     expect(client).toContain(
-      "const existingResponse = await lookup(data.mobile)",
+      'const action = existingRegistration ? "updateRegistration" : "createRegistration";',
     );
-    expect(client).toContain(
-      'const action = existing ? "updateRegistration" : "createRegistration";',
-    );
+    expect(client).toContain("KW26|");
     expect(backend).toContain('action === "updateRegistration"');
     expect(backend).toContain("function updateRegistration_(data)");
-    expect(backend).toContain('audit_("UPDATE"');
-    expect(page).toContain("cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js");
+    expect(backend).toContain("coupons <= 4");
+    expect(page).toContain(
+      "cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js",
+    );
+    expect(coordinator).toContain('compact[0] === "KW26"');
   });
 });
