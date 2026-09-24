@@ -1,76 +1,31 @@
 <!doctype html>
 <html lang="hi">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="सर्वोदय श्रावक संस्कार शिविर २०२६ - पंजीकरण बंद">
-  <title>सर्वोदय श्रावक संस्कार शिविर २०२६ - पंजीकरण बंद</title>
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="./css/components.css">
-  <link rel="stylesheet" href="./css/registration.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="क्षमावाणी २०२६ भोजन हेतु उपस्थिति पंजीकरण"><title>क्षमावाणी २०२६ — भोजन पंजीकरण</title>
+<link rel="icon" type="image/png" href="favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/style.css"><link rel="stylesheet" href="./css/components.css"><link rel="stylesheet" href="./css/registration.css">
 </head>
-
 <body>
-  <div class="announcement-bar">
-    🙏 जिनधर्म आराधना चातुर्मास में आपका स्वागत है
-  </div>
-
-  <header class="site-header">
-    <div class="container nav-wrapper">
-      <a class="brand" href="index.html" aria-label="जिनधर्म आराधना">
-        <span class="brand-icon">🪔</span>
-        <span>
-          <span class="brand-title">जिनधर्म आराधना</span>
-          <span class="brand-subtitle">चातुर्मास २०२६</span>
-        </span>
-      </a>
-    </div>
-  </header>
-
-  <main class="site-main">
-    <section class="page-hero">
-      <div class="container">
-        <div class="event-eyebrow">पंजीकरण</div>
-        <h1 class="page-title">सर्वोदय श्रावक संस्कार शिविर</h1>
-        <p class="page-subtitle">आदिनाथ जिनालय, ड्रीम्स वीरोदय सोसाइटी · खराड़ी, पुणे</p>
-      </div>
-    </section>
-
-    <section class="page-section" aria-labelledby="registration-closed-title">
-      <div class="container">
-        <div class="registration-panel" id="registration-closed-message">
-          <div class="panel-head">
-            <div>
-              <div class="panel-title" id="registration-closed-title">पंजीकरण बंद है</div>
-              <p class="panel-description">
-                सर्वोदय श्रावक संस्कार शिविर के लिए पंजीकरण अब स्वीकार नहीं किए जा रहे हैं।
-              </p>
-            </div>
-            <span class="badge">पंजीकरण बंद</span>
-          </div>
-
-          <div class="event-info">
-            <p>पंजीकरण की अंतिम तिथि १० सितम्बर २०२६ थी।</p>
-          </div>
-
-          <div class="form-actions">
-            <a class="button primary" href="index.html">मुख्य पृष्ठ पर जाएँ</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>🙏 जिनधर्म आराधना चातुर्मास २०२६</p>
-    </div>
-  </footer>
-</body>
-
-</html>
+<div class="announcement-bar">🙏 जिनधर्म आराधना चातुर्मास में आपका स्वागत है</div>
+<header class="site-header"><div class="container nav-wrapper"><a class="brand" href="index.html" aria-label="जिनधर्म आराधना"><span class="brand-icon">🪔</span><span><span class="brand-title">जिनधर्म आराधना</span><span class="brand-subtitle">चातुर्मास २०२६</span></span></a></div></header>
+<main class="site-main">
+<section class="page-hero"><div class="container"><div class="event-eyebrow">विशेष आयोजन · २७ सितम्बर २०२६</div><h1 class="page-title">क्षमावाणी २०२६</h1><p class="page-subtitle">भोजन हेतु उपस्थिति पंजीकरण · आदिनाथ जिनालय, खराड़ी, पुणे</p></div></section>
+<section class="page-section"><div class="container"><div class="registration-panel">
+<div class="panel-head"><div><div class="panel-title">भोजन हेतु अपनी उपस्थिति दर्ज करें</div><p class="panel-description" id="intro"></p></div><span class="badge">२७ सितम्बर २०२६</span></div>
+<form id="kshamawani-form" novalidate>
+<div class="form-field"><label for="name">नाम <span>*</span></label><input id="name" name="name" type="text" autocomplete="name" required maxlength="100"></div>
+<div class="form-field"><label for="address">पता <span>*</span></label><textarea id="address" name="address" rows="3" autocomplete="street-address" required maxlength="300"></textarea></div>
+<div class="form-row"><div class="form-field"><label for="mobile">मोबाइल नंबर <span>*</span></label><input id="mobile" name="mobile" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" required></div>
+<div class="form-field"><label for="coupons">कूपन की संख्या <span>*</span></label><input id="coupons" name="coupons" type="number" min="1" max="20" step="1" required></div></div>
+<div id="form-message" class="form-message hidden" role="alert"></div><div class="form-actions"><button id="submit-button" class="button primary" type="submit">पंजीकरण करें</button></div>
+</form>
+<section id="success-section" class="success-panel hidden" aria-live="polite"><div class="success-icon">✓</div><h2>पंजीकरण सफल रहा</h2><p id="success-summary"></p>
+<div class="application-code-box"><span>आवेदन कोड</span><strong id="application-code">—</strong></div><div id="qr-code" class="qr-code" aria-label="आवेदन QR code"></div>
+<p class="success-instruction" id="venue-instruction"></p><button id="print-button" class="button secondary" type="button">स्क्रीनशॉट / प्रिंट</button></section>
+</div></div></section>
+</main>
+<footer class="site-footer"><div class="container"><p>🙏 जिनधर्म आराधना चातुर्मास २०२६</p></div></footer>
+<script src="https://unpkg.com/qrcode-generator@2.0.4/qrcode.js"></script><script src="js/registration.js"></script>
+</body></html>
