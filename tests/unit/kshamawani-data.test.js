@@ -9,16 +9,11 @@ const repositoryRoot = path.resolve(
 );
 
 async function readFileText(relativePath) {
-  return readFile(
-    path.join(repositoryRoot, relativePath),
-    "utf8",
-  );
+  return readFile(path.join(repositoryRoot, relativePath), "utf8");
 }
 
 async function readConfig() {
-  return JSON.parse(
-    await readFileText("data/kshamawani-2026.json"),
-  );
+  return JSON.parse(await readFileText("data/kshamawani-2026.json"));
 }
 
 describe("Kshamawani configuration", () => {
@@ -44,8 +39,12 @@ describe("Kshamawani configuration", () => {
     const client = await readFileText("js/registration.js");
     const backend = await readFileText("apps-script/Kshamawani2026.gs");
 
-    expect(client).toContain("const existingResponse = await lookup(data.mobile)");
-    expect(client).toContain('const action = existing ? "updateRegistration" : "createRegistration";');
+    expect(client).toContain(
+      "const existingResponse = await lookup(data.mobile)",
+    );
+    expect(client).toContain(
+      'const action = existing ? "updateRegistration" : "createRegistration";',
+    );
     expect(backend).toContain('action === "updateRegistration"');
     expect(backend).toContain("function updateRegistration_(data)");
     expect(backend).toContain('audit_("UPDATE"');
