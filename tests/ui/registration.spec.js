@@ -38,9 +38,13 @@ test.describe("Kshamawani registration page", () => {
     page,
   }) => {
     await page.route("**/exec?api=lookupRegistration*", async (route) => {
-      const callback = new URL(route.request().url()).searchParams.get(
-        "callback",
-      );
+      const callbackMatch = route
+        .request()
+        .url()
+        .match(/[?&]callback=([^&]+)/);
+      const callback = callbackMatch
+        ? decodeURIComponent(callbackMatch[1])
+        : "";
       await route.fulfill({
         contentType: "application/javascript",
         body: `${callback}(${JSON.stringify({
