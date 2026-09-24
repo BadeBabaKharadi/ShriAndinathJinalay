@@ -38,6 +38,7 @@ describe("Kshamawani configuration", () => {
   it("uses the mobile number as the update-or-create key", async () => {
     const client = await readFileText("js/registration.js");
     const backend = await readFileText("apps-script/Kshamawani2026.gs");
+    const page = await readFileText("registration.html");
 
     expect(client).toContain(
       "const existingResponse = await lookup(data.mobile)",
@@ -48,5 +49,6 @@ describe("Kshamawani configuration", () => {
     expect(backend).toContain('action === "updateRegistration"');
     expect(backend).toContain("function updateRegistration_(data)");
     expect(backend).toContain('audit_("UPDATE"');
+    expect(page).toContain("cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js");
   });
 });
