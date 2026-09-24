@@ -115,8 +115,28 @@ function updateRegistration_(data) {
     }
 
     // The mobile number is the source of truth. If it was not found,
-    // create a new registration rather than relying on a stale client lookup.
-    return createRegistration_(data);
+    // create a new registration while keeping the same lock.
+    const code = nextApplicationCode_(sheet);
+    const now = new Date();
+    sheet.appendRow([
+      now,
+      EVENT_ID,
+      code,
+      mobile,
+      String(data.name).trim(),
+      String(data.address).trim(),
+      coupons,
+      "NO",
+      "",
+      "",
+    ]);
+    audit_("CREATE", code, mobile, coupons, "PUBLIC");
+    return {
+      success: true,
+      created: true,
+      registrationId: code,
+      applicationCode: code,
+    };
   } finally {
     lock.releaseLock();
   }
