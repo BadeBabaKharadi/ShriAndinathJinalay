@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     result.classList.remove("hidden");
     result.innerHTML = \`
       \${issued ? "" : '<div class="token-actions"><button id="issue-token" class="button primary" type="button">भौतिक टोकन जारी करें</button></div>'}
+      <div class="token-actions"><button id="scan-next" class="button secondary" type="button">अगला QR कोड स्कैन करें</button></div>
       <div class="result-grid">
         <div class="result-item"><span>नाम</span><strong>\${esc(registration.name)}</strong></div>
         <div class="result-item"><span>मोबाइल</span><strong>\${esc(registration.mobile)}</strong></div>
