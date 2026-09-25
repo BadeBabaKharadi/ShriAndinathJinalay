@@ -1,4 +1,19 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {
+  getFunctions,
+  httpsCallable,
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
+
 const KSHAMAWANI_CONFIG = "data/kshamawani-2026.json";
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC7JQJ6MmkcKF_ijnIUyahzmKER78FXZFw",
+  appId: "1:817235117988:web:5d879779d999bce98ce331",
+  authDomain: "jain-community-platform.firebaseapp.com",
+  projectId: "jain-community-platform",
+  storageBucket: "jain-community-platform.firebasestorage.app",
+  messagingSenderId: "817235117988",
+};
 
 document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("kshamawani-form");
@@ -18,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
   const openingClose = document.getElementById("registration-opening-close");
   let config;
-  let existingRegistration = null;
+  let existingRegistration = null;\n  let functions;
 
   const cleanMobile = (value) => String(value || "").replace(/\D/g, "");
 
@@ -160,32 +175,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const callFirebase = async (functionName, data) => {
-    const url =
-      `${config.registration.firebaseFunctionsBaseUrl}/${functionName}`;
-    let response;
-
-    try {
-      response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify({ data }),
-      });
-    } catch {
-      throw new Error("पंजीकरण सेवा से संपर्क नहीं हो सका।");
+    if (!functions) {
+      throw new Error("पंजीकरण सेवा अभी तैयार नहीं है।");
     }
 
-    let payload;
     try {
-      payload = await response.json();
-    } catch {
-      throw new Error("पंजीकरण सेवा से सही प्रतिक्रिया नहीं मिली।");
-    }
-
-    if (!response.ok || payload.error) {
-      const code = String(payload.error?.status || "").toLowerCase();
-      const serverMessage = payload.error?.message || "";
+      const callable = httpsCallable(functions, functionName);
+      const response = await callable(data);
+      return response.data;
+    } catch (error) {
+      const code = String(error?.code || "")
+        .replace(/^functions\\//, "")
+        .toLowerCase();
+      const serverMessage = error?.message || "";
 
       if (code === "already-exists") {
         throw new Error(
@@ -198,10 +200,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (code === "not-found") {
         throw new Error("पंजीकरण नहीं मिला।");
       }
+      if (code === "invalid-argument") {
+        throw new Error(serverMessage || "पंजीकरण की जानकारी सही नहीं है।");
+      }
       throw new Error(serverMessage || "पंजीकरण सेवा उपलब्ध नहीं है।");
     }
-
-    return payload.result;
   };
 
   const lookup = (mobile) =>
@@ -214,6 +217,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch(KSHAMAWANI_CONFIG, { cache: "no-store" });
     if (!response.ok) throw Error();
     config = await response.json();
+    const firebaseApp = initializeApp(FIREBASE_CONFIG);
+    functions = getFunctions(firebaseApp, "asia-south1");
     intro.textContent = config.messages.intro;
     setRegistrationAvailability();
     window.setInterval(setRegistrationAvailability, 1000);
