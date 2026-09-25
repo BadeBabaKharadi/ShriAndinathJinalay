@@ -4,9 +4,7 @@ const FIREBASE_BASE =
   "https://asia-south1-jain-community-platform.cloudfunctions.net";
 
 async function mockFirebase(page, functionName, payload, status = 200) {
-  await page.route(
-    `${FIREBASE_BASE}/${functionName}`,
-    async (route) => {
+  await page.route(`${FIREBASE_BASE}/${functionName}`, async (route) => {
       expect(route.request().headers()["content-type"]).toContain(
         "application/json",
       );
@@ -43,9 +41,7 @@ test.describe("Kshamawani coordinator access", () => {
       "सत्यापित",
     );
     await expect(page.locator("#scanner-start-panel")).toBeVisible();
-    await expect(page.locator("#status")).toContainText(
-      "सत्यापन पूरा है",
-    );
+    await expect(page.locator("#status")).toContainText("सत्यापन पूरा है");
   });
 
   test("keeps the access section visible when Firebase rejects the key", async ({
