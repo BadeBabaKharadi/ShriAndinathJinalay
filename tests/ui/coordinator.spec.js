@@ -4,7 +4,9 @@ const FIREBASE_BASE =
   "https://asia-south1-jain-community-platform.cloudfunctions.net";
 
 async function mockFirebase(page, functionName, payload, status = 200) {
-  await page.route(`${FIREBASE_BASE}/${functionName}`, async (route) => {
+  await page.route(
+    `${FIREBASE_BASE}/${functionName}`,
+    async (route) => {
       expect(route.request().headers()["content-type"]).toContain(
         "application/json",
       );
