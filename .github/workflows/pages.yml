@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate website and Firebase backend
+    name: Validate website
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
