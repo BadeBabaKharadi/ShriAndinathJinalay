@@ -25,11 +25,13 @@ async function mockRegistrationClosed(page) {
 }
 
 async function mockFirebaseSdk(page) {
-  await page.route("http://127.0.0.1:4173/js/firebase-client.js", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/javascript",
-      body: `export function createFirebaseFunctionsClient() {
+  await page.route(
+    "http://127.0.0.1:4173/js/firebase-client.js",
+    async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/javascript",
+        body: `export function createFirebaseFunctionsClient() {
   return {};
 }
 export async function callFirebaseFunction(functions, functionName, data) {
@@ -47,10 +49,10 @@ export async function callFirebaseFunction(functions, functionName, data) {
   }
   return { data: payload.result };
 }`,
-    });
-  });
+      });
+    },
+  );
 }
-
 async function mockFirebaseFunction(page, functionName, result) {
   await page.route(
     `https://asia-south1-jain-community-platform.cloudfunctions.net/${functionName}`,
