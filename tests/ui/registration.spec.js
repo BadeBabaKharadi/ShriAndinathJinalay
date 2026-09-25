@@ -1,12 +1,29 @@
 import { expect, test } from "@playwright/test";
 
+async function mockRegistrationOpen(page) {
+  await page.route("**/data/kshamawani-2026.json", async (route) => {
+    const response = await route.fetch();
+    const config = await response.json();
+    config.registration.opensAt = "2026-09-25T00:00:00+05:30";
+    await route.fulfill({
+      status: response.status(),
+      contentType: "application/json",
+      body: JSON.stringify(config),
+    });
+  });
+}
+
 test.describe("Kshamawani registration page", () => {
   test("starts with mobile lookup and hides registration details", async ({
     page,
   }) => {
     await page.goto("/registration.html");
 
-    await expect(page.locator("#lookup-mobile")).toBeVisible();
+    await expect(page.locator("#registration-opening-overlay")).toBeVisible();
+    await expect(page.locator("#registration-opening-title")).toHaveText(
+      "पंजीकरण शाम ४ बजे खुलेगा",
+    );
+    await expect(page.locator("#lookup-mobile")).toBeDisabled();
     await expect(page.locator("#lookup-button")).toBeVisible();
     await expect(page.locator("#details-section")).toBeHidden();
     await expect(page.locator("#success-section")).toBeHidden();
@@ -15,6 +32,7 @@ test.describe("Kshamawani registration page", () => {
   test("shows address guidance and six-coupon maximum in the registration form", async ({
     page,
   }) => {
+    await mockRegistrationOpen(page);
     await page.goto("/registration.html");
 
     await expect(page.locator("#address")).toHaveAttribute(
@@ -25,6 +43,7 @@ test.describe("Kshamawani registration page", () => {
   });
 
   test("validates the mobile number before lookup", async ({ page }) => {
+    await mockRegistrationOpen(page);
     await page.goto("/registration.html");
 
     await page.locator("#lookup-button").click();
@@ -61,6 +80,7 @@ test.describe("Kshamawani registration page", () => {
       });
     });
 
+    await mockRegistrationOpen(page);
     await page.goto("/registration.html");
     await page.locator("#lookup-mobile").fill("9860699870");
     await page.locator("#lookup-button").click();

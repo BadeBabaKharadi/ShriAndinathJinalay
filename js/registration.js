@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const intro = document.getElementById("intro");
   const instruction = document.getElementById("venue-instruction");
   const editButton = document.getElementById("edit-button");
+  const openingOverlay = document.getElementById(
+    "registration-opening-overlay",
+  );
+  const openingClose = document.getElementById("registration-opening-close");
   let config;
   let existingRegistration = null;
 
@@ -26,6 +30,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   const clearMessage = (element) => {
     element.textContent = "";
     element.classList.add("hidden");
+  };
+
+  const setRegistrationAvailability = () => {
+    const opensAt = new Date(config.registration.opensAt);
+    const isOpen =
+      !Number.isNaN(opensAt.getTime()) && Date.now() >= opensAt.getTime();
+
+    openingOverlay.classList.toggle("hidden", isOpen);
+    lookupMobile.disabled = !isOpen;
+    lookupButton.disabled = !isOpen;
+
+    if (!isOpen) {
+      showMessage(
+        lookupMessage,
+        "क्षमावाणी २०२६ का भोजन पंजीकरण लिंक आज शाम ४:०० बजे खुलेगा।",
+      );
+    } else {
+      clearMessage(lookupMessage);
+    }
+
+    return isOpen;
   };
 
   const validateMobile = (mobile) =>
@@ -207,6 +232,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) throw Error();
     config = await response.json();
     intro.textContent = config.messages.intro;
+    setRegistrationAvailability();
+    openingClose.addEventListener("click", () => {
+      openingOverlay.classList.add("hidden");
+    });
   } catch {
     showMessage(
       lookupMessage,
@@ -216,6 +245,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   lookupButton.addEventListener("click", async () => {
+    if (!setRegistrationAvailability()) return;
     clearMessage(lookupMessage);
     const mobile = cleanMobile(lookupMobile.value);
 
