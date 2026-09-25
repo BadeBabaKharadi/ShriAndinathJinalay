@@ -69,7 +69,8 @@ test.describe("Kshamawani registration page", () => {
       "placeholder",
       "उदा. फ्लैट 101, ABC सोसाइटी, खराड़ी, पुणे",
     );
-    await expect(page.locator("#coupons")).toHaveAttribute("max", "6");
+    await expect(page.locator("#coupons")).toHaveValue("");
+    await expect(page.locator("#coupons option")).toHaveCount(7);
   });
 
   test("validates the mobile number before lookup", async ({ page }) => {
@@ -145,7 +146,7 @@ test.describe("Kshamawani registration page", () => {
     await page.locator("#lookup-button").click();
     await page.locator("#name").fill("Pratik Jain");
     await page.locator("#address").fill("C 403 Dreams Veeroday");
-    await page.locator("#coupons").fill("4");
+    await page.locator("#coupons").selectOption("4");
     await page.locator("#submit-button").click();
 
     await expect(page.locator("#success-title")).toHaveText("पंजीकरण सफल रहा");
