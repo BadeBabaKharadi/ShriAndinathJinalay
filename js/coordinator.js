@@ -33,11 +33,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     scannerElement.classList.add("hidden");
   };
 
+  const showScanner = () => {
+    result.classList.add("hidden");
+    result.innerHTML = "";
+    scannerElement.classList.remove("hidden");
+    setStatus("स्कैन की प्रतीक्षा है…");
+    scanner = new Html5QrcodeScanner(
+      "scanner",
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        rememberLastUsedCamera: true,
+      },
+      false,
+    );
+    scanner.render((decoded) => verify(decoded), () => {});
+  };
+
   const render = (registration, issued = false) => {
     result.className = "result" + (issued ? " issued" : "");
     result.classList.remove("hidden");
     result.innerHTML = \`
       \${issued ? "" : '<div class="token-actions"><button id="issue-token" class="button primary" type="button">भौतिक टोकन जारी करें</button></div>'}
+      <div class="token-actions"><button id="scan-next" class="button secondary" type="button">अगला QR कोड स्कैन करें</button></div>
       <div class="result-grid">
         <div class="result-item"><span>नाम</span><strong>\${esc(registration.name)}</strong></div>
         <div class="result-item"><span>मोबाइल</span><strong>\${esc(registration.mobile)}</strong></div>
@@ -51,6 +69,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       document
         .getElementById("issue-token")
         .addEventListener("click", () => issue(registration));
+    }
+
+    const nextButton = document.getElementById("scan-next");
+    if (nextButton) {
+      nextButton.addEventListener("click", async () => {
+        await hideScanner();
+        showScanner();
+        scannerElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
     }
   };
 
@@ -250,16 +277,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   if (window.Html5QrcodeScanner) {
-    scanner = new Html5QrcodeScanner(
-      "scanner",
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        rememberLastUsedCamera: true,
-      },
-      false,
-    );
-    scanner.render((decoded) => verify(decoded), () => {});
+    showScanner();
   } else {
     setStatus(
       "कैमरा स्कैनर लोड नहीं हुआ। आवेदन कोड हाथ से दर्ज करें।",
