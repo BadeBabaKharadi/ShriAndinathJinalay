@@ -31,11 +31,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       scanner = null;
     }
     scannerElement.classList.add("hidden");
+    scannerElement.innerHTML = "";
   };
 
   const showScanner = () => {
     result.classList.add("hidden");
     result.innerHTML = "";
+    scannerElement.innerHTML = "";
     scannerElement.classList.remove("hidden");
     setStatus("स्कैन की प्रतीक्षा है…");
     scanner = new Html5QrcodeScanner(
