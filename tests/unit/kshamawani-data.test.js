@@ -17,12 +17,12 @@ async function readConfig() {
 }
 
 describe("Kshamawani configuration", () => {
-  it("defines a four-coupon maximum", async () => {
+  it("defines a six-coupon maximum", async () => {
     const data = await readConfig();
 
     expect(data.id).toBe("kshamawani-2026");
     expect(data.date).toBe("2026-09-27");
-    expect(data.registration.maxCoupons).toBe(4);
+    expect(data.registration.maxCoupons).toBe(6);
   });
 
   it("keeps the coordinator route out of search indexes", async () => {
@@ -47,7 +47,7 @@ describe("Kshamawani configuration", () => {
     expect(client).toContain("KW26|");
     expect(backend).toContain('action === "updateRegistration"');
     expect(backend).toContain("function updateRegistration_(data)");
-    expect(backend).toContain("coupons <= 4");
+    expect(backend).toContain("coupons <= 6");
     expect(backend).toContain("CacheService.getScriptCache()");
     expect(backend).toContain("buildLookupIndexes_()");
     expect(backend).toContain("function getKshamawaniHealth()");
@@ -56,6 +56,9 @@ describe("Kshamawani configuration", () => {
     );
     expect(coordinator).toContain('compact[0] === "KW26"');
     expect(coordinator).toContain("lookupByCode(code)");
+    expect(coordinator).toContain("await hideScanner()");
+    expect(coordinator).toContain("भौतिक टोकन जारी करें");
+    expect(coordinator).toContain("result.scrollIntoView");
     expect(backend).toContain(
       "function lookupRegistrationByCode_(eventId, code)",
     );

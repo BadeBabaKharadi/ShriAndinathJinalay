@@ -12,7 +12,7 @@ test.describe("Kshamawani registration page", () => {
     await expect(page.locator("#success-section")).toBeHidden();
   });
 
-  test("shows address guidance and four-coupon maximum in the registration form", async ({
+  test("shows address guidance and six-coupon maximum in the registration form", async ({
     page,
   }) => {
     await page.goto("/registration.html");
@@ -21,7 +21,7 @@ test.describe("Kshamawani registration page", () => {
       "placeholder",
       "उदा. फ्लैट 101, ABC सोसाइटी, खराड़ी, पुणे",
     );
-    await expect(page.locator("#coupons")).toHaveAttribute("max", "4");
+    await expect(page.locator("#coupons")).toHaveAttribute("max", "6");
   });
 
   test("validates the mobile number before lookup", async ({ page }) => {
