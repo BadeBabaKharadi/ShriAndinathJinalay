@@ -51,7 +51,7 @@ test.describe("Kshamawani registration page", () => {
 
     await expect(page.locator("#registration-opening-overlay")).toBeVisible();
     await expect(page.locator("#registration-opening-title")).toHaveText(
-      "पंजीकरण शाम ४:३० बजे खुलेगा",
+      "पंजीकरण शाम ५:३० बजे खुलेगा",
     );
     await expect(page.locator("#lookup-mobile")).toBeDisabled();
     await expect(page.locator("#lookup-button")).toBeVisible();
@@ -152,4 +152,22 @@ test.describe("Kshamawani registration page", () => {
     await expect(page.locator("#application-code")).toHaveText("KW26-0011");
     expect(lookupCalls).toBe(1);
   });
+  test("supports explicit closed test mode", async ({ page }) => {
+    await page.goto("/registration.html?testMode=closed");
+
+    await expect(page.locator("#registration-opening-overlay")).toBeVisible();
+    await expect(page.locator("#registration-opening-title")).toHaveText(
+      "पंजीकरण शाम ५:३० बजे खुलेगा",
+    );
+    await expect(page.locator("#lookup-mobile")).toBeDisabled();
+  });
+
+  test("supports explicit open test mode", async ({ page }) => {
+    await page.goto("/registration.html?testMode=open");
+
+    await expect(page.locator("#registration-opening-overlay")).toBeHidden();
+    await expect(page.locator("#lookup-mobile")).toBeEnabled();
+    await expect(page.locator("#lookup-button")).toBeEnabled();
+  });
+
 });
