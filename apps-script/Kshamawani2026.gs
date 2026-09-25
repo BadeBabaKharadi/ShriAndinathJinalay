@@ -45,6 +45,20 @@ function doPost(e) {
   }
 }
 
+function acquireKshamawaniLock_(operation) {
+  const lock = LockService.getScriptLock();
+  const startedAt = Date.now();
+  lock.waitLock(LOCK_TIMEOUT_MS);
+  console.log(
+    JSON.stringify({
+      event: "kshamawani.lock",
+      operation,
+      waitMs: Date.now() - startedAt,
+    }),
+  );
+  return lock;
+}
+
 function createRegistration_(data) {
   assert_(data.eventId === EVENT_ID, "Invalid event.");
   const mobile = normalizeMobile_(data.mobile);
@@ -57,15 +71,19 @@ function createRegistration_(data) {
     "Invalid coupon count.",
   );
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(LOCK_TIMEOUT_MS);
+  const sheet = registrationsSheet_();
+  const existingRowBeforeLock = findRowByColumnValue_(sheet, 4, mobile);
+  if (existingRowBeforeLock) {
+    throw new Error("This mobile number is already registered.");
+  }
+
+  const lock = acquireKshamawaniLock_("createRegistration");
   let registration;
   let code;
   let rowNumber;
   try {
-    const sheet = registrationsSheet_();
-    const existingRow = findRowByColumnValue_(sheet, 4, mobile);
-    if (existingRow) {
+    const lockedExistingRow = findRowByColumnValue_(sheet, 4, mobile);
+    if (lockedExistingRow) {
       throw new Error("This mobile number is already registered.");
     }
 
@@ -108,15 +126,20 @@ function updateRegistration_(data) {
     "Invalid coupon count.",
   );
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(LOCK_TIMEOUT_MS);
+  const sheet = registrationsSheet_();
+  const matchBeforeLock = findRowByColumnValue_(sheet, 4, mobile);
+  if (!matchBeforeLock) {
+    // The row may be created concurrently; the locked path rechecks before
+    // allocating a new application code.
+  }
+
+  const lock = acquireKshamawaniLock_("updateRegistration");
   let registration;
   let applicationCode;
   let rowNumber;
   let created = false;
 
   try {
-    const sheet = registrationsSheet_();
     const match = findRowByColumnValue_(sheet, 4, mobile);
 
     if (match) {
@@ -414,8 +437,7 @@ function markTokensIssued_(data) {
   const code = String(data.registrationId || data.applicationCode || "").trim();
   assert_(code, "Application code is required.");
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(LOCK_TIMEOUT_MS);
+  const lock = acquireKshamawaniLock_("markTokensIssued");
   let registration;
   let alreadyIssued = false;
   let coupons;
