@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!isOpen) {
       showMessage(
         lookupMessage,
-        "क्षमावाणी २०२६ का भोजन पंजीकरण लिंक आज शाम ४:०० बजे खुलेगा।",
+        "क्षमावाणी २०२६ का भोजन पंजीकरण आज शाम ४:३० बजे खुलेगा। कृपया ४:३० बजे के बाद इस पृष्ठ पर पुनः आएँ।",
       );
     } else {
       clearMessage(lookupMessage);
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       response = await fetch(url, {
         method: "POST",
         headers: {
-          "Content-Type": "text/plain;charset=UTF-8",
+          "Content-Type": "application/json;charset=UTF-8",
         },
         body: JSON.stringify({ data }),
       });
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (!response.ok || payload.error) {
-      const code = payload.error?.status || "";
+      const code = String(payload.error?.status || "").toLowerCase();
       const serverMessage = payload.error?.message || "";
 
       if (code === "already-exists") {
@@ -216,6 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     config = await response.json();
     intro.textContent = config.messages.intro;
     setRegistrationAvailability();
+    window.setInterval(setRegistrationAvailability, 1000);
     openingClose.addEventListener("click", () => {
       openingOverlay.classList.add("hidden");
     });
