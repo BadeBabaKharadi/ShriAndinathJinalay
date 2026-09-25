@@ -40,9 +40,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (
       !Number.isInteger(data.coupons) ||
       data.coupons < 1 ||
-      data.coupons > 4
+      data.coupons > Number(config.registration.maxCoupons)
     ) {
-      return "एक पंजीकरण में अधिकतम 4 भोजन कूपन लिए जा सकते हैं।";
+      return `एक पंजीकरण में अधिकतम ${Number(config.registration.maxCoupons)} भोजन कूपन लिए जा सकते हैं।`;
     }
     return null;
   };
@@ -91,7 +91,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     qr(code, registration.mobile);
     instruction.textContent = config.messages.venueInstruction;
 
-    const canEdit = !registration.tokensIssued;
+    const tokensIssued =
+      registration.tokensIssued === true ||
+      String(registration.tokensIssued || "").toUpperCase() === "YES";
+    const canEdit = !tokensIssued;
     editButton.classList.toggle("hidden", !canEdit);
     editButton.disabled = !canEdit;
     lookupPanel.classList.add("hidden");
