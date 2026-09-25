@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-const FIREBASE_BASE =
+const SERVICE_BASE =
   "https://asia-south1-jain-community-platform.cloudfunctions.net";
 
-async function mockFirebase(page, functionName, payload, status = 200) {
-  const url = `${FIREBASE_BASE}/${functionName}`;
+async function mockService(page, functionName, payload, status = 200) {
+  const url = `${SERVICE_BASE}/${functionName}`;
   await page.route(url, async (route) => {
     expect(route.request().headers()["content-type"]).toContain(
       "application/json",
@@ -25,14 +25,21 @@ const stats = {
   pendingPhysicalCouponRegistrations: 12,
   registrationsWithTokens: 0,
   averageCouponsPerRegistration: 3.25,
-  byDate: [
-    {
-      date: "2026-09-25",
-      registrations: 12,
-      coupons: 39,
-      physicalCouponsIssued: 0,
-    },
-  ],
+  bookingTrend: {
+    daily: [
+      { period: "2026-09-24", registrations: 1, coupons: 6 },
+      { period: "2026-09-25", registrations: 11, coupons: 33 },
+    ],
+    hourly: [
+      { period: "2026-09-25T10:00", registrations: 3, coupons: 9 },
+      { period: "2026-09-25T11:00", registrations: 5, coupons: 15 },
+      { period: "2026-09-25T12:00", registrations: 3, coupons: 9 },
+    ],
+    twoHourly: [
+      { period: "2026-09-25T10:00", registrations: 8, coupons: 24 },
+      { period: "2026-09-25T12:00", registrations: 3, coupons: 9 },
+    ],
+  },
   byCouponCount: [
     { coupons: 2, count: 3 },
     { coupons: 3, count: 3 },
@@ -46,10 +53,10 @@ test.describe("Kshamawani admin access", () => {
   test("hides the access section and shows the compact refresh control after verification", async ({
     page,
   }) => {
-    await mockFirebase(page, "kshamawaniVerifyAccess", {
+    await mockService(page, "kshamawaniVerifyAccess", {
       result: { verified: true },
     });
-    await mockFirebase(page, "kshamawaniAdminStats", {
+    await mockService(page, "kshamawaniAdminStats", {
       result: stats,
     });
 
@@ -70,15 +77,75 @@ test.describe("Kshamawani admin access", () => {
       "aria-label",
       "आँकड़े ताज़ा करें",
     );
-    await expect(page.locator("#refresh")).not.toHaveClass(/refresh/);
+    await expect(page.locator("#refresh")).toHaveClass(/refresh-button/);
+    await expect(page.locator("#refresh")).not.toHaveClass(/refresh$/);
     await expect(page.locator("#registrations")).toHaveText("12");
     await expect(page.locator("#booked")).toHaveText("39");
+
+    await expect(
+      page.locator('.trend-control[data-trend="daily"]'),
+    ).toHaveClass(/active/);
+    await expect(page.locator("#trend-chart")).toBeVisible();
+    await page.locator('.trend-control[data-trend="hourly"]').click();
+    await expect(
+      page.locator('.trend-control[data-trend="hourly"]'),
+    ).toHaveClass(/active/);
+    await expect(page.locator("#trend-chart .trend-point")).toHaveCount(3);
+
+    await page.locator('.trend-control[data-trend="twoHourly"]').click();
+    await expect(page.locator("#trend-chart .trend-point")).toHaveCount(2);
+  });
+
+  test("clears the search after a successful deletion", async ({ page }) => {
+    await mockService(page, "kshamawaniVerifyAccess", {
+      result: { verified: true },
+    });
+    await mockService(page, "kshamawaniAdminStats", {
+      result: stats,
+    });
+    await mockService(page, "kshamawaniAdminLookup", {
+      result: {
+        registration: {
+          applicationCode: "KW26-0012",
+          mobile: "9028256379",
+          name: "Test Registration",
+          address: "Test Address",
+          coupons: 3,
+          tokensIssued: false,
+        },
+      },
+    });
+    await mockService(page, "kshamawaniAdminDelete", {
+      result: {
+        deleted: {
+          applicationCode: "KW26-0012",
+          mobile: "9028256379",
+        },
+      },
+    });
+
+    page.on("dialog", (dialog) => dialog.accept());
+    await page.goto("/admin-7x9p2.html");
+    await page.locator("#admin-key").fill("test-access-key");
+    await page.locator("#unlock").click();
+
+    await page.locator("#search-mobile").fill("9028256379");
+    await page.locator("#search").click();
+
+    await expect(page.locator("#search-result")).toBeVisible();
+    await expect(page.locator("#delete")).toBeEnabled();
+
+    await page.locator("#delete").click();
+
+    await expect(page.locator("#search-result")).toBeHidden();
+    await expect(page.locator("#search-mobile")).toHaveValue("");
+    await expect(page.locator("#delete")).toBeDisabled();
   });
 
   test("keeps the access section visible when verification is rejected", async ({
     page,
   }) => {
-    await mockFirebase(
+    await mockService(
       page,
       "kshamawaniVerifyAccess",
       {
