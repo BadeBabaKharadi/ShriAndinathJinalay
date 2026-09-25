@@ -32,7 +32,7 @@
 <div class="form-field"><label for="name">नाम <span>*</span></label><input id="name" name="name" type="text" autocomplete="name" required maxlength="100"></div>
 <div class="form-field"><label for="address">पता <span>*</span></label><textarea id="address" name="address" rows="3" autocomplete="street-address" placeholder="उदा. फ्लैट 101, ABC सोसाइटी, खराड़ी, पुणे" required maxlength="300"></textarea></div>
 <div class="form-row"><div class="form-field"><label for="mobile">मोबाइल नंबर</label><input id="mobile" name="mobile" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" readonly></div>
-<div class="form-field"><label for="coupons">कूपन की संख्या <span>*</span></label><input id="coupons" name="coupons" type="number" min="1" max="6" step="1" required></div></div>
+<div class="form-field"><label for="coupons">कूपन की संख्या <span>*</span></label><select id="coupons" name="coupons" required aria-label="कूपन की संख्या"><option value="" selected disabled>कूपन चुनें</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></div></div>
 <div id="form-message" class="form-message hidden" role="alert"></div><div class="form-actions"><button id="submit-button" class="button primary" type="submit">पंजीकरण करें</button></div>
 </div>
 </form>
