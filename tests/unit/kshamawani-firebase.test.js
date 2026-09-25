@@ -40,14 +40,17 @@ describe("Kshamawani Firebase registration", () => {
 
   it("moves public registration calls to Firebase callable endpoints", async () => {
     const client = await readFileText("js/registration.js");
+    const firebaseClient = await readFileText("js/firebase-client.js");
 
     expect(client).toContain("kshamawaniLookup");
     expect(client).toContain("kshamawaniCreate");
     expect(client).toContain("kshamawaniUpdate");
-    expect(client).toContain(
+    expect(client).toContain("createFirebaseFunctionsClient");
+    expect(client).toContain("callFirebaseFunction");
+    expect(firebaseClient).toContain(
       "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js",
     );
-    expect(client).toContain("httpsCallable(functions, functionName)");
+    expect(firebaseClient).toContain("httpsCallable(functions, functionName)");
     expect(client).not.toContain("fetch(url");
     expect(client).not.toContain("api=lookupRegistration");
     expect(client).not.toContain("iframe");
