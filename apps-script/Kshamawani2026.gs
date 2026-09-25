@@ -13,6 +13,7 @@ const CODE_INDEX_CACHE_KEY = "k26:lookup:code:v2";
 const MOBILE_REGISTRATION_CACHE_PREFIX = "k26:registration:mobile:v1:";
 const CODE_REGISTRATION_CACHE_PREFIX = "k26:registration:code:v1:";
 const NEXT_CODE_PROPERTY = "k26:nextApplicationNumber";
+const LOCK_TIMEOUT_MS = 5000;
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
@@ -57,21 +58,21 @@ function createRegistration_(data) {
   );
 
   const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+  lock.waitLock(LOCK_TIMEOUT_MS);
+  let registration;
+  let code;
+  let rowNumber;
   try {
     const sheet = registrationsSheet_();
-    const values = sheet.getDataRange().getValues();
-    const mobileIndex = 3;
-    for (let i = 1; i < values.length; i++) {
-      if (String(values[i][mobileIndex]) === mobile) {
-        throw new Error("This mobile number is already registered.");
-      }
+    const existingRow = findRowByColumnValue_(sheet, 4, mobile);
+    if (existingRow) {
+      throw new Error("This mobile number is already registered.");
     }
 
-    const code = nextApplicationCode_(sheet);
-    const now = new Date();
-    sheet.appendRow([
-      now,
+    code = nextApplicationCode_(sheet);
+    rowNumber = sheet.getLastRow() + 1;
+    const row = [
+      new Date(),
       EVENT_ID,
       code,
       mobile,
@@ -81,17 +82,18 @@ function createRegistration_(data) {
       "NO",
       "",
       "",
-    ]);
-    const registration = rowToRegistration_(
-      sheet.getRange(sheet.getLastRow(), 1, 1, 10).getValues()[0],
-    );
-    invalidateLookupCaches_(mobile, code);
-    cacheRegistration_(registration);
-    audit_("CREATE", code, mobile, coupons, "PUBLIC");
-    return { success: true, registrationId: code, applicationCode: code };
+    ];
+    sheet.getRange(rowNumber, 1, 1, 10).setValues([row]);
+    registration = rowToRegistration_(row);
+    SpreadsheetApp.flush();
   } finally {
     lock.releaseLock();
   }
+
+  invalidateLookupCaches_(mobile, code);
+  cacheRegistration_(registration, rowNumber);
+  audit_("CREATE", code, mobile, coupons, "PUBLIC");
+  return { success: true, registrationId: code, applicationCode: code };
 }
 
 function updateRegistration_(data) {
@@ -102,85 +104,88 @@ function updateRegistration_(data) {
   assert_(String(data.address || "").trim(), "Address is required.");
   const coupons = Number(data.coupons);
   assert_(
-    Number.isInteger(coupons) && coupons >= 1 && coupons <= 4,
+    Number.isInteger(coupons) && coupons >= 1 && coupons <= 6,
     "Invalid coupon count.",
   );
 
   const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+  lock.waitLock(LOCK_TIMEOUT_MS);
+  let registration;
+  let applicationCode;
+  let rowNumber;
+  let created = false;
+
   try {
     const sheet = registrationsSheet_();
-    const values = sheet.getDataRange().getValues();
+    const match = findRowByColumnValue_(sheet, 4, mobile);
 
-    for (let i = 1; i < values.length; i++) {
-      const row = values[i];
-      if (String(row[1]) !== EVENT_ID || String(row[3]) !== mobile) continue;
+    if (match) {
+      rowNumber = match.getRow();
+      const row = sheet.getRange(rowNumber, 1, 1, 10).getValues()[0];
 
+      if (String(row[1]) !== EVENT_ID) {
+        throw new Error("Application does not belong to this event.");
+      }
       if (String(row[7]) === "YES") {
         throw new Error(
           "इस मोबाइल नंबर के लिए टोकन पहले ही जारी हो चुके हैं। अब पंजीकरण अपडेट नहीं किया जा सकता।",
         );
       }
 
-      const existingCode = String(row[2]);
+      applicationCode = String(row[2]);
       const registrationId = String(data.registrationId || "").trim();
-      if (registrationId && registrationId !== existingCode) {
+      if (registrationId && registrationId !== applicationCode) {
         throw new Error("Application code does not match the mobile number.");
       }
 
-      sheet.getRange(i + 1, 5, 1, 3).setValues([
-        [
-          String(data.name).trim(),
-          String(data.address).trim(),
-          coupons,
-        ],
+      row[4] = String(data.name).trim();
+      row[5] = String(data.address).trim();
+      row[6] = coupons;
+      sheet.getRange(rowNumber, 5, 1, 3).setValues([
+        [row[4], row[5], row[6]],
       ]);
-      const registration = rowToRegistration_(
-        sheet.getRange(i + 1, 1, 1, 10).getValues()[0],
-      );
-      invalidateLookupCaches_(mobile, existingCode);
-      cacheRegistration_(registration);
-      audit_("UPDATE", existingCode, mobile, coupons, "PUBLIC");
-
-      return {
-        success: true,
-        updated: true,
-        registrationId: existingCode,
-        applicationCode: existingCode,
-      };
+      registration = rowToRegistration_(row);
+    } else {
+      applicationCode = nextApplicationCode_(sheet);
+      rowNumber = sheet.getLastRow() + 1;
+      const row = [
+        new Date(),
+        EVENT_ID,
+        applicationCode,
+        mobile,
+        String(data.name).trim(),
+        String(data.address).trim(),
+        coupons,
+        "NO",
+        "",
+        "",
+      ];
+      sheet.getRange(rowNumber, 1, 1, 10).setValues([row]);
+      registration = rowToRegistration_(row);
+      created = true;
     }
 
-    // The mobile number is the source of truth. If it was not found,
-    // create a new registration while keeping the same lock.
-    const code = nextApplicationCode_(sheet);
-    const now = new Date();
-    sheet.appendRow([
-      now,
-      EVENT_ID,
-      code,
-      mobile,
-      String(data.name).trim(),
-      String(data.address).trim(),
-      coupons,
-      "NO",
-      "",
-      "",
-    ]);
-    const registration = rowToRegistration_(
-      sheet.getRange(sheet.getLastRow(), 1, 1, 10).getValues()[0],
-    );
-    invalidateLookupCaches_(mobile, code);
-    cacheRegistration_(registration);
-    audit_("CREATE", code, mobile, coupons, "PUBLIC");
-    return {
-      success: true,
-      created: true,
-      registrationId: code,
-      applicationCode: code,
-    };
+    SpreadsheetApp.flush();
   } finally {
     lock.releaseLock();
   }
+
+  invalidateLookupCaches_(mobile, applicationCode);
+  cacheRegistration_(registration, rowNumber);
+  audit_(
+    created ? "CREATE" : "UPDATE",
+    applicationCode,
+    mobile,
+    coupons,
+    "PUBLIC",
+  );
+
+  return {
+    success: true,
+    ...(created ? { created: true } : { updated: true }),
+    registrationId: applicationCode,
+    applicationCode,
+  };
 }
 
 function lookupRegistration_(eventId, mobile) {
@@ -256,7 +261,8 @@ function getCachedRegistration_(type, key) {
   if (!cached) return null;
 
   try {
-    return JSON.parse(cached);
+    const parsed = JSON.parse(cached);
+    return parsed && parsed.registration ? parsed.registration : parsed;
   } catch (error) {
     cache.remove(cacheKey);
     console.log(
@@ -270,13 +276,16 @@ function getCachedRegistration_(type, key) {
   }
 }
 
-function cacheRegistration_(registration) {
+function cacheRegistration_(registration, rowNumber) {
   if (!registration || !registration.mobile || !registration.applicationCode) {
     return;
   }
 
   const cache = CacheService.getScriptCache();
-  const payload = JSON.stringify(registration);
+  const payload = JSON.stringify({
+    registration,
+    rowNumber: Number(rowNumber) || 0,
+  });
 
   try {
     cache.putAll(
@@ -296,6 +305,18 @@ function cacheRegistration_(registration) {
   }
 }
 
+function findRowByColumnValue_(sheet, column, value) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return null;
+
+  return sheet
+    .getRange(2, column, lastRow - 1, 1)
+    .createTextFinder(String(value))
+    .matchEntireCell(true)
+    .matchCase(true)
+    .findNext();
+}
+
 function findRegistrationRow_(type, key) {
   if (!key) return { rowNumber: 0, cacheHit: true };
 
@@ -312,11 +333,11 @@ function findRegistrationRow_(type, key) {
     };
   }
 
-  const indexes = buildLookupIndexes_();
+  const sheet = registrationsSheet_();
+  const column = type === "mobile" ? 4 : 3;
+  const match = findRowByColumnValue_(sheet, column, key);
   return {
-    rowNumber: Number(
-      (type === "mobile" ? indexes.mobile : indexes.code)[key] || 0,
-    ),
+    rowNumber: match ? match.getRow() : 0,
     cacheHit: false,
   };
 }
@@ -394,39 +415,54 @@ function markTokensIssued_(data) {
   assert_(code, "Application code is required.");
 
   const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+  lock.waitLock(LOCK_TIMEOUT_MS);
+  let registration;
+  let alreadyIssued = false;
+  let coupons;
+  let rowNumber;
+
   try {
     const sheet = registrationsSheet_();
-    const values = sheet.getDataRange().getValues();
-    for (let i = 1; i < values.length; i++) {
-      if (
-        String(values[i][1]) === EVENT_ID &&
-        String(values[i][2]) === code &&
-        String(values[i][3]) === mobile
-      ) {
-        if (String(values[i][7]) === "YES") {
-          const registration = rowToRegistration_(values[i]);
-          invalidateLookupCaches_(mobile, code);
-          cacheRegistration_(registration);
-          return { success: true, alreadyIssued: true };
-        }
-        const timestamp = new Date();
-        sheet.getRange(i + 1, 8, 1, 3).setValues([
-          ["YES", timestamp, "COORDINATOR"],
-        ]);
-        const updatedRegistration = rowToRegistration_(
-          sheet.getRange(i + 1, 1, 1, 10).getValues()[0],
-        );
-        invalidateLookupCaches_(mobile, code);
-        cacheRegistration_(updatedRegistration);
-        audit_("TOKENS_ISSUED", code, mobile, Number(values[i][6]), "COORDINATOR");
-        return { success: true, alreadyIssued: false };
-      }
+    const match = findRowByColumnValue_(sheet, 3, code);
+    if (!match) throw new Error("Application not found.");
+
+    rowNumber = match.getRow();
+    const row = sheet.getRange(rowNumber, 1, 1, 10).getValues()[0];
+    if (
+      String(row[1]) !== EVENT_ID ||
+      String(row[2]) !== code ||
+      String(row[3]) !== mobile
+    ) {
+      throw new Error("Application details do not match.");
     }
-    throw new Error("Application not found.");
+
+    coupons = Number(row[6]);
+    if (String(row[7]) === "YES") {
+      alreadyIssued = true;
+      registration = rowToRegistration_(row);
+    } else {
+      row[7] = "YES";
+      row[8] = new Date();
+      row[9] = "COORDINATOR";
+      sheet.getRange(rowNumber, 8, 1, 3).setValues([
+        [row[7], row[8], row[9]],
+      ]);
+      registration = rowToRegistration_(row);
+    }
+
+    SpreadsheetApp.flush();
   } finally {
     lock.releaseLock();
   }
+
+  invalidateLookupCaches_(mobile, code);
+  cacheRegistration_(registration, rowNumber);
+
+  if (!alreadyIssued) {
+    audit_("TOKENS_ISSUED", code, mobile, coupons, "COORDINATOR");
+  }
+
+  return { success: true, alreadyIssued };
 }
 
 function registrationsSheet_() {
@@ -570,4 +606,8 @@ function getKshamawaniHealth() {
   };
   console.log(JSON.stringify(result));
   return result;
+}
+
+function rebuildKshamawaniLookupIndexes() {
+  return buildLookupIndexes_();
 }
