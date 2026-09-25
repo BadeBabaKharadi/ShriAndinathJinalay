@@ -15,8 +15,5 @@ test("normalizes coordinator mobile numbers", () => {
 });
 
 test("groups registration timestamps by Pune calendar date", () => {
-  assert.equal(
-    dateKey(new Date("2026-09-24T19:00:00.000Z")),
-    "2026-09-25",
-  );
+  assert.equal(dateKey(new Date("2026-09-24T19:00:00.000Z")), "2026-09-25");
 });
