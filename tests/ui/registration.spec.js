@@ -25,7 +25,6 @@ async function mockRegistrationClosed(page) {
   });
 }
 
-
 async function mockFirebaseFunction(page, functionName, result) {
   await page.route(
     `https://asia-south1-jain-community-platform.cloudfunctions.net/${functionName}`,
