@@ -54,7 +54,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (!response.ok || payload.error) {
-      const code = String(payload.error?.status || "").toLowerCase();
+      const code = String(payload.error?.status || "")
+        .toLowerCase()
+        .replaceAll("_", "-");
       if (code === "permission-denied") {
         sessionStorage.removeItem(ACCESS_STORAGE_KEY);
         accessKey = "";
