@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
       );
     } catch {
-      throw new Error("Firebase सेवा से संपर्क नहीं हो सका।");
+      throw new Error("सेवा से संपर्क नहीं हो सका।");
     }
 
     const payload = await response.json();

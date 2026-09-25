@@ -15,6 +15,7 @@ const {
   findRegistrationByMobile,
   getAdminStats,
   issueTokens,
+  verifyAccess,
 } = require("./admin");
 
 initializeApp();
@@ -104,6 +105,21 @@ exports.kshamawaniUpdate = onCall(callableOptions(), async (request) => {
     return mapError(error);
   }
 });
+
+exports.kshamawaniVerifyAccess = onCall(
+  protectedCallableOptions(),
+  async (request) => {
+    try {
+      const data = request.data || {};
+      return await verifyAccess({
+        accessKey: data.accessKey,
+        expectedKey: ADMIN_ACCESS_KEY.value(),
+      });
+    } catch (error) {
+      return mapError(error);
+    }
+  },
+);
 
 exports.kshamawaniCoordinatorLookup = onCall(
   protectedCallableOptions(),

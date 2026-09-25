@@ -47,6 +47,11 @@ function serializeRegistration(data) {
   };
 }
 
+function verifyAccess({ accessKey, expectedKey }) {
+  assertAdminKey(accessKey, expectedKey);
+  return { verified: true };
+}
+
 async function coordinatorLookup({ db, applicationCode, mobile, expectedKey }) {
   assertAdminKey(applicationCode?.accessKey || mobile?.accessKey, expectedKey);
   const code = String(applicationCode?.value || "").trim();
@@ -271,6 +276,7 @@ async function deleteRegistration({
 module.exports = {
   assertAdminKey,
   coordinatorLookup,
+  verifyAccess,
   dateKey,
   deleteRegistration,
   findRegistrationByMobile,

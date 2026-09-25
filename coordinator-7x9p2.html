@@ -13,11 +13,12 @@
 <body>
 <main class="coordinator-shell">
   <div class="coordinator-card">
+    <div id="access-verified" class="access-verified hidden" aria-label="सत्यापित" title="सुरक्षा कुंजी सत्यापित">✓</div>
     <div class="event-eyebrow">आंतरिक उपयोग</div>
     <h1>क्षमावाणी २०२६ — समन्वय कक्ष</h1>
     <p>QR स्कैन करके आवेदन सत्यापित करें और भौतिक कूपन जारी होने की एंट्री करें।</p>
 
-    <section class="access-panel">
+    <section id="access-panel" class="access-panel">
       <label for="access-key">सुरक्षा कुंजी</label>
       <div class="access-row">
         <input id="access-key" type="password" autocomplete="off" placeholder="सुरक्षा कुंजी दर्ज करें">
@@ -42,6 +43,6 @@
   </div>
 </main>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script src="js/coordinator.js?v=20260925-3"></script>
+<script src="js/coordinator.js?v=20260925-4"></script>
 </body>
 </html>
