@@ -127,12 +127,6 @@ function updateRegistration_(data) {
   );
 
   const sheet = registrationsSheet_();
-  const matchBeforeLock = findRowByColumnValue_(sheet, 4, mobile);
-  if (!matchBeforeLock) {
-    // The row may be created concurrently; the locked path rechecks before
-    // allocating a new application code.
-  }
-
   const lock = acquireKshamawaniLock_("updateRegistration");
   let registration;
   let applicationCode;
