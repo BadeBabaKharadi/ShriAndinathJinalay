@@ -10,7 +10,8 @@
     "apiUrl": "https://script.google.com/macros/s/AKfycbz-8vm_xzC6CST-alG5iQW_Vu6G-k0_3MOqS0gc2WYTw1LbXKK3DBXZIV1UgANUwStojA/exec",
     "deadline": "2026-09-27",
     "opensAt": "2026-09-25T16:00:00+05:30",
-    "maxCoupons": 6
+    "maxCoupons": 6,
+    "firebaseFunctionsBaseUrl": "https://asia-south1-jain-community-platform.cloudfunctions.net"
   },
   "messages": {
     "intro": "क्षमावाणी २०२६ के अवसर पर भोजन व्यवस्था के लिए आपकी उपस्थिति जानने हेतु यह पंजीकरण है।",

@@ -159,72 +159,55 @@ document.addEventListener("DOMContentLoaded", async () => {
     lookupMobile.focus();
   };
 
+  const callFirebase = async (functionName, data) => {
+    const url =
+      `${config.registration.firebaseFunctionsBaseUrl}/${functionName}`;
+    let response;
+
+    try {
+      response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=UTF-8",
+        },
+        body: JSON.stringify({ data }),
+      });
+    } catch {
+      throw new Error("पंजीकरण सेवा से संपर्क नहीं हो सका।");
+    }
+
+    let payload;
+    try {
+      payload = await response.json();
+    } catch {
+      throw new Error("पंजीकरण सेवा से सही प्रतिक्रिया नहीं मिली।");
+    }
+
+    if (!response.ok || payload.error) {
+      const code = payload.error?.status || "";
+      const serverMessage = payload.error?.message || "";
+
+      if (code === "already-exists") {
+        throw new Error(
+          "यह मोबाइल नंबर अभी-अभी पंजीकृत हुआ है। कृपया पंजीकरण जाँचें।",
+        );
+      }
+      if (code === "failed-precondition") {
+        throw new Error(serverMessage || "पंजीकरण इस समय उपलब्ध नहीं है।");
+      }
+      if (code === "not-found") {
+        throw new Error("पंजीकरण नहीं मिला।");
+      }
+      throw new Error(serverMessage || "पंजीकरण सेवा उपलब्ध नहीं है।");
+    }
+
+    return payload.result;
+  };
+
   const lookup = (mobile) =>
-    new Promise((resolve, reject) => {
-      const callbackName =
-        "kwLookup_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-      const script = document.createElement("script");
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(new Error("सर्वर से प्रतिक्रिया नहीं मिली।"));
-      }, 15000);
-
-      function cleanup() {
-        clearTimeout(timeout);
-        delete window[callbackName];
-        script.remove();
-      }
-
-      window[callbackName] = (result) => {
-        cleanup();
-        resolve(result);
-      };
-      script.onerror = () => {
-        cleanup();
-        reject(new Error("पंजीकरण सेवा से संपर्क नहीं हो सका।"));
-      };
-      script.src =
-        `${config.registration.apiUrl}?api=lookupRegistration&eventId=${encodeURIComponent(config.id)}&mobile=${encodeURIComponent(mobile)}&callback=${callbackName}`;
-      document.body.appendChild(script);
-    });
-
-  const post = (action, data) =>
-    new Promise((resolve, reject) => {
-      const iframeName = "kwSubmit_" + Date.now();
-      const iframe = document.createElement("iframe");
-      iframe.name = iframeName;
-      iframe.hidden = true;
-      document.body.appendChild(iframe);
-
-      const node = document.createElement("form");
-      node.method = "POST";
-      node.action = config.registration.apiUrl;
-      node.target = iframeName;
-      node.hidden = true;
-
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "payload";
-      input.value = JSON.stringify({ action, data });
-      node.appendChild(input);
-      document.body.appendChild(node);
-
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(new Error("सर्वर से प्रतिक्रिया मिलने में अधिक समय लग रहा है।"));
-      }, 20000);
-
-      function cleanup() {
-        clearTimeout(timeout);
-        node.remove();
-        iframe.remove();
-      }
-
-      iframe.onload = () => {
-        cleanup();
-        resolve({ success: true });
-      };
-      node.submit();
+    callFirebase("kshamawaniLookup", {
+      eventId: config.id,
+      mobile,
     });
 
   try {
@@ -259,11 +242,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const response = await lookup(mobile);
-      if (!response?.success) {
-        throw new Error(response?.error || "पंजीकरण की जाँच नहीं हो सकी।");
-      }
-
-      if (response.exists) {
+      if (response?.exists) {
         existingRegistration = response.registration;
         showSuccess(response.registration, "existing");
       } else {
@@ -319,8 +298,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const action = existingRegistration
-        ? "updateRegistration"
-        : "createRegistration";
+        ? "kshamawaniUpdate"
+        : "kshamawaniCreate";
       const payload = {
         ...data,
         eventId: config.id,
@@ -334,15 +313,12 @@ document.addEventListener("DOMContentLoaded", async () => {
           existingRegistration.applicationCode;
       }
 
-      await post(action, payload);
-
-      const saved = await lookup(data.mobile);
-      if (!saved?.success || !saved.exists) {
-        throw new Error("पंजीकरण सुरक्षित होने की पुष्टि नहीं हो सकी।");
-      }
-
+      const saved = await callFirebase(action, payload);
       existingRegistration = saved.registration;
-      showSuccess(saved.registration, action === "updateRegistration" ? "updated" : "created");
+      showSuccess(
+        saved.registration,
+        action === "kshamawaniUpdate" ? "updated" : "created",
+      );
     } catch (saveError) {
       showMessage(
         message,

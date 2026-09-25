@@ -13,6 +13,19 @@ async function mockRegistrationOpen(page) {
   });
 }
 
+async function mockFirebaseFunction(page, functionName, result) {
+  await page.route(
+    `https://asia-south1-jain-community-platform.cloudfunctions.net/${functionName}`,
+    async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ result }),
+      });
+    },
+  );
+}
+
 test.describe("Kshamawani registration page", () => {
   test("starts with mobile lookup and hides registration details", async ({
     page,
@@ -56,28 +69,15 @@ test.describe("Kshamawani registration page", () => {
   test("shows that an existing mobile number is already registered", async ({
     page,
   }) => {
-    await page.route("**/exec?api=lookupRegistration*", async (route) => {
-      const callbackMatch = route
-        .request()
-        .url()
-        .match(/[?&]callback=([^&]+)/);
-      const callback = callbackMatch
-        ? decodeURIComponent(callbackMatch[1])
-        : "";
-      await route.fulfill({
-        contentType: "application/javascript",
-        body: `${callback}(${JSON.stringify({
-          success: true,
-          exists: true,
-          registration: {
-            registrationId: "KW26-TEST01",
-            applicationCode: "KW26-TEST01",
-            mobile: "9860699870",
-            name: "Arpit Jain",
-            coupons: 4,
-          },
-        })})`,
-      });
+    await mockFirebaseFunction(page, "kshamawaniLookup", {
+      exists: true,
+      registration: {
+        registrationId: "KW26-TEST01",
+        applicationCode: "KW26-TEST01",
+        mobile: "9860699870",
+        name: "Arpit Jain",
+        coupons: 4,
+      },
     });
 
     await mockRegistrationOpen(page);
@@ -92,5 +92,47 @@ test.describe("Kshamawani registration page", () => {
       "Arpit Jain के लिए 4 भोजन कूपन पहले से दर्ज हैं।",
     );
     await expect(page.locator("#edit-button")).toBeVisible();
+  });
+
+  test("creates a new registration from the form without a follow-up lookup", async ({
+    page,
+  }) => {
+    let lookupCalls = 0;
+    await page.route(
+      "https://asia-south1-jain-community-platform.cloudfunctions.net/kshamawaniLookup",
+      async (route) => {
+        lookupCalls += 1;
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ result: { exists: false } }),
+        });
+      },
+    );
+    await mockFirebaseFunction(page, "kshamawaniCreate", {
+      registrationId: "KW26-0011",
+      applicationCode: "KW26-0011",
+      registration: {
+        registrationId: "KW26-0011",
+        applicationCode: "KW26-0011",
+        mobile: "8511278527",
+        name: "Pratik Jain",
+        coupons: 4,
+        tokensIssued: false,
+      },
+    });
+
+    await mockRegistrationOpen(page);
+    await page.goto("/registration.html");
+    await page.locator("#lookup-mobile").fill("8511278527");
+    await page.locator("#lookup-button").click();
+    await page.locator("#name").fill("Pratik Jain");
+    await page.locator("#address").fill("C 403 Dreams Veeroday");
+    await page.locator("#coupons").fill("4");
+    await page.locator("#submit-button").click();
+
+    await expect(page.locator("#success-title")).toHaveText("पंजीकरण सफल रहा");
+    await expect(page.locator("#application-code")).toHaveText("KW26-0011");
+    expect(lookupCalls).toBe(1);
   });
 });
