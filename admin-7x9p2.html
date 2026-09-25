@@ -10,17 +10,22 @@
 <body>
 <main class="admin-shell">
   <section class="admin-card">
+    <div id="access-verified" class="access-verified hidden" aria-label="सत्यापित" title="सुरक्षा कुंजी सत्यापित">✓</div>
     <div class="event-eyebrow">आंतरिक उपयोग</div>
     <h1>क्षमावाणी २०२६ — संचालन डैशबोर्ड</h1>
     <p class="muted">यह पृष्ठ केवल अधिकृत संचालन उपयोग के लिए है।</p>
 
-    <section class="admin-access">
+    <section id="access-panel" class="admin-access">
       <label for="admin-key">सुरक्षा कुंजी</label>
       <div class="access-row"><input id="admin-key" type="password" autocomplete="off" placeholder="सुरक्षा कुंजी"><button id="unlock" class="button primary" type="button">सक्रिय करें</button></div>
       <p id="admin-message" class="form-message hidden" role="alert"></p>
     </section>
 
     <section id="dashboard" class="hidden">
+      <div class="admin-toolbar">
+        <span>आँकड़े</span>
+        <button id="refresh" class="refresh-button" type="button" aria-label="आँकड़े ताज़ा करें" title="आँकड़े ताज़ा करें">↻</button>
+      </div>
       <div class="stats-grid">
         <article class="stat"><span>कुल पंजीकरण</span><strong id="registrations">—</strong></article>
         <article class="stat"><span>कुल बुक कूपन</span><strong id="booked">—</strong></article>
@@ -30,9 +35,20 @@
         <article class="stat"><span>जारी हुए पंजीकरण</span><strong id="issuedRegistrations">—</strong></article>
       </div>
 
-      <section class="admin-section">
-        <h2>दिनवार बुकिंग</h2>
-        <div class="table-wrap"><table><thead><tr><th>तारीख</th><th>पंजीकरण</th><th>कूपन</th><th>जारी कूपन</th></tr></thead><tbody id="date-rows"></tbody></table></div>
+      <section class="admin-section trend-section">
+        <div class="section-heading">
+          <div>
+            <h2>बुकिंग ट्रेंड</h2>
+            <p class="muted">समय के अनुसार पंजीकरण की संख्या</p>
+          </div>
+          <div class="trend-controls" role="group" aria-label="बुकिंग ट्रेंड अवधि">
+            <button class="trend-control active" type="button" data-trend="daily">दैनिक</button>
+            <button class="trend-control" type="button" data-trend="hourly">प्रति घंटा</button>
+            <button class="trend-control" type="button" data-trend="twoHourly">2 घंटे</button>
+          </div>
+        </div>
+        <div id="trend-chart" class="trend-chart" role="img" aria-label="बुकिंग ट्रेंड ग्राफ"></div>
+        <p id="trend-empty" class="muted trend-empty hidden">अभी कोई बुकिंग उपलब्ध नहीं है।</p>
       </section>
 
       <section class="admin-section">
@@ -51,11 +67,9 @@
         <p class="muted">सिर्फ उन पंजीकरणों को हटाया जा सकता है जिनके भौतिक कूपन अभी जारी नहीं हुए हैं।</p>
         <button id="delete" class="button danger" type="button" disabled>खोजे गए पंजीकरण को हटाएँ</button>
       </section>
-
-      <button id="refresh" class="button secondary refresh" type="button">↻ आँकड़े ताज़ा करें</button>
     </section>
   </section>
 </main>
-<script src="js/admin-7x9p2.js?v=20260925-1"></script>
+<script src="js/admin-7x9p2.js?v=20260925-3"></script>
 </body>
 </html>
