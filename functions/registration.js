@@ -108,11 +108,17 @@ function mobileRef(db, eventId, mobile) {
     .doc(mobileIndexId(eventId, mobile));
 }
 
-async function lookupRegistration({ db, eventId, mobile }) {
+async function lookupRegistration({ db, eventId, mobile, now = new Date() }) {
   const normalized = normalizeMobile(mobile);
   if (eventId !== EVENT_ID || !/^[6-9]\d{9}$/.test(normalized)) {
     throw new Error("Invalid mobile number.");
   }
+
+  const eventSnapshot = await eventRef(db, eventId).get();
+  if (!eventSnapshot.exists) {
+    throw new Error("Registration event is not configured.");
+  }
+  assertEventOpen(eventSnapshot.data(), now);
 
   const indexSnapshot = await mobileRef(db, eventId, normalized).get();
   if (!indexSnapshot.exists) return { exists: false };
@@ -208,9 +214,17 @@ async function updateRegistration({ db, data, now = new Date() }) {
   let updated;
 
   await db.runTransaction(async (transaction) => {
+    const eventSnapshot = await transaction.get(
+      eventRef(db, input.eventId),
+    );
     const indexSnapshot = await transaction.get(
       mobileRef(db, input.eventId, input.mobile),
     );
+
+    if (!eventSnapshot.exists) {
+      throw new Error("Registration event is not configured.");
+    }
+    assertEventOpen(eventSnapshot.data(), now);
 
     if (!indexSnapshot.exists) throw new Error("Registration not found.");
 
