@@ -1,0 +1,12 @@
+{
+  "name": "kshamawani-firestore-migration",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "migrate": "node migrate-kshamawani-to-firestore.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.4.0",
+    "xlsx": "^0.18.5"
+  }
+}
