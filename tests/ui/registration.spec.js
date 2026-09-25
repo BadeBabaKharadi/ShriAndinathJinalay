@@ -1,20 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 async function mockRegistrationOpen(page) {
-  await page.addInitScript(() => {
-    const fixedNow = new Date("2026-09-25T16:01:00+05:30").getTime();
-    const OriginalDate = Date;
-    class MockDate extends OriginalDate {
-      constructor(...args) {
-        super(...(args.length ? args : [fixedNow]));
-      }
-
-      static now() {
-        return fixedNow;
-      }
-    }
-    Object.setPrototypeOf(MockDate, OriginalDate);
-    window.Date = MockDate;
+  await page.route("**/data/kshamawani-2026.json", async (route) => {
+    const response = await route.fetch();
+    const config = await response.json();
+    config.registration.opensAt = "2026-09-25T15:59:00+05:30";
+    await route.fulfill({
+      response,
+      json: config,
+    });
   });
 }
 
