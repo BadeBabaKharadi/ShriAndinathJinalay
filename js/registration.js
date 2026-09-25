@@ -13,7 +13,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const intro = document.getElementById("intro");
   const instruction = document.getElementById("venue-instruction");
   const editButton = document.getElementById("edit-button");
-  const openingOverlay = document.getElementById("registration-opening-overlay");
+  const openingOverlay = document.getElementById(
+    "registration-opening-overlay",
+  );
   const openingClose = document.getElementById("registration-opening-close");
   let config;
   let existingRegistration = null;
@@ -32,7 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const setRegistrationAvailability = () => {
     const opensAt = new Date(config.registration.opensAt);
-    const isOpen = !Number.isNaN(opensAt.getTime()) && Date.now() >= opensAt.getTime();
+    const isOpen =
+      !Number.isNaN(opensAt.getTime()) && Date.now() >= opensAt.getTime();
 
     openingOverlay.classList.toggle("hidden", isOpen);
     lookupMobile.disabled = !isOpen;
