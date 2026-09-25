@@ -132,6 +132,7 @@ exports.kshamawaniIssue = onCall(
         db: getFirestore(),
         applicationCode: data.applicationCode,
         accessKey: data.accessKey,
+        expectedKey: ADMIN_ACCESS_KEY.value(),
         issuedBy: data.issuedBy || "COORDINATOR",
       });
     } catch (error) {
@@ -149,6 +150,7 @@ exports.kshamawaniAdminStats = onCall(
         db: getFirestore(),
         eventId: data.eventId,
         accessKey: data.accessKey,
+        expectedKey: ADMIN_ACCESS_KEY.value(),
       });
     } catch (error) {
       return mapError(error);
@@ -165,6 +167,7 @@ exports.kshamawaniAdminLookup = onCall(
         db: getFirestore(),
         mobile: data.mobile,
         accessKey: data.accessKey,
+        expectedKey: ADMIN_ACCESS_KEY.value(),
       });
     } catch (error) {
       return mapError(error);
@@ -181,6 +184,7 @@ exports.kshamawaniAdminDelete = onCall(
         db: getFirestore(),
         registrationId: data.registrationId,
         accessKey: data.accessKey,
+        expectedKey: ADMIN_ACCESS_KEY.value(),
       });
     } catch (error) {
       return mapError(error);
