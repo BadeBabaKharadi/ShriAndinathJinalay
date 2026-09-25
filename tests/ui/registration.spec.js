@@ -6,8 +6,10 @@ async function mockRegistrationOpen(page) {
     const config = await response.json();
     config.registration.opensAt = "2026-09-25T15:59:00+05:30";
     await route.fulfill({
-      response,
-      json: config,
+      status: response.status(),
+      headers: response.headers(),
+      contentType: "application/json",
+      body: JSON.stringify(config),
     });
   });
 }
