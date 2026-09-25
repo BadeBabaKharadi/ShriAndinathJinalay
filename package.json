@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "preview": "vite preview --host 127.0.0.1",
-    "format:check": "prettier --check package.json CONTRIBUTING.md eslint.config.mjs playwright.config.js vitest.config.js firebase.json .firebaserc firestore.indexes.json 'functions/**/*.js' 'functions/package.json' 'migration/**/*.mjs' 'migration/package.json' 'scripts/**/*.mjs' 'tests/**/*.js'",
+    "format:check": "prettier --check package.json CONTRIBUTING.md eslint.config.mjs playwright.config.js vitest.config.js firebase.json firestore.indexes.json 'functions/**/*.js' 'functions/package.json' 'migration/**/*.mjs' 'migration/package.json' 'scripts/**/*.mjs' 'tests/**/*.js'",
     "lint": "eslint functions scripts tests",
     "test:unit": "vitest run",
     "test:functions": "node --test functions/test/*.test.js",
