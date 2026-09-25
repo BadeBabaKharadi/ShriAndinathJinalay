@@ -21,6 +21,7 @@ setGlobalOptions({
 const ALLOWED_ORIGINS = [
   "https://badebabakharadi.com",
   "https://www.badebabakharadi.com",
+  "https://badebabakharadi.github.io",
 ];
 
 function callableOptions() {
