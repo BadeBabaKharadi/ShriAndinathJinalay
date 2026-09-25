@@ -4,7 +4,7 @@ async function mockRegistrationOpen(page) {
   await page.route("**/data/kshamawani-2026.json", async (route) => {
     const response = await route.fetch();
     const config = await response.json();
-    config.registration.opensAt = "2026-09-25T15:59:00+05:30";
+    config.registration.opensAt = "2026-09-25T00:00:00+05:30";
     await route.fulfill({
       status: response.status(),
       contentType: "application/json",
