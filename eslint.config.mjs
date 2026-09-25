@@ -6,14 +6,22 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ["scripts/**/*.mjs", "tests/**/*.js"],
+    files: ["functions/**/*.js", "scripts/**/*.mjs", "tests/**/*.js"],
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "module",
+      sourceType: "commonjs",
       globals: {
         console: "readonly",
+        module: "readonly",
         process: "readonly",
+        require: "readonly",
       },
+    },
+  },
+  {
+    files: ["scripts/**/*.mjs", "tests/**/*.js"],
+    languageOptions: {
+      sourceType: "module",
     },
   },
 ];
