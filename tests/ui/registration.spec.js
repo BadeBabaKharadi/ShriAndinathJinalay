@@ -7,7 +7,6 @@ async function mockRegistrationOpen(page) {
     config.registration.opensAt = "2026-09-25T15:59:00+05:30";
     await route.fulfill({
       status: response.status(),
-      headers: response.headers(),
       contentType: "application/json",
       body: JSON.stringify(config),
     });
