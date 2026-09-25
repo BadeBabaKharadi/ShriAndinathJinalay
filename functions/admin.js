@@ -47,16 +47,8 @@ function serializeRegistration(data) {
   };
 }
 
-async function coordinatorLookup({
-  db,
-  applicationCode,
-  mobile,
-  expectedKey,
-}) {
-  assertAdminKey(
-    applicationCode?.accessKey || mobile?.accessKey,
-    expectedKey,
-  );
+async function coordinatorLookup({ db, applicationCode, mobile, expectedKey }) {
+  assertAdminKey(applicationCode?.accessKey || mobile?.accessKey, expectedKey);
   const code = String(applicationCode?.value || "").trim();
   const normalizedMobile = normalizeMobile(mobile?.value);
 
@@ -257,9 +249,7 @@ async function deleteRegistration({
         .digest("hex");
 
     transaction.delete(registrationRef);
-    transaction.delete(
-      db.collection("registrationMobileIndex").doc(indexId),
-    );
+    transaction.delete(db.collection("registrationMobileIndex").doc(indexId));
     transaction.create(db.collection("adminDeletionAudit").doc(), {
       eventId: "kshamawani-2026",
       applicationCode: code,
