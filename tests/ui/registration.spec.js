@@ -26,45 +26,30 @@ async function mockRegistrationClosed(page) {
 }
 
 async function mockFirebaseSdk(page) {
-  await page.route(
-    "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js",
-    async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/javascript",
-        body: "export function initializeApp(config) { return { config }; }",
-      });
+  await page.route("**/js/firebase-client.js", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/javascript",
+      body: `export function createFirebaseFunctionsClient() {
+  return {};
+}
+export async function callFirebaseFunction(functions, functionName, data) {
+  const response = await fetch(
+    \`https://asia-south1-jain-community-platform.cloudfunctions.net/\${functionName}\`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data }),
     },
   );
-  await page.route(
-    "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js",
-    async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/javascript",
-        body: `export function getFunctions() { return {}; }
-export function httpsCallable(functions, name) {
-  return async (data) => {
-    const response = await fetch(
-      \`https://asia-south1-jain-community-platform.cloudfunctions.net/\${name}\`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data }),
-      },
-    );
-    const payload = await response.json();
-    if (payload.error) {
-      const error = new Error(payload.error.message || "Callable failed");
-      error.code = \`functions/\${String(payload.error.status || "").toLowerCase()}\`;
-      throw error;
-    }
-    return { data: payload.result };
-  };
+  const payload = await response.json();
+  if (payload.error) {
+    throw new Error(payload.error.message || "Callable failed");
+  }
+  return { data: payload.result };
 }`,
-      });
-    },
-  );
+    });
+  });
 }
 
 async function mockFirebaseFunction(page, functionName, result) {
@@ -106,7 +91,6 @@ test.describe("Kshamawani registration page", () => {
     page,
   }) => {
     await mockFirebaseSdk(page);
-    await mockFirebaseSdk(page);
     await mockRegistrationOpen(page);
     await page.goto("/registration.html");
 
@@ -118,6 +102,7 @@ test.describe("Kshamawani registration page", () => {
   });
 
   test("validates the mobile number before lookup", async ({ page }) => {
+    await mockFirebaseSdk(page);
     await mockRegistrationOpen(page);
     await page.goto("/registration.html");
 
