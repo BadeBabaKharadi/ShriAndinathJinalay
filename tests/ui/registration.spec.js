@@ -1,32 +1,31 @@
 import { expect, test } from "@playwright/test";
 
-async function mockRegistrationOpen(page) {
-  await page.route("**/data/kshamawani-2026.json", async (route) => {
-    const response = await route.fetch();
-    const config = await response.json();
-    config.registration.opensAt = "2026-09-25T00:00:00+05:30";
-    await route.fulfill({
-      status: response.status(),
-      contentType: "application/json",
-      body: JSON.stringify(config),
-    });
-  });
+async function mockRegistrationConfig(page, opensAt) {
+  await page.route(
+    "http://127.0.0.1:4173/data/kshamawani-2026.json",
+    async (route) => {
+      const response = await route.fetch();
+      const config = await response.json();
+      config.registration.opensAt = opensAt;
+      await route.fulfill({
+        status: response.status(),
+        contentType: "application/json",
+        body: JSON.stringify(config),
+      });
+    },
+  );
 }
+
+async function mockRegistrationOpen(page) {
+  await mockRegistrationConfig(page, "2026-09-25T00:00:00+05:30");
+}
+
 async function mockRegistrationClosed(page) {
-  await page.route("**/data/kshamawani-2026.json", async (route) => {
-    const response = await route.fetch();
-    const config = await response.json();
-    config.registration.opensAt = "2099-09-25T16:30:00+05:30";
-    await route.fulfill({
-      status: response.status(),
-      contentType: "application/json",
-      body: JSON.stringify(config),
-    });
-  });
+  await mockRegistrationConfig(page, "2099-09-25T16:30:00+05:30");
 }
 
 async function mockFirebaseSdk(page) {
-  await page.route("**/js/firebase-client.js", async (route) => {
+  await page.route("http://127.0.0.1:4173/js/firebase-client.js", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/javascript",
