@@ -77,6 +77,16 @@ describe("Kshamawani Firebase registration", () => {
     expect(client).not.toContain("iframe");
   });
 
+  it("keeps coordinator and admin operations protected", async () => {
+    const admin = await readFileText("functions/admin.js");
+
+    expect(admin).toContain("assertAdminKey");
+    expect(admin).toContain("Issued-token registrations cannot be deleted.");
+    expect(admin).toContain("totalPhysicalCouponsIssued");
+    expect(admin).toContain("byDate");
+    expect(admin).toContain("byCouponCount");
+  });
+
   it("keeps the Firebase mobile index opaque", async () => {
     const functions = await readFileText("functions/registration.js");
 
