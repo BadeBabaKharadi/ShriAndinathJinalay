@@ -12,6 +12,19 @@ async function mockRegistrationOpen(page) {
     });
   });
 }
+async function mockRegistrationClosed(page) {
+  await page.route("**/data/kshamawani-2026.json", async (route) => {
+    const response = await route.fetch();
+    const config = await response.json();
+    config.registration.opensAt = "2099-09-25T16:30:00+05:30";
+    await route.fulfill({
+      status: response.status(),
+      contentType: "application/json",
+      body: JSON.stringify(config),
+    });
+  });
+}
+
 
 async function mockFirebaseFunction(page, functionName, result) {
   await page.route(
@@ -30,6 +43,7 @@ test.describe("Kshamawani registration page", () => {
   test("starts with mobile lookup and hides registration details", async ({
     page,
   }) => {
+    await mockRegistrationClosed(page);
     await page.goto("/registration.html");
 
     await expect(page.locator("#registration-opening-overlay")).toBeVisible();
