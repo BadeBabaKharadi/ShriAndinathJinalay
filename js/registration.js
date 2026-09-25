@@ -33,7 +33,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
   const openingClose = document.getElementById("registration-opening-close");
   let config;
-  let existingRegistration = null;\n  let functions;
+  let existingRegistration = null;
+  let functions;
 
   const cleanMobile = (value) => String(value || "").replace(/\D/g, "");
 
