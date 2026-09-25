@@ -52,7 +52,7 @@ function createRegistration_(data) {
   assert_(String(data.address || "").trim(), "Address is required.");
   const coupons = Number(data.coupons);
   assert_(
-    Number.isInteger(coupons) && coupons >= 1 && coupons <= 4,
+    Number.isInteger(coupons) && coupons >= 1 && coupons <= 6,
     "Invalid coupon count.",
   );
 
