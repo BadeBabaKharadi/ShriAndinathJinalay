@@ -34,7 +34,7 @@ test.describe("Kshamawani registration page", () => {
 
     await expect(page.locator("#registration-opening-overlay")).toBeVisible();
     await expect(page.locator("#registration-opening-title")).toHaveText(
-      "पंजीकरण शाम ४ बजे खुलेगा",
+      "पंजीकरण शाम ४:३० बजे खुलेगा",
     );
     await expect(page.locator("#lookup-mobile")).toBeDisabled();
     await expect(page.locator("#lookup-button")).toBeVisible();
