@@ -61,9 +61,9 @@ describe("Kshamawani configuration", () => {
     expect(coordinator).toContain("अगला QR कोड स्कैन करें");
     expect(coordinator).toContain("showScanner()");
     expect(coordinator).toContain("startCamera");
-    expect(coordinator).toContain("facingMode: \"environment\"");
+    expect(coordinator).toContain('facingMode: "environment"');
     expect(coordinator).toContain("कैमरा शुरू करें");
-    expect(coordinator).toContain("scannerElement.innerHTML = \"\"");
+    expect(coordinator).toContain('scannerElement.innerHTML = ""');
     expect(coordinator).toContain("result.scrollIntoView");
     expect(backend).toContain(
       "function lookupRegistrationByCode_(eventId, code)",
