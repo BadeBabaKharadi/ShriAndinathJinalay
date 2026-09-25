@@ -35,6 +35,7 @@ describe("Kshamawani Firebase registration", () => {
     const functions = await readFileText("functions/index.js");
 
     expect(page).toContain("coordinator.js");
+    expect(script).toContain("kshamawaniVerifyAccess");
     expect(script).toContain("kshamawaniCoordinatorLookup");
     expect(script).toContain("kshamawaniIssue");
     expect(script).toContain("getCameras");
@@ -42,6 +43,7 @@ describe("Kshamawani Firebase registration", () => {
     expect(script).not.toContain("apiUrl");
     expect(functions).toContain("defineSecret");
     expect(functions).toContain("KSHAMAWANI_ADMIN_KEY");
+    expect(functions).toContain("kshamawaniVerifyAccess");
   });
 
   it("adds a protected operations dashboard", async () => {
