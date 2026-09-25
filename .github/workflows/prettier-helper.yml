@@ -1,7 +1,9 @@
 name: Temporary Prettier Fix
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - feat/kshamawani-coordinator-firebase-admin
 
 permissions:
   contents: write
