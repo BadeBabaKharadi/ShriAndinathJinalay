@@ -62,7 +62,6 @@ test.describe("Kshamawani registration page", () => {
     await expect(page.locator("#lookup-button")).toBeEnabled();
   });
 
-
   test("starts with mobile lookup and hides registration details", async ({
     page,
   }) => {
