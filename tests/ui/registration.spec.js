@@ -9,25 +9,7 @@ async function mockRegistrationOpen(page) {
       status: response.status(),
       contentType: "application/json",
       body: JSON.stringify(config),
-      test("supports explicit closed test mode", async ({ page }) => {
-    await page.goto("/registration.html?testMode=closed");
-
-    await expect(page.locator("#registration-opening-overlay")).toBeVisible();
-    await expect(page.locator("#registration-opening-title")).toHaveText(
-      "पंजीकरण शाम ५:३० बजे खुलेगा",
-    );
-    await expect(page.locator("#lookup-mobile")).toBeDisabled();
-  });
-
-  test("supports explicit open test mode", async ({ page }) => {
-    await page.goto("/registration.html?testMode=open");
-
-    await expect(page.locator("#registration-opening-overlay")).toBeHidden();
-    await expect(page.locator("#lookup-mobile")).toBeEnabled();
-    await expect(page.locator("#lookup-button")).toBeEnabled();
-  });
-
-});
+    });
   });
 }
 async function mockRegistrationClosed(page) {
@@ -61,6 +43,25 @@ async function mockFirebaseFunction(page, functionName, result) {
 }
 
 test.describe("Kshamawani registration page", () => {
+  test("supports explicit closed test mode", async ({ page }) => {
+    await page.goto("/registration.html?testMode=closed");
+
+    await expect(page.locator("#registration-opening-overlay")).toBeVisible();
+    await expect(page.locator("#registration-opening-title")).toHaveText(
+      "पंजीकरण शाम ५:३० बजे खुलेगा",
+    );
+    await expect(page.locator("#lookup-mobile")).toBeDisabled();
+  });
+
+  test("supports explicit open test mode", async ({ page }) => {
+    await page.goto("/registration.html?testMode=open");
+
+    await expect(page.locator("#registration-opening-overlay")).toBeHidden();
+    await expect(page.locator("#lookup-mobile")).toBeEnabled();
+    await expect(page.locator("#lookup-button")).toBeEnabled();
+  });
+
+
   test("starts with mobile lookup and hides registration details", async ({
     page,
   }) => {
@@ -170,5 +171,4 @@ test.describe("Kshamawani registration page", () => {
     await expect(page.locator("#application-code")).toHaveText("KW26-0011");
     expect(lookupCalls).toBe(1);
   });
-
 });
