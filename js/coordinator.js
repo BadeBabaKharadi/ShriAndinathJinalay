@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const scannerElement = document.getElementById("scanner");
   let config;
   let scanner = null;
+  let scannerStarting = false;
 
   const setStatus = (text, className = "") => {
     status.textContent = text;
@@ -24,12 +25,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   const hideScanner = async () => {
     if (scanner) {
       try {
-        await scanner.clear();
+        await scanner.stop();
       } catch {
         // The camera may already have stopped after a successful scan.
       }
+      try {
+        await scanner.clear();
+      } catch {
+        // The scanner container may already be empty.
+      }
       scanner = null;
     }
+    scannerStarting = false;
     scannerElement.classList.add("hidden");
     scannerElement.innerHTML = "";
   };
@@ -37,20 +44,56 @@ document.addEventListener("DOMContentLoaded", async () => {
   const showScanner = () => {
     result.classList.add("hidden");
     result.innerHTML = "";
-    scannerElement.innerHTML = "";
+    scannerElement.innerHTML = `
+      <button id="start-camera" class="button primary scanner-start" type="button">
+        📷 कैमरा शुरू करें
+      </button>
+    `;
     scannerElement.classList.remove("hidden");
-    setStatus("स्कैन की प्रतीक्षा है…");
-    scanner = new Html5QrcodeScanner(
-      "scanner",
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        rememberLastUsedCamera: true,
-      },
-      false,
-    );
-    scanner.render((decoded) => verify(decoded), () => {});
+    setStatus("कैमरा शुरू करने के लिए बटन दबाएँ।");
+
+    document.getElementById("start-camera").addEventListener("click", startCamera);
   };
+
+  async function startCamera() {
+    if (scannerStarting || scanner) return;
+    scannerStarting = true;
+    const button = document.getElementById("start-camera");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "कैमरा शुरू हो रहा है…";
+    }
+    setStatus("कैमरा अनुमति की प्रतीक्षा है…");
+
+    try {
+      scanner = new Html5Qrcode("scanner");
+      await scanner.start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1,
+        },
+        (decoded) => verify(decoded),
+        () => {},
+      );
+      setStatus("QR कोड कैमरे के सामने रखें।");
+    } catch (error) {
+      scanner = null;
+      const message =
+        error?.message ||
+        "कैमरा शुरू नहीं हो सका। कृपया ब्राउज़र में कैमरा अनुमति दें।";
+      scannerElement.innerHTML = `
+        <button id="start-camera" class="button primary scanner-start" type="button">
+          📷 कैमरा फिर से शुरू करें
+        </button>
+      `;
+      document.getElementById("start-camera").addEventListener("click", startCamera);
+      setStatus(message, "error");
+    } finally {
+      scannerStarting = false;
+    }
+  }
 
   const render = (registration, issued = false) => {
     result.className = "result" + (issued ? " issued" : "");
@@ -278,7 +321,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (event.key === "Enter") verify(input.value);
   });
 
-  if (window.Html5QrcodeScanner) {
+  if (window.Html5Qrcode) {
     showScanner();
   } else {
     setStatus(
