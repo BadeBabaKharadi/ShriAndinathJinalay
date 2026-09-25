@@ -54,6 +54,14 @@ describe("Kshamawani configuration", () => {
       "function findRowByColumnValue_(sheet, column, value)",
     );
     expect(backend).toContain(".createTextFinder(String(value))");
+    expect(backend).toContain(
+      "function acquireKshamawaniLock_(operation)",
+    );
+    expect(backend).toContain('acquireKshamawaniLock_("createRegistration")');
+    expect(backend).toContain('acquireKshamawaniLock_("updateRegistration")');
+    expect(backend).toContain('acquireKshamawaniLock_("markTokensIssued")');
+    expect(backend).toContain('event: "kshamawani.lock"');
+    expect(backend).toContain("waitMs");
     expect(backend).toContain("lock.waitLock(LOCK_TIMEOUT_MS)");
     expect(backend).toContain("function getKshamawaniHealth()");
     expect(page).toContain(
