@@ -1,19 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-import {
-  getFunctions,
-  httpsCallable,
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
+import { createFirebaseFunctionsClient, callFirebaseFunction } from "./firebase-client.js";
 
 const KSHAMAWANI_CONFIG = "data/kshamawani-2026.json";
-
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyC7JQJ6MmkcKF_ijnIUyahzmKER78FXZFw",
-  appId: "1:817235117988:web:5d879779d999bce98ce331",
-  authDomain: "jain-community-platform.firebaseapp.com",
-  projectId: "jain-community-platform",
-  storageBucket: "jain-community-platform.firebasestorage.app",
-  messagingSenderId: "817235117988",
-};
 
 document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("kshamawani-form");
@@ -34,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const openingClose = document.getElementById("registration-opening-close");
   let config;
   let existingRegistration = null;
-  let functions;
+  let functionsClient;
 
   const cleanMobile = (value) => String(value || "").replace(/\D/g, "");
 
@@ -176,7 +163,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const callFirebase = async (functionName, data) => {
-    if (!functions) {
+    if (!functionsClient) {
       throw new Error("पंजीकरण सेवा अभी तैयार नहीं है।");
     }
 
