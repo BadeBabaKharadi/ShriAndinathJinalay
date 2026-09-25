@@ -44,7 +44,7 @@ describe("Kshamawani Firebase registration", () => {
     expect(client).toContain("kshamawaniLookup");
     expect(client).toContain("kshamawaniCreate");
     expect(client).toContain("kshamawaniUpdate");
-    expect(client).toContain("https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js");
+    expect(client).toContain(\n      "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js",\n    );
     expect(client).toContain("httpsCallable(functions, functionName)");
     expect(client).not.toContain("fetch(url");
     expect(client).not.toContain("api=lookupRegistration");
