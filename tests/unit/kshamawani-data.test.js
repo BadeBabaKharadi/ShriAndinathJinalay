@@ -60,6 +60,7 @@ describe("Kshamawani configuration", () => {
     expect(coordinator).toContain("भौतिक टोकन जारी करें");
     expect(coordinator).toContain("अगला QR कोड स्कैन करें");
     expect(coordinator).toContain("showScanner()");
+    expect(coordinator).toContain("scannerElement.innerHTML = """);
     expect(coordinator).toContain("result.scrollIntoView");
     expect(backend).toContain(
       "function lookupRegistrationByCode_(eventId, code)",
