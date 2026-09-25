@@ -26,11 +26,7 @@ function validateRegistration(data) {
   }
   if (!name) throw new Error("Name is required.");
   if (!address) throw new Error("Address is required.");
-  if (
-    !Number.isInteger(coupons) ||
-    coupons < 1 ||
-    coupons > MAX_COUPONS
-  ) {
+  if (!Number.isInteger(coupons) || coupons < 1 || coupons > MAX_COUPONS) {
     throw new Error("Invalid coupon count.");
   }
 
@@ -124,10 +120,7 @@ async function lookupRegistration({ db, eventId, mobile, now = new Date() }) {
   if (!indexSnapshot.exists) return { exists: false };
 
   const registrationId = indexSnapshot.data().registrationId;
-  const registrationSnapshot = await registrationRef(
-    db,
-    registrationId,
-  ).get();
+  const registrationSnapshot = await registrationRef(db, registrationId).get();
 
   if (!registrationSnapshot.exists) {
     throw new Error("Registration index is inconsistent.");
@@ -146,9 +139,7 @@ async function createRegistration({ db, data, now = new Date() }) {
   let created;
 
   await db.runTransaction(async (transaction) => {
-    const eventSnapshot = await transaction.get(
-      eventRef(db, input.eventId),
-    );
+    const eventSnapshot = await transaction.get(eventRef(db, input.eventId));
     const indexSnapshot = await transaction.get(
       mobileRef(db, input.eventId, input.mobile),
     );
@@ -214,9 +205,7 @@ async function updateRegistration({ db, data, now = new Date() }) {
   let updated;
 
   await db.runTransaction(async (transaction) => {
-    const eventSnapshot = await transaction.get(
-      eventRef(db, input.eventId),
-    );
+    const eventSnapshot = await transaction.get(eventRef(db, input.eventId));
     const indexSnapshot = await transaction.get(
       mobileRef(db, input.eventId, input.mobile),
     );

@@ -124,8 +124,7 @@ function parseRows(workbook) {
     }
     if (codes.has(registration.applicationCode)) {
       throw new Error(
-        "Duplicate application code in source: " +
-          registration.applicationCode,
+        "Duplicate application code in source: " + registration.applicationCode,
       );
     }
     mobiles.add(registration.mobile);
@@ -200,9 +199,7 @@ async function migrate(filePath) {
   let batch = db.batch();
 
   for (const registration of registrations) {
-    const existing = existingRegistrations.get(
-      registration.applicationCode,
-    );
+    const existing = existingRegistrations.get(registration.applicationCode);
     const expected = asFirestoreRegistration(registration);
 
     if (existing?.exists) {
@@ -274,8 +271,7 @@ async function migrate(filePath) {
     eventId: EVENT_ID,
     name: "क्षमावाणी २०२६",
     date: "2026-09-27",
-    venueName:
-      "1008 श्री आदिनाथ दिगंबर जैन मंदिर, ड्रीम्स वीरोदय सोसाइटी",
+    venueName: "1008 श्री आदिनाथ दिगंबर जैन मंदिर, ड्रीम्स वीरोदय सोसाइटी",
     venuePlace: "खराड़ी, पुणे",
     opensAt: Timestamp.fromDate(new Date(EVENT_OPENS_AT)),
     deadline: Timestamp.fromDate(new Date(EVENT_DEADLINE)),
@@ -308,9 +304,7 @@ async function migrate(filePath) {
 
 const filePath = process.argv[2];
 if (!filePath) {
-  throw new Error(
-    "Usage: npm run migrate -- <path-to-Kshamawani.xlsx>",
-  );
+  throw new Error("Usage: npm run migrate -- <path-to-Kshamawani.xlsx>");
 }
 
 initializeApp({ credential: applicationDefault() });

@@ -14,19 +14,11 @@ async function readFileText(relativePath) {
 
 describe("Kshamawani Firebase registration", () => {
   it("configures the existing Firebase project and Mumbai region", async () => {
-    const firebaseConfig = JSON.parse(
-      await readFileText("firebase.json"),
-    );
-    const firebaseProject = JSON.parse(
-      await readFileText(".firebaserc"),
-    );
-    const functions = JSON.parse(
-      await readFileText("functions/package.json"),
-    );
+    const firebaseConfig = JSON.parse(await readFileText("firebase.json"));
+    const firebaseProject = JSON.parse(await readFileText(".firebaserc"));
+    const functions = JSON.parse(await readFileText("functions/package.json"));
 
-    expect(firebaseProject.projects.default).toBe(
-      "jain-community-platform",
-    );
+    expect(firebaseProject.projects.default).toBe("jain-community-platform");
     expect(firebaseConfig.functions.runtime).toBe("nodejs22");
     expect(functions.engines.node).toBe("22");
   });

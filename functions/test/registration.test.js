@@ -30,9 +30,7 @@ class FakeReference {
   }
 
   async get() {
-    return new FakeSnapshot(
-      this.db.data.get(this.collection + "/" + this.id),
-    );
+    return new FakeSnapshot(this.db.data.get(this.collection + "/" + this.id));
   }
 }
 
@@ -172,15 +170,12 @@ test("creates a registration and advances the application counter atomically", a
   });
 
   assert.equal(result.applicationCode, "KW26-0011");
+  assert.equal(db.data.get("events/kshamawani-2026").nextApplicationNumber, 12);
   assert.equal(
-    db.data.get("events/kshamawani-2026").nextApplicationNumber,
-    12,
-  );
-  assert.equal(
-    db.data.get("registrationMobileIndex/" + mobileIndexId(
-      "kshamawani-2026",
-      "8511278527",
-    )).registrationId,
+    db.data.get(
+      "registrationMobileIndex/" +
+        mobileIndexId("kshamawani-2026", "8511278527"),
+    ).registrationId,
     "KW26-0011",
   );
 });

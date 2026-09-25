@@ -131,9 +131,7 @@ test.describe("Kshamawani registration page", () => {
     await page.locator("#coupons").fill("4");
     await page.locator("#submit-button").click();
 
-    await expect(page.locator("#success-title")).toHaveText(
-      "पंजीकरण सफल रहा",
-    );
+    await expect(page.locator("#success-title")).toHaveText("पंजीकरण सफल रहा");
     await expect(page.locator("#application-code")).toHaveText("KW26-0011");
     expect(lookupCalls).toBe(1);
   });
