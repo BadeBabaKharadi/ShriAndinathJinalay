@@ -112,8 +112,14 @@ exports.kshamawaniCoordinatorLookup = onCall(
       const data = request.data || {};
       return await coordinatorLookup({
         db: getFirestore(),
-        applicationCode: { value: data.applicationCode, accessKey: data.accessKey },
-        mobile: { value: data.mobile, accessKey: data.accessKey },
+        applicationCode: {
+          value: data.applicationCode,
+          accessKey: data.accessKey,
+        },
+        mobile: {
+          value: data.mobile,
+          accessKey: data.accessKey,
+        },
         accessKey: data.accessKey,
         expectedKey: ADMIN_ACCESS_KEY.value(),
       });
