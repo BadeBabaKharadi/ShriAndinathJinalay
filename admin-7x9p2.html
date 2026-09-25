@@ -35,9 +35,20 @@
         <article class="stat"><span>जारी हुए पंजीकरण</span><strong id="issuedRegistrations">—</strong></article>
       </div>
 
-      <section class="admin-section">
-        <h2>दिनवार बुकिंग</h2>
-        <div class="table-wrap"><table><thead><tr><th>तारीख</th><th>पंजीकरण</th><th>कूपन</th><th>जारी कूपन</th></tr></thead><tbody id="date-rows"></tbody></table></div>
+      <section class="admin-section trend-section">
+        <div class="section-heading">
+          <div>
+            <h2>बुकिंग ट्रेंड</h2>
+            <p class="muted">समय के अनुसार पंजीकरण की संख्या</p>
+          </div>
+          <div class="trend-controls" role="group" aria-label="बुकिंग ट्रेंड अवधि">
+            <button class="trend-control active" type="button" data-trend="daily">दैनिक</button>
+            <button class="trend-control" type="button" data-trend="hourly">प्रति घंटा</button>
+            <button class="trend-control" type="button" data-trend="twoHourly">2 घंटे</button>
+          </div>
+        </div>
+        <div id="trend-chart" class="trend-chart" role="img" aria-label="बुकिंग ट्रेंड ग्राफ"></div>
+        <p id="trend-empty" class="muted trend-empty hidden">अभी कोई बुकिंग उपलब्ध नहीं है।</p>
       </section>
 
       <section class="admin-section">
@@ -59,6 +70,6 @@
     </section>
   </section>
 </main>
-<script src="js/admin-7x9p2.js?v=20260925-2"></script>
+<script src="js/admin-7x9p2.js?v=20260925-3"></script>
 </body>
 </html>
