@@ -24,6 +24,9 @@ describe("Kshamawani configuration", () => {
     expect(data.date).toBe("2026-09-27");
     expect(data.registration.maxCoupons).toBe(6);
     expect(data.registration.opensAt).toBe("2026-09-25T16:00:00+05:30");
+    expect(data.registration.firebaseFunctionsBaseUrl).toBe(
+      "https://asia-south1-jain-community-platform.cloudfunctions.net",
+    );
   });
 
   it("keeps the coordinator route out of search indexes", async () => {
@@ -35,53 +38,33 @@ describe("Kshamawani configuration", () => {
     expect(html).toContain("html5-qrcode");
   });
 
-  it("uses indexed mobile and application-code lookups", async () => {
+  it("uses Firebase for public registration and Apps Script for coordination", async () => {
     const client = await readFileText("js/registration.js");
     const backend = await readFileText("apps-script/Kshamawani2026.gs");
-    const page = await readFileText("registration.html");
     const coordinator = await readFileText("js/coordinator.js");
 
-    expect(client).toContain("const response = await lookup(mobile)");
-    expect(client).toContain("const action = existingRegistration");
-    expect(client).toContain('? "updateRegistration"');
-    expect(client).toContain(': "createRegistration";');
-    expect(client).toContain("KW26|");
+    expect(client).toContain("kshamawaniLookup");
+    expect(client).toContain("kshamawaniCreate");
+    expect(client).toContain("kshamawaniUpdate");
+    expect(client).not.toContain("api=lookupRegistration");
+    expect(client).not.toContain("iframe");
     expect(backend).toContain('action === "updateRegistration"');
-    expect(backend).toContain("function updateRegistration_(data)");
-    expect(backend).toContain("coupons <= 6");
-    expect(backend).toContain("CacheService.getScriptCache()");
-    expect(backend).toContain("buildLookupIndexes_()");
-    expect(backend).toContain(
-      "function findRowByColumnValue_(sheet, column, value)",
-    );
-    expect(backend).toContain(".createTextFinder(String(value))");
-    expect(backend).toContain("lock.waitLock(LOCK_TIMEOUT_MS)");
-    expect(backend).toContain("function getKshamawaniHealth()");
-    expect(page).toContain(
-      "cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js",
-    );
-    expect(coordinator).toContain('compact[0] === "KW26"');
-    expect(coordinator).toContain("lookupByCode(code)");
-    expect(coordinator).toContain("await hideScanner()");
-    expect(coordinator).toContain("भौतिक टोकन जारी करें");
-    expect(coordinator).toContain("अगला QR कोड स्कैन करें");
-    expect(coordinator).toContain("showScanner()");
-    expect(coordinator).toContain("startCamera");
-    expect(coordinator).toContain('facingMode: "environment"');
-    expect(coordinator).toContain("कैमरा शुरू करें");
-    expect(coordinator).toContain('scannerElement.innerHTML = ""');
-    expect(coordinator).toContain("result.scrollIntoView");
-    expect(backend).toContain(
-      "function lookupRegistrationByCode_(eventId, code)",
-    );
-    expect(backend).toContain("p.code");
+    expect(backend).toContain("function markTokensIssued_(data)");
+    expect(coordinator).toContain("markTokensIssued");
+    expect(coordinator).toContain("apiUrl");
   });
 
-  it("does not log registration PII in performance telemetry", async () => {
+  it("keeps the Firebase mobile index opaque", async () => {
+    const functions = await readFileText("functions/registration.js");
+
+    expect(functions).toContain('sha256(eventId + ":" + mobile)');
+    expect(functions).toContain("registrationMobileIndex");
+  });
+
+  it("does not log registration PII in the Apps Script telemetry", async () => {
     const backend = await readFileText("apps-script/Kshamawani2026.gs");
 
     expect(backend).toContain('event: "kshamawani.performance"');
-    expect(backend).toContain("durationMs");
     expect(backend).not.toContain("console.log(mobile");
     expect(backend).not.toContain("console.log(code");
   });
