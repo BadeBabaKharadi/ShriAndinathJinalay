@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const openingClose = document.getElementById("registration-opening-close");
   let config;
   let existingRegistration = null;
+  const testMode = new URLSearchParams(window.location.search).get("testMode");
 
   const cleanMobile = (value) => String(value || "").replace(/\D/g, "");
 
@@ -34,8 +35,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const setRegistrationAvailability = () => {
     const opensAt = new Date(config.registration.opensAt);
-    const isOpen =
+    const realIsOpen =
       !Number.isNaN(opensAt.getTime()) && Date.now() >= opensAt.getTime();
+    const isOpen =
+      testMode === "open" ? true : testMode === "closed" ? false : realIsOpen;
 
     openingOverlay.classList.toggle("hidden", isOpen);
     lookupMobile.disabled = !isOpen;
@@ -44,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!isOpen) {
       showMessage(
         lookupMessage,
-        "क्षमावाणी २०२६ का भोजन पंजीकरण आज शाम ४:३० बजे खुलेगा। कृपया ४:३० बजे के बाद इस पृष्ठ पर पुनः आएँ।",
+        "क्षमावाणी २०२६ का भोजन पंजीकरण आज शाम ५:३० बजे खुलेगा। कृपया ४:३० बजे के बाद इस पृष्ठ पर पुनः आएँ।",
       );
     } else {
       clearMessage(lookupMessage);
