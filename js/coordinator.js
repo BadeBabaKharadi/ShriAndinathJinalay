@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const input = document.getElementById("manual-code");
   const scannerElement = document.getElementById("scanner");
   const startPanel = document.getElementById("scanner-start-panel");
+  const accessPanel = document.getElementById("access-panel");
+  const accessVerified = document.getElementById("access-verified");
   const accessKeyInput = document.getElementById("access-key");
   const accessButton = document.getElementById("access-button");
   const accessStatus = document.getElementById("access-status");
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
       );
     } catch {
-      throw new Error("Firebase सेवा से संपर्क नहीं हो सका।");
+      throw new Error("Firebase कनेक्टिविटी में समस्या है। कृपया फिर से प्रयास करें।");
     }
 
     let payload;
@@ -58,9 +60,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         accessKey = "";
         throw new Error("सुरक्षा कुंजी गलत है या समाप्त हो गई है।");
       }
-      throw new Error(payload.error?.message || "सत्यापन सेवा उपलब्ध नहीं है।");
+      throw new Error(
+        payload.error?.status === "internal"
+          ? "Firebase कनेक्टिविटी में समस्या है। कृपया फिर से प्रयास करें।"
+          : payload.error?.message || "सत्यापन सेवा उपलब्ध नहीं है.",
+      );
     }
     return payload.result;
+  };
+
+  const verifyAccessKey = async (candidateKey, { persist = true } = {}) => {
+    if (!candidateKey) {
+      throw new Error("सुरक्षा कुंजी दर्ज करें।");
+    }
+
+    await callFirebase("kshamawaniVerifyAccess", {
+      accessKey: candidateKey,
+    });
+
+    accessKey = candidateKey;
+    if (persist) {
+      sessionStorage.setItem(ACCESS_STORAGE_KEY, accessKey);
+    }
+    accessPanel.classList.add("hidden");
+    accessVerified.classList.remove("hidden");
+    accessStatus.textContent = "";
   };
 
   const hideScanner = async () => {
@@ -257,18 +281,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  const activateAccess = () => {
+  const activateAccess = async () => {
     const value = accessKeyInput.value.trim();
     if (!value) {
       accessStatus.textContent = "सुरक्षा कुंजी दर्ज करें।";
       return;
     }
-    accessKey = value;
-    sessionStorage.setItem(ACCESS_STORAGE_KEY, accessKey);
-    accessStatus.textContent = "सुरक्षा कुंजी इस सत्र के लिए सक्रिय है।";
-    accessKeyInput.value = "";
-    setStatus("सुरक्षा कुंजी सक्रिय है। कैमरा शुरू करें या आवेदन कोड दर्ज करें।");
-    showScannerStart();
+
+    accessButton.disabled = true;
+    accessButton.textContent = "सत्यापित हो रहा है…";
+    accessStatus.textContent = "सुरक्षा कुंजी सत्यापित की जा रही है…";
+    setStatus("Firebase से सत्यापन किया जा रहा है…");
+
+    try {
+      await verifyAccessKey(value);
+      accessKeyInput.value = "";
+      setStatus("सत्यापन पूरा है। कैमरा शुरू करें या आवेदन कोड दर्ज करें।", "success");
+      showScannerStart();
+    } catch (error) {
+      accessStatus.textContent = error.message;
+      setStatus(error.message, "error");
+      sessionStorage.removeItem(ACCESS_STORAGE_KEY);
+      accessKey = "";
+    } finally {
+      accessButton.disabled = false;
+      accessButton.textContent = "सक्रिय करें";
+    }
   };
 
   accessButton.addEventListener("click", activateAccess);
@@ -286,9 +324,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) throw Error();
     config = await response.json();
     if (accessKey) {
-      accessStatus.textContent = "सुरक्षा कुंजी इस सत्र के लिए सक्रिय है।";
-      setStatus("कैमरा शुरू करें या आवेदन कोड दर्ज करें।");
-      showScannerStart();
+      try {
+        await verifyAccessKey(accessKey, { persist: false });
+        setStatus("सत्यापन पूरा है। कैमरा शुरू करें या आवेदन कोड दर्ज करें।", "success");
+        showScannerStart();
+      } catch (error) {
+        sessionStorage.removeItem(ACCESS_STORAGE_KEY);
+        accessKey = "";
+        accessStatus.textContent = error.message;
+        setStatus(error.message, "error");
+      }
     }
   } catch {
     setStatus("कॉन्फ़िगरेशन लोड नहीं हो सका। कृपया पृष्ठ पुनः खोलें।", "error");
