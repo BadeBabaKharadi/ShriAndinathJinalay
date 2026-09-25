@@ -50,6 +50,9 @@ describe("Kshamawani configuration", () => {
     expect(backend).toContain("coupons <= 6");
     expect(backend).toContain("CacheService.getScriptCache()");
     expect(backend).toContain("buildLookupIndexes_()");
+    expect(backend).toContain("function findRowByColumnValue_(sheet, column, value)");
+    expect(backend).toContain(".createTextFinder(String(value))");
+    expect(backend).toContain("lock.waitLock(LOCK_TIMEOUT_MS)");
     expect(backend).toContain("function getKshamawaniHealth()");
     expect(page).toContain(
       "cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js",
