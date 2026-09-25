@@ -4,6 +4,8 @@ const ACCESS_STORAGE_KEY = "kw26-admin-access";
 document.addEventListener("DOMContentLoaded", async () => {
   const keyInput = document.getElementById("admin-key");
   const unlockButton = document.getElementById("unlock");
+  const accessPanel = document.getElementById("access-panel");
+  const accessVerified = document.getElementById("access-verified");
   const message = document.getElementById("admin-message");
   const dashboard = document.getElementById("dashboard");
   const searchMobile = document.getElementById("search-mobile");
@@ -43,10 +45,30 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (String(payload.error?.status || "").toLowerCase() === "permission-denied") {
         sessionStorage.removeItem(ACCESS_STORAGE_KEY);
         accessKey = "";
+        accessPanel.classList.remove("hidden");
+        accessVerified.classList.add("hidden");
+        dashboard.classList.add("hidden");
       }
       throw new Error(payload.error?.message || "ऑपरेशन पूरा नहीं हो सका।");
     }
     return payload.result;
+  };
+
+  const verifyAccessKey = async (candidateKey, { persist = true } = {}) => {
+    if (!candidateKey) {
+      throw new Error("सुरक्षा कुंजी दर्ज करें।");
+    }
+
+    await callFirebase("kshamawaniVerifyAccess", {
+      accessKey: candidateKey,
+    });
+
+    accessKey = candidateKey;
+    if (persist) {
+      sessionStorage.setItem(ACCESS_STORAGE_KEY, accessKey);
+    }
+    accessPanel.classList.add("hidden");
+    accessVerified.classList.remove("hidden");
   };
 
   const renderStats = (stats) => {
@@ -102,12 +124,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       showMessage("सुरक्षा कुंजी दर्ज करें।");
       return;
     }
-    accessKey = value;
-    sessionStorage.setItem(ACCESS_STORAGE_KEY, accessKey);
-    keyInput.value = "";
+
+    unlockButton.disabled = true;
+    unlockButton.textContent = "सत्यापित हो रहा है…";
     clearMessage();
-    dashboard.classList.remove("hidden");
-    await refresh();
+
+    try {
+      await verifyAccessKey(value);
+      keyInput.value = "";
+      dashboard.classList.remove("hidden");
+      await refresh();
+    } catch (error) {
+      sessionStorage.removeItem(ACCESS_STORAGE_KEY);
+      accessKey = "";
+      showMessage(error.message);
+    } finally {
+      unlockButton.disabled = false;
+      unlockButton.textContent = "सक्रिय करें";
+    }
   };
 
   unlockButton.addEventListener("click", activate);
@@ -165,8 +199,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) throw Error();
     config = await response.json();
     if (accessKey) {
-      dashboard.classList.remove("hidden");
-      await refresh();
+      try {
+        await verifyAccessKey(accessKey, { persist: false });
+        dashboard.classList.remove("hidden");
+        await refresh();
+      } catch (error) {
+        sessionStorage.removeItem(ACCESS_STORAGE_KEY);
+        accessKey = "";
+        accessPanel.classList.remove("hidden");
+        accessVerified.classList.add("hidden");
+        dashboard.classList.add("hidden");
+        showMessage(error.message);
+      }
     }
   } catch {
     showMessage("कॉन्फ़िगरेशन लोड नहीं हो सका।");
