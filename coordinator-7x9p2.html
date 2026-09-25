@@ -1,33 +1,47 @@
 <!doctype html>
 <html lang="hi">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="robots" content="noindex,nofollow,noarchive">
-    <title>समन्वय कक्ष</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/coordinator.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>समन्वय कक्ष</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/coordinator.css">
 </head>
-
 <body>
-    <main class="coordinator-shell">
-        <div class="coordinator-card">
-            <div class="event-eyebrow">आंतरिक उपयोग</div>
-            <h1>क्षमावाणी २०२६ — समन्वय कक्ष</h1>
-            <p>QR स्कैन करके आवेदन सत्यापित करें और भौतिक टोकन जारी होने की एंट्री करें।</p>
-            <section id="result" class="result hidden" aria-live="polite"></section>
-            <div id="scanner" class="scanner"></div>
-            <div class="manual-row"><input id="manual-code" type="text" placeholder="आवेदन कोड"
-                    autocomplete="off"><button id="manual-button" class="button primary" type="button">जाँचें</button>
-            </div>
-            <div id="status" class="status" role="status">स्कैन की प्रतीक्षा है…</div>
-        </div>
-    </main>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="js/coordinator.js?v=20260925-2"></script>
-</body>
+<main class="coordinator-shell">
+  <div class="coordinator-card">
+    <div class="event-eyebrow">आंतरिक उपयोग</div>
+    <h1>क्षमावाणी २०२६ — समन्वय कक्ष</h1>
+    <p>QR स्कैन करके आवेदन सत्यापित करें और भौतिक कूपन जारी होने की एंट्री करें।</p>
 
+    <section class="access-panel">
+      <label for="access-key">सुरक्षा कुंजी</label>
+      <div class="access-row">
+        <input id="access-key" type="password" autocomplete="off" placeholder="सुरक्षा कुंजी दर्ज करें">
+        <button id="access-button" class="button secondary" type="button">सक्रिय करें</button>
+      </div>
+      <p id="access-status" class="access-status" role="status"></p>
+    </section>
+
+    <section id="result" class="result hidden" aria-live="polite"></section>
+    <div id="scanner" class="scanner hidden"></div>
+
+    <div id="scanner-start-panel" class="scanner-start-panel hidden">
+      <button id="start-camera" class="button primary scanner-start" type="button">📷 कैमरा शुरू करें</button>
+      <p>कैमरा अनुमति मिलने के बाद पीछे वाला कैमरा चुना जाएगा।</p>
+    </div>
+
+    <div class="manual-row">
+      <input id="manual-code" type="text" placeholder="आवेदन कोड (जैसे KW26-0001)" autocomplete="off">
+      <button id="manual-button" class="button primary" type="button">जाँचें</button>
+    </div>
+    <div id="status" class="status" role="status">पहले सुरक्षा कुंजी सक्रिय करें।</div>
+  </div>
+</main>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="js/coordinator.js?v=20260925-3"></script>
+</body>
 </html>

@@ -1,13 +1,20 @@
 const CONFIG_URL = "data/kshamawani-2026.json";
+const ACCESS_STORAGE_KEY = "kw26-coordinator-access";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const status = document.getElementById("status");
   const result = document.getElementById("result");
   const input = document.getElementById("manual-code");
   const scannerElement = document.getElementById("scanner");
+  const startPanel = document.getElementById("scanner-start-panel");
+  const accessKeyInput = document.getElementById("access-key");
+  const accessButton = document.getElementById("access-button");
+  const accessStatus = document.getElementById("access-status");
   let config;
   let scanner = null;
   let scannerStarting = false;
+  let verificationInProgress = false;
+  let accessKey = sessionStorage.getItem(ACCESS_STORAGE_KEY) || "";
 
   const setStatus = (text, className = "") => {
     status.textContent = text;
@@ -22,18 +29,48 @@ document.addEventListener("DOMContentLoaded", async () => {
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
 
+  const callFirebase = async (functionName, data) => {
+    let response;
+    try {
+      response = await fetch(
+        `${config.registration.firebaseFunctionsBaseUrl}/${functionName}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json;charset=UTF-8" },
+          body: JSON.stringify({ data }),
+        },
+      );
+    } catch {
+      throw new Error("Firebase सेवा से संपर्क नहीं हो सका।");
+    }
+
+    let payload;
+    try {
+      payload = await response.json();
+    } catch {
+      throw new Error("Firebase से सही प्रतिक्रिया नहीं मिली।");
+    }
+
+    if (!response.ok || payload.error) {
+      const code = String(payload.error?.status || "").toLowerCase();
+      if (code === "permission-denied") {
+        sessionStorage.removeItem(ACCESS_STORAGE_KEY);
+        accessKey = "";
+        throw new Error("सुरक्षा कुंजी गलत है या समाप्त हो गई है।");
+      }
+      throw new Error(payload.error?.message || "सत्यापन सेवा उपलब्ध नहीं है।");
+    }
+    return payload.result;
+  };
+
   const hideScanner = async () => {
     if (scanner) {
       try {
         await scanner.stop();
-      } catch {
-        // The camera may already have stopped after a successful scan.
-      }
+      } catch {}
       try {
-        await scanner.clear();
-      } catch {
-        // The scanner container may already be empty.
-      }
+        scanner.clear();
+      } catch {}
       scanner = null;
     }
     scannerStarting = false;
@@ -41,22 +78,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     scannerElement.innerHTML = "";
   };
 
-  const showScanner = () => {
-    result.classList.add("hidden");
-    result.innerHTML = "";
-    scannerElement.innerHTML = `
-      <button id="start-camera" class="button primary scanner-start" type="button">
-        📷 कैमरा शुरू करें
-      </button>
-    `;
-    scannerElement.classList.remove("hidden");
-    setStatus("कैमरा शुरू करने के लिए बटन दबाएँ।");
+  const showScannerStart = () => {
+    startPanel.classList.remove("hidden");
+    scannerElement.classList.add("hidden");
+    scannerElement.innerHTML = "";
+  };
 
-    document.getElementById("start-camera").addEventListener("click", startCamera);
+  const chooseCamera = (cameras) => {
+    if (!cameras?.length) return null;
+    const preferred = cameras.find((camera) =>
+      /back|rear|environment|trás|tras/i.test(camera.label || ""),
+    );
+    return preferred || cameras[cameras.length - 1];
   };
 
   async function startCamera() {
-    if (scannerStarting || scanner) return;
+    if (scannerStarting || scanner || !accessKey) return;
     scannerStarting = true;
     const button = document.getElementById("start-camera");
     if (button) {
@@ -66,267 +103,194 @@ document.addEventListener("DOMContentLoaded", async () => {
     setStatus("कैमरा अनुमति की प्रतीक्षा है…");
 
     try {
-      scanner = new Html5Qrcode("scanner");
+      const cameras = await Html5Qrcode.getCameras();
+      const camera = chooseCamera(cameras);
+      if (!camera) throw new Error("इस डिवाइस पर कोई कैमरा उपलब्ध नहीं मिला।");
+
+      startPanel.classList.add("hidden");
+      scannerElement.classList.remove("hidden");
+      scanner = new Html5Qrcode("scanner", {
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+      });
+
       await scanner.start(
-        { facingMode: "environment" },
+        { deviceId: { exact: camera.id } },
         {
           fps: 10,
           qrbox: { width: 250, height: 250 },
-          aspectRatio: 1,
+          aspectRatio: 1.777,
+          disableFlip: true,
         },
-        (decoded) => verify(decoded),
+        async (decoded) => {
+          if (verificationInProgress) return;
+          verificationInProgress = true;
+          await hideScanner();
+          await verify(decoded);
+          verificationInProgress = false;
+        },
         () => {},
       );
       setStatus("QR कोड कैमरे के सामने रखें।");
     } catch (error) {
       scanner = null;
+      startPanel.classList.remove("hidden");
       const message =
         error?.message ||
         "कैमरा शुरू नहीं हो सका। कृपया ब्राउज़र में कैमरा अनुमति दें।";
-      scannerElement.innerHTML = `
-        <button id="start-camera" class="button primary scanner-start" type="button">
-          📷 कैमरा फिर से शुरू करें
-        </button>
-      `;
-      document.getElementById("start-camera").addEventListener("click", startCamera);
       setStatus(message, "error");
     } finally {
       scannerStarting = false;
+      if (button) {
+        button.disabled = false;
+        button.textContent = "📷 कैमरा शुरू करें";
+      }
     }
   }
 
   const render = (registration, issued = false) => {
     result.className = "result" + (issued ? " issued" : "");
     result.classList.remove("hidden");
-    result.innerHTML = \`
-      \${issued ? "" : '<div class="token-actions"><button id="issue-token" class="button primary" type="button">भौतिक टोकन जारी करें</button></div>'}
-      <div class="token-actions"><button id="scan-next" class="button secondary" type="button">अगला QR कोड स्कैन करें</button></div>
+    result.innerHTML = `
+      <div class="result-actions">
+        <button id="scan-next" class="button secondary" type="button">अगला QR कोड स्कैन करें</button>
+        ${issued ? "" : '<button id="issue-token" class="button primary" type="button">भौतिक कूपन जारी करें</button>'}
+      </div>
       <div class="result-grid">
-        <div class="result-item"><span>नाम</span><strong>\${esc(registration.name)}</strong></div>
-        <div class="result-item"><span>मोबाइल</span><strong>\${esc(registration.mobile)}</strong></div>
-        <div class="result-item"><span>पता</span><strong>\${esc(registration.address)}</strong></div>
-        <div class="result-item"><span>कूपन</span><strong>\${esc(registration.coupons)}</strong></div>
-        <div class="result-item"><span>आवेदन कोड</span><strong>\${esc(registration.registrationId || registration.applicationCode)}</strong></div>
-        <div class="result-item"><span>टोकन स्थिति</span><strong>\${issued ? "टोकन पहले जारी हो चुके हैं" : "टोकन जारी नहीं हुए"}</strong></div>
-      </div>\`;
+        <div class="result-item"><span>नाम</span><strong>${esc(registration.name)}</strong></div>
+        <div class="result-item"><span>मोबाइल</span><strong>${esc(registration.mobile)}</strong></div>
+        <div class="result-item"><span>पता</span><strong>${esc(registration.address)}</strong></div>
+        <div class="result-item"><span>कूपन</span><strong>${esc(registration.coupons)}</strong></div>
+        <div class="result-item"><span>आवेदन कोड</span><strong>${esc(registration.registrationId || registration.applicationCode)}</strong></div>
+        <div class="result-item"><span>टोकन स्थिति</span><strong>${issued ? "भौतिक कूपन जारी हो चुके हैं" : "भौतिक कूपन जारी नहीं हुए"}</strong></div>
+      </div>`;
 
-    if (!issued) {
-      document
-        .getElementById("issue-token")
-        .addEventListener("click", () => issue(registration));
+    const issueButton = document.getElementById("issue-token");
+    if (issueButton) {
+      issueButton.addEventListener("click", () => issue(registration));
     }
-
-    const nextButton = document.getElementById("scan-next");
-    if (nextButton) {
-      nextButton.addEventListener("click", async () => {
-        await hideScanner();
-        showScanner();
-        scannerElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      });
-    }
+    document.getElementById("scan-next").addEventListener("click", async () => {
+      result.classList.add("hidden");
+      result.innerHTML = "";
+      showScannerStart();
+      setStatus("कैमरा शुरू करने के लिए बटन दबाएँ।");
+      startPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
   };
 
-  const lookupByMobile = (mobile) =>
-    new Promise((resolve, reject) => {
-      const callbackName =
-        "kwCoord_" +
-        Date.now() +
-        "_" +
-        Math.random().toString(36).slice(2);
-      const script = document.createElement("script");
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(Error("सत्यापन सेवा से प्रतिक्रिया नहीं मिली।"));
-      }, 15000);
-
-      function cleanup() {
-        clearTimeout(timeout);
-        delete window[callbackName];
-        script.remove();
-      }
-
-      window[callbackName] = (response) => {
-        cleanup();
-        resolve(response);
-      };
-      script.onerror = () => {
-        cleanup();
-        reject(Error("सत्यापन सेवा से संपर्क नहीं हो सका।"));
-      };
-      script.src =
-        \`\${config.registration.apiUrl}?api=lookupRegistration&eventId=\${encodeURIComponent(config.id)}&mobile=\${encodeURIComponent(mobile)}&callback=\${callbackName}\`;
-      document.body.appendChild(script);
-    });
-
-  const lookupByCode = (code) =>
-    new Promise((resolve, reject) => {
-      const callbackName =
-        "kwCoordCode_" +
-        Date.now() +
-        "_" +
-        Math.random().toString(36).slice(2);
-      const script = document.createElement("script");
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(Error("सत्यापन सेवा से प्रतिक्रिया नहीं मिली।"));
-      }, 15000);
-
-      function cleanup() {
-        clearTimeout(timeout);
-        delete window[callbackName];
-        script.remove();
-      }
-
-      window[callbackName] = (response) => {
-        cleanup();
-        resolve(response);
-      };
-      script.onerror = () => {
-        cleanup();
-        reject(Error("सत्यापन सेवा से संपर्क नहीं हो सका।"));
-      };
-      script.src =
-        \`\${config.registration.apiUrl}?api=lookupRegistration&eventId=\${encodeURIComponent(config.id)}&code=\${encodeURIComponent(code)}&callback=\${callbackName}\`;
-      document.body.appendChild(script);
-    });
-
-  const issue = (registration) => {
-    setStatus("टोकन जारी करने की एंट्री सुरक्षित की जा रही है…");
-
-    const iframeName = "kwIssue_" + Date.now();
-    const iframe = document.createElement("iframe");
-    const form = document.createElement("form");
-
-    iframe.name = iframeName;
-    iframe.hidden = true;
-    document.body.appendChild(iframe);
-
-    form.method = "POST";
-    form.action = config.registration.apiUrl;
-    form.target = iframeName;
-    form.hidden = true;
-
-    const payload = document.createElement("input");
-    payload.type = "hidden";
-    payload.name = "payload";
-    payload.value = JSON.stringify({
-      action: "markTokensIssued",
-      data: {
-        eventId: config.id,
-        registrationId: registration.registrationId,
-        mobile: registration.mobile,
-        coupons: Number(registration.coupons),
-      },
-    });
-    form.appendChild(payload);
-    document.body.appendChild(form);
-
-    const timeout = setTimeout(() => {
-      cleanup();
-      setStatus("टोकन एंट्री की पुष्टि नहीं हो सकी।", "error");
-    }, 15000);
-
-    function cleanup() {
-      clearTimeout(timeout);
-      form.remove();
-      iframe.remove();
+  const issue = async (registration) => {
+    const button = document.getElementById("issue-token");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "सहेजा जा रहा है…";
     }
-
-    iframe.onload = () => {
-      cleanup();
-      setStatus("टोकन जारी करने की एंट्री सुरक्षित हो गई।");
-      render(registration, true);
-      result.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-
-    form.submit();
-  };
-
-  const verify = async (raw) => {
-    let parsed;
+    setStatus("भौतिक कूपन जारी होने की एंट्री सुरक्षित की जा रही है…");
     try {
-      parsed = JSON.parse(raw);
-    } catch {
-      parsed = null;
+      const saved = await callFirebase("kshamawaniIssue", {
+        applicationCode: registration.registrationId || registration.applicationCode,
+        accessKey,
+        issuedBy: "COORDINATOR",
+      });
+      render(saved.registration, true);
+      setStatus("भौतिक कूपन जारी होने की एंट्री सुरक्षित हो गई।", "success");
+    } catch (error) {
+      if (button) {
+        button.disabled = false;
+        button.textContent = "भौतिक कूपन जारी करें";
+      }
+      setStatus(error.message, "error");
     }
+  };
 
-    let code = parsed?.applicationCode || "";
-    let mobile = parsed?.mobile || "";
-    const compact = String(raw || "")
-      .trim()
-      .split("|");
-
-    if (!code && compact.length === 3 && compact[0] === "KW26") {
-      code = compact[1];
-      mobile = compact[2];
+  const parseQr = (value) => {
+    const parts = String(value || "").trim().split("|");
+    if (parts.length !== 3 || parts[0] !== "KW26") {
+      throw new Error("यह क्षमावाणी २०२६ का मान्य QR कोड नहीं है।");
     }
+    return { applicationCode: parts[1], mobile: parts[2] };
+  };
 
-    if (!code) code = String(raw || "").trim();
-
-    if (
-      parsed &&
-      (parsed.eventId !== config.id ||
-        !code ||
-        !/^[6-9]\d{9}$/.test(String(mobile)))
-    ) {
-      setStatus("अमान्य QR कोड।", "error");
+  async function verify(decoded) {
+    if (!accessKey) {
+      setStatus("पहले सुरक्षा कुंजी सक्रिय करें।", "error");
       return;
     }
-
-    setStatus("आवेदन की जाँच हो रही है…");
     try {
-      const response = mobile
-        ? await lookupByMobile(mobile)
-        : await lookupByCode(code);
-
-      if (!response?.success || !response.exists) {
-        throw Error("यह आवेदन नहीं मिला।");
-      }
-
-      const registration = response.registration || {};
-      const actualCode = String(
-        registration.registrationId || registration.applicationCode || "",
+      const parsed = parseQr(decoded);
+      setStatus("आवेदन सत्यापित किया जा रहा है…");
+      const response = await callFirebase("kshamawaniCoordinatorLookup", {
+        applicationCode: parsed.applicationCode,
+        mobile: parsed.mobile,
+        accessKey,
+      });
+      const registration = response.registration;
+      render(registration, registration.tokensIssued === true);
+      setStatus(
+        registration.tokensIssued
+          ? "यह आवेदन पहले ही जारी किया जा चुका है।"
+          : "आवेदन सत्यापित हो गया।",
+        registration.tokensIssued ? "error" : "success",
       );
-
-      if (actualCode !== code || registration.eventId !== config.id) {
-        throw Error("आवेदन कोड रिकॉर्ड से मेल नहीं खाता।");
-      }
-
-      await hideScanner();
-      const tokensIssued =
-        registration.tokensIssued === true ||
-        String(registration.tokensIssued || "").toUpperCase() === "YES";
-      render(registration, tokensIssued);
-      setStatus("आवेदन सत्यापित है।");
       result.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (error) {
-      setStatus(error.message || "सत्यापन असफल रहा।", "error");
+      setStatus(error.message, "error");
+      showScannerStart();
+    }
+  }
+
+  const lookupManual = async () => {
+    const code = input.value.trim().toUpperCase();
+    if (!/^KW26-\d{4}$/.test(code)) {
+      setStatus("कृपया सही आवेदन कोड दर्ज करें।", "error");
+      return;
+    }
+    try {
+      setStatus("आवेदन सत्यापित किया जा रहा है…");
+      const response = await callFirebase("kshamawaniCoordinatorLookup", {
+        applicationCode: code,
+        accessKey,
+      });
+      render(response.registration, response.registration.tokensIssued === true);
+      setStatus("आवेदन सत्यापित हो गया।", "success");
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (error) {
+      setStatus(error.message, "error");
     }
   };
+
+  const activateAccess = () => {
+    const value = accessKeyInput.value.trim();
+    if (!value) {
+      accessStatus.textContent = "सुरक्षा कुंजी दर्ज करें।";
+      return;
+    }
+    accessKey = value;
+    sessionStorage.setItem(ACCESS_STORAGE_KEY, accessKey);
+    accessStatus.textContent = "सुरक्षा कुंजी इस सत्र के लिए सक्रिय है।";
+    accessKeyInput.value = "";
+    setStatus("सुरक्षा कुंजी सक्रिय है। कैमरा शुरू करें या आवेदन कोड दर्ज करें।");
+    showScannerStart();
+  };
+
+  accessButton.addEventListener("click", activateAccess);
+  accessKeyInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") activateAccess();
+  });
+  document.getElementById("start-camera").addEventListener("click", startCamera);
+  document.getElementById("manual-button").addEventListener("click", lookupManual);
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") lookupManual();
+  });
 
   try {
     const response = await fetch(CONFIG_URL, { cache: "no-store" });
     if (!response.ok) throw Error();
     config = await response.json();
+    if (accessKey) {
+      accessStatus.textContent = "सुरक्षा कुंजी इस सत्र के लिए सक्रिय है।";
+      setStatus("कैमरा शुरू करें या आवेदन कोड दर्ज करें।");
+      showScannerStart();
+    }
   } catch {
-    setStatus("कॉन्फ़िगरेशन लोड नहीं हो सकी।", "error");
-    return;
-  }
-
-  document
-    .getElementById("manual-button")
-    .addEventListener("click", () => verify(input.value));
-
-  input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") verify(input.value);
-  });
-
-  if (window.Html5Qrcode) {
-    showScanner();
-  } else {
-    setStatus(
-      "कैमरा स्कैनर लोड नहीं हुआ। आवेदन कोड हाथ से दर्ज करें।",
-      "error",
-    );
+    setStatus("कॉन्फ़िगरेशन लोड नहीं हो सका। कृपया पृष्ठ पुनः खोलें।", "error");
   }
 });

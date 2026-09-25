@@ -38,9 +38,9 @@ describe("Kshamawani configuration", () => {
     expect(html).toContain("html5-qrcode");
   });
 
-  it("uses Firebase for public registration and Apps Script for coordination", async () => {
+  it("uses Firebase for public registration and protected Firebase coordination", async () => {
     const client = await readFileText("js/registration.js");
-    const backend = await readFileText("apps-script/Kshamawani2026.gs");
+    const functions = await readFileText("functions/index.js");
     const coordinator = await readFileText("js/coordinator.js");
 
     expect(client).toContain("kshamawaniLookup");
@@ -48,10 +48,13 @@ describe("Kshamawani configuration", () => {
     expect(client).toContain("kshamawaniUpdate");
     expect(client).not.toContain("api=lookupRegistration");
     expect(client).not.toContain("iframe");
-    expect(backend).toContain('action === "updateRegistration"');
-    expect(backend).toContain("function markTokensIssued_(data)");
-    expect(coordinator).toContain("markTokensIssued");
-    expect(coordinator).toContain("apiUrl");
+    expect(functions).toContain("kshamawaniCoordinatorLookup");
+    expect(functions).toContain("kshamawaniIssue");
+    expect(coordinator).toContain("kshamawaniCoordinatorLookup");
+    expect(coordinator).toContain("kshamawaniIssue");
+    expect(coordinator).toContain("getCameras");
+    expect(coordinator).not.toContain("markTokensIssued");
+    expect(coordinator).not.toContain("apiUrl");
   });
 
   it("keeps the Firebase mobile index opaque", async () => {

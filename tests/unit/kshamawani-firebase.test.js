@@ -29,13 +29,42 @@ describe("Kshamawani Firebase registration", () => {
     expect(rules).toContain("allow read, write: if false;");
   });
 
-  it("keeps the coordinator on Apps Script for this migration", async () => {
+  it("moves the coordinator to protected Firebase callables", async () => {
     const page = await readFileText("coordinator-7x9p2.html");
     const script = await readFileText("js/coordinator.js");
+    const functions = await readFileText("functions/index.js");
 
     expect(page).toContain("coordinator.js");
-    expect(script).toContain("markTokensIssued");
-    expect(script).toContain("apiUrl");
+    expect(script).toContain("kshamawaniCoordinatorLookup");
+    expect(script).toContain("kshamawaniIssue");
+    expect(script).toContain("getCameras");
+    expect(script).not.toContain("markTokensIssued");
+    expect(script).not.toContain("apiUrl");
+    expect(functions).toContain("defineSecret");
+    expect(functions).toContain("KSHAMAWANI_ADMIN_KEY");
+  });
+
+  it("adds a protected operations dashboard", async () => {
+    const page = await readFileText("admin-7x9p2.html");
+    const script = await readFileText("js/admin-7x9p2.js");
+    const functions = await readFileText("functions/index.js");
+
+    expect(page).toContain("कुल बुक कूपन");
+    expect(page).toContain("भौतिक कूपन जारी");
+    expect(script).toContain("kshamawaniAdminStats");
+    expect(script).toContain("kshamawaniAdminLookup");
+    expect(script).toContain("kshamawaniAdminDelete");
+    expect(functions).toContain("kshamawaniAdminStats");
+    expect(functions).toContain("kshamawaniAdminDelete");
+  });
+
+  it("keeps the coupon count as a one-to-six selector", async () => {
+    const page = await readFileText("registration.html");
+    expect(page).toContain('<select id="coupons"');
+    for (const value of ["1", "2", "3", "4", "5", "6"]) {
+      expect(page).toContain(`<option value="${value}">${value}</option>`);
+    }
+    expect(page).not.toContain('id="coupons" name="coupons" type="number"');
   });
 
   it("moves public registration calls to Firebase callable endpoints", async () => {
@@ -46,6 +75,16 @@ describe("Kshamawani Firebase registration", () => {
     expect(client).toContain("kshamawaniUpdate");
     expect(client).not.toContain("api=lookupRegistration");
     expect(client).not.toContain("iframe");
+  });
+
+  it("keeps coordinator and admin operations protected", async () => {
+    const admin = await readFileText("functions/admin.js");
+
+    expect(admin).toContain("assertAdminKey");
+    expect(admin).toContain("Issued-token registrations cannot be deleted.");
+    expect(admin).toContain("totalPhysicalCouponsIssued");
+    expect(admin).toContain("byDate");
+    expect(admin).toContain("byCouponCount");
   });
 
   it("keeps the Firebase mobile index opaque", async () => {
