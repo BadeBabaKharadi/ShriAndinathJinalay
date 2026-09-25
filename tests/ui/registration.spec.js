@@ -25,6 +25,48 @@ async function mockRegistrationClosed(page) {
   });
 }
 
+async function mockFirebaseSdk(page) {
+  await page.route(
+    "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js",
+    async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/javascript",
+        body: "export function initializeApp(config) { return { config }; }",
+      });
+    },
+  );
+  await page.route(
+    "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js",
+    async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/javascript",
+        body: `export function getFunctions() { return {}; }
+export function httpsCallable(functions, name) {
+  return async (data) => {
+    const response = await fetch(
+      \`https://asia-south1-jain-community-platform.cloudfunctions.net/\${name}\`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data }),
+      },
+    );
+    const payload = await response.json();
+    if (payload.error) {
+      const error = new Error(payload.error.message || "Callable failed");
+      error.code = \`functions/\${String(payload.error.status || "").toLowerCase()}\`;
+      throw error;
+    }
+    return { data: payload.result };
+  };
+}`,
+      });
+    },
+  );
+}
+
 async function mockFirebaseFunction(page, functionName, result) {
   await page.route(
     `https://asia-south1-jain-community-platform.cloudfunctions.net/${functionName}`,
@@ -46,6 +88,7 @@ test.describe("Kshamawani registration page", () => {
   test("starts with mobile lookup and hides registration details", async ({
     page,
   }) => {
+    await mockFirebaseSdk(page);
     await mockRegistrationClosed(page);
     await page.goto("/registration.html");
 
@@ -62,6 +105,8 @@ test.describe("Kshamawani registration page", () => {
   test("shows address guidance and six-coupon maximum in the registration form", async ({
     page,
   }) => {
+    await mockFirebaseSdk(page);
+    await mockFirebaseSdk(page);
     await mockRegistrationOpen(page);
     await page.goto("/registration.html");
 
@@ -86,6 +131,7 @@ test.describe("Kshamawani registration page", () => {
   test("shows that an existing mobile number is already registered", async ({
     page,
   }) => {
+    await mockFirebaseSdk(page);
     await mockFirebaseFunction(page, "kshamawaniLookup", {
       exists: true,
       registration: {
@@ -126,6 +172,7 @@ test.describe("Kshamawani registration page", () => {
         });
       },
     );
+    await mockFirebaseSdk(page);
     await mockFirebaseFunction(page, "kshamawaniCreate", {
       registrationId: "KW26-0011",
       applicationCode: "KW26-0011",
