@@ -7,7 +7,7 @@ import * as XLSX from "xlsx";
 
 const EVENT_ID = "kshamawani-2026";
 const MAX_COUPONS = 6;
-const EVENT_OPENS_AT = "2026-09-25T16:30:00+05:30";
+const EVENT_OPENS_AT = "2026-09-25T17:30:00+05:30";
 const EVENT_DEADLINE = "2026-09-27T23:59:59+05:30";
 const REQUIRED_HEADERS = [
   "Timestamp",
