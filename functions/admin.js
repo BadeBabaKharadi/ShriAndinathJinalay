@@ -29,6 +29,36 @@ function dateKey(value, timeZone = "Asia/Kolkata") {
   }).format(date);
 }
 
+function zonedHour(value, timeZone = "Asia/Kolkata") {
+  const date = toDate(value);
+  if (!date || Number.isNaN(date.getTime())) return null;
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const values = Object.fromEntries(
+    parts
+      .filter(({ type }) => type !== "literal")
+      .map(({ type, value: partValue }) => [type, partValue]),
+  );
+  return {
+    date: `${values.year}-${values.month}-${values.day}`,
+    hour: Number(values.hour),
+  };
+}
+
+function addTrendBucket(collection, key, coupons) {
+  if (!collection[key]) {
+    collection[key] = { registrations: 0, coupons: 0 };
+  }
+  collection[key].registrations += 1;
+  collection[key].coupons += coupons;
+}
+
 function serializeRegistration(data) {
   if (!data) return null;
   return {
@@ -138,6 +168,8 @@ async function getAdminStats({
   let registrationsWithTokens = 0;
   let pendingTokenRegistrations = 0;
   const byDate = {};
+  const byHour = {};
+  const byTwoHour = {};
   const byCouponCount = {};
 
   snapshot.forEach((doc) => {
@@ -168,10 +200,25 @@ async function getAdminStats({
       byDate[day].physicalCouponsIssued += coupons;
     }
 
+    const zoned = zonedHour(data.createdAt);
+    if (zoned) {
+      const hourlyKey = `${zoned.date}T${String(zoned.hour).padStart(2, "0")}:00`;
+      addTrendBucket(byHour, hourlyKey, coupons);
+
+      const twoHourStart = Math.floor(zoned.hour / 2) * 2;
+      const twoHourlyKey = `${zoned.date}T${String(twoHourStart).padStart(2, "0")}:00`;
+      addTrendBucket(byTwoHour, twoHourlyKey, coupons);
+    }
+
     byCouponCount[coupons] = (byCouponCount[coupons] || 0) + 1;
   });
 
   const registrations = snapshot.size;
+
+  const toTrendRows = (buckets) =>
+    Object.entries(buckets)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([period, values]) => ({ period, ...values }));
 
   return {
     registrations,
@@ -185,6 +232,11 @@ async function getAdminStats({
     byDate: Object.entries(byDate)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([date, values]) => ({ date, ...values })),
+    bookingTrend: {
+      daily: toTrendRows(byDate),
+      hourly: toTrendRows(byHour),
+      twoHourly: toTrendRows(byTwoHour),
+    },
     byCouponCount: Object.entries(byCouponCount)
       .sort(([a], [b]) => Number(a) - Number(b))
       .map(([coupons, count]) => ({ coupons: Number(coupons), count })),
