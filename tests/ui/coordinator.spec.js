@@ -4,20 +4,18 @@ const FIREBASE_BASE =
   "https://asia-south1-jain-community-platform.cloudfunctions.net";
 
 async function mockFirebase(page, functionName, payload, status = 200) {
-  await page.route(
-    `${FIREBASE_BASE}/${functionName}`,
-    async (route) => {
-      expect(route.request().headers()["content-type"]).toContain(
-        "application/json",
-      );
-      expect(route.request().postDataJSON()).toHaveProperty("data");
-      await route.fulfill({
-        status,
-        contentType: "application/json",
-        body: JSON.stringify(payload),
-      });
-    },
-  );
+  const url = `${FIREBASE_BASE}/${functionName}`;
+  await page.route(url, async (route) => {
+    expect(route.request().headers()["content-type"]).toContain(
+      "application/json",
+    );
+    expect(route.request().postDataJSON()).toHaveProperty("data");
+    await route.fulfill({
+      status,
+      contentType: "application/json",
+      body: JSON.stringify(payload),
+    });
+  });
 }
 
 test.describe("Kshamawani coordinator access", () => {
