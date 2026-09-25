@@ -30,6 +30,10 @@ async function mockFirebaseFunction(page, functionName, result) {
   await page.route(
     `https://asia-south1-jain-community-platform.cloudfunctions.net/${functionName}`,
     async (route) => {
+      expect(route.request().headers()["content-type"]).toContain(
+        "application/json",
+      );
+      expect(route.request().postDataJSON()).toHaveProperty("data");
       await route.fulfill({
         status: 200,
         contentType: "application/json",
