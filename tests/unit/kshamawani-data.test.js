@@ -23,7 +23,7 @@ describe("Kshamawani configuration", () => {
     expect(data.id).toBe("kshamawani-2026");
     expect(data.date).toBe("2026-09-27");
     expect(data.registration.maxCoupons).toBe(6);
-    expect(data.registration.opensAt).toBe("2026-09-25T16:30:00+05:30");
+    expect(data.registration.opensAt).toBe("2026-09-25T17:30:00+05:30");
     expect(data.registration.firebaseFunctionsBaseUrl).toBe(
       "https://asia-south1-jain-community-platform.cloudfunctions.net",
     );
