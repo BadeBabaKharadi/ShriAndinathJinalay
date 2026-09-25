@@ -12,6 +12,7 @@ async function mockRegistrationOpen(page) {
     });
   });
 }
+
 async function mockRegistrationClosed(page) {
   await page.route("**/data/kshamawani-2026.json", async (route) => {
     const response = await route.fetch();
