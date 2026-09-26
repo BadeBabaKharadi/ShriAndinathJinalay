@@ -57,6 +57,14 @@ describe("Kshamawani configuration", () => {
     expect(coordinator).not.toContain("apiUrl");
   });
 
+  it("allows both public domain aliases to call protected functions", async () => {
+    const functions = await readFileText("functions/index.js");
+
+    expect(functions).toContain('"https://badebabakharadi.com"');
+    expect(functions).toContain('"https://babakharadi.com"');
+    expect(functions).toContain('"https://www.babakharadi.com"');
+  });
+
   it("keeps the Firebase mobile index opaque", async () => {
     const functions = await readFileText("functions/registration.js");
 

@@ -61,8 +61,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       throw new Error(payload.error?.message || "ऑपरेशन पूरा नहीं हो सका।");
     }
-    // Firebase callable HTTP responses return the function result in "data".
-    return payload.data;
+    // Firebase callable HTTP responses use "data"; keep "result" support for
+    // older/proxy deployments so the dashboard is tolerant of both shapes.
+    const result = payload.data ?? payload.result;
+    if (!result || typeof result !== "object") {
+      throw new Error("आँकड़े लोड नहीं हो सके।");
+    }
+    return result;
   };
 
   const verifyAccessKey = async (candidateKey, { persist = true } = {}) => {
