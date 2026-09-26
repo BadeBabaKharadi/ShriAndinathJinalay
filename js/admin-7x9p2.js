@@ -24,6 +24,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const recordsNext = document.getElementById("records-next");
   const recordsPageLabel = document.getElementById("records-page-label");
   const recordsMessage = document.getElementById("records-message");
+  const recordsFilterInput = document.getElementById("records-filter-input");
+  const recordsFilterApply = document.getElementById("records-filter-apply");
+  const recordsFilterClear = document.getElementById("records-filter-clear");
   const exportCsvButton = document.getElementById("export-csv");
   const exportExcelButton = document.getElementById("export-excel");
   const trendChart = document.getElementById("trend-chart");
@@ -42,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let recordPageCursors = [""];
   let recordPageIndex = 0;
   let recordsHasMore = false;
+  let recordsFilter = "";
 
   const showMessage = (text) => {
     message.textContent = text;
@@ -305,6 +309,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       accessKey,
       pageSize: Number(recordsPageSize.value),
       cursor,
+      filter: recordsFilter,
     });
 
   const loadRecordPage = async (pageIndex = recordPageIndex) => {
@@ -335,6 +340,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     showRecordsButton.classList.add("hidden");
     exportCsvButton.classList.remove("hidden");
     exportExcelButton.classList.remove("hidden");
+    recordPageCursors = [""];
+    recordPageIndex = 0;
+    await loadRecordPage(0);
+  };
+
+  const applyRecordsFilter = async () => {
+    recordsFilter = recordsFilterInput.value.trim();
+    recordPageCursors = [""];
+    recordPageIndex = 0;
+    await loadRecordPage(0);
+  };
+
+  const clearRecordsFilter = async () => {
+    recordsFilterInput.value = "";
+    recordsFilter = "";
     recordPageCursors = [""];
     recordPageIndex = 0;
     await loadRecordPage(0);
@@ -521,6 +541,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   showRecordsButton.addEventListener("click", openRecords);
+  recordsFilterApply.addEventListener("click", applyRecordsFilter);
+  recordsFilterClear.addEventListener("click", clearRecordsFilter);
+  recordsFilterInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") applyRecordsFilter();
+  });
   recordsPageSize.addEventListener("change", changeRecordPageSize);
   recordsPrev.addEventListener("click", async () => {
     if (recordPageIndex > 0) {
