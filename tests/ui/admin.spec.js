@@ -109,16 +109,25 @@ test.describe("Kshamawani admin access", () => {
     await mockService(page, "kshamawaniVerifyAccess", {
       data: { verified: true },
     });
-    await mockService(page, "kshamawaniAdminStats", {
-      data: stats,
-    }, 200, 350);
+    await mockService(
+      page,
+      "kshamawaniAdminStats",
+      {
+        data: stats,
+      },
+      200,
+      350,
+    );
 
     await page.goto("/admin-7x9p2.html");
     await page.locator("#admin-key").fill("test-access-key");
     await page.locator("#unlock").click();
 
     await expect(page.locator("#refresh")).toHaveClass(/is-loading/);
-    await expect(page.locator("#refresh")).toHaveAttribute("aria-busy", "true");
+    await expect(page.locator("#refresh")).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
     await expect(page.locator("#refresh")).toHaveAttribute(
       "aria-label",
       "आँकड़े ताज़ा हो रहे हैं…",
