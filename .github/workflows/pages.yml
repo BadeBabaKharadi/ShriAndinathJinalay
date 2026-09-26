@@ -30,11 +30,6 @@ jobs:
         run: npm ci
       - name: Install browser runtime
         run: PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install --with-deps chromium
-      - name: Diagnose Prettier formatting
-        run: |
-          npx prettier --write tests/ui/admin.spec.js
-          git diff -- tests/ui/admin.spec.js
-          exit 1
       - name: Run required checks
         run: npm run check
       - name: Upload Playwright artifacts
