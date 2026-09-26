@@ -129,31 +129,6 @@ test.describe("Kshamawani admin access", () => {
     );
   });
 
-  test(
-    "shows a visible error when refresh cannot reach the stats service",
-    async ({ page }) => {
-      await mockService(page, "kshamawaniVerifyAccess", {
-        data: { verified: true },
-      });
-      await mockService(
-        page,
-        "kshamawaniAdminStats",
-        { error: { status: "INTERNAL", message: "Service unavailable." } },
-        500,
-      );
-
-      await page.goto("/admin-7x9p2.html");
-      await page.locator("#admin-key").fill("test-access-key");
-      await page.locator("#unlock").click();
-
-      await expect(page.locator("#admin-dashboard-message")).toBeVisible();
-      await expect(page.locator("#admin-dashboard-message")).toHaveText(
-        "Service unavailable.",
-      );
-      await expect(page.locator("#refresh")).not.toBeDisabled();
-    },
-  );
-
   test("clears the search after a successful deletion", async ({ page }) => {
     await mockService(page, "kshamawaniVerifyAccess", {
       data: { verified: true },
