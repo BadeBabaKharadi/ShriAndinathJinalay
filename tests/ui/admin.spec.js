@@ -240,4 +240,59 @@ test.describe("Kshamawani admin access", () => {
     expect(recordsCalls).toBe(2);
   });
 
+  test("filters registrations by keyword and keeps pagination within matches", async ({
+    page,
+  }) => {
+    await mockService(page, "kshamawaniVerifyAccess", {
+      data: { verified: true },
+    });
+    await mockService(page, "kshamawaniAdminStats", {
+      data: stats,
+    });
+    await page.route(
+      `${SERVICE_BASE}/kshamawaniAdminRegistrations`,
+      async (route) => {
+        const request = route.request().postDataJSON();
+        expect(request.data.filter).toBe("kharadi");
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              records: [
+                {
+                  applicationCode: "KW26-0012",
+                  name: "Test Registration",
+                  mobile: "9028256379",
+                  address: "Kharadi Pune",
+                  coupons: 3,
+                  tokensIssued: false,
+                  createdAt: "2026-09-25T10:00:00.000Z",
+                  issuedAt: "",
+                },
+              ],
+              pageSize: 25,
+              totalMatches: 1,
+              nextCursor: "",
+              hasMore: false,
+              filter: "kharadi",
+            },
+          }),
+        });
+      },
+    );
+
+    await page.goto("/admin-7x9p2.html");
+    await page.locator("#admin-key").fill("test-access-key");
+    await page.locator("#unlock").click();
+    await page.locator("#show-records").click();
+
+    await page.locator("#records-filter-input").fill("kharadi");
+    await page.locator("#records-filter-apply").click();
+
+    await expect(page.locator("#records-body")).toContainText("Kharadi Pune");
+    await expect(page.locator("#records-count")).toContainText("1 रिकॉर्ड मिले");
+    await expect(page.locator("#records-next")).toBeDisabled();
+  });
+
 });
