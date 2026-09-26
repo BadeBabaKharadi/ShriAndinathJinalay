@@ -14,6 +14,7 @@ const {
   deleteRegistration,
   findRegistrationByMobile,
   getAdminStats,
+  getAdminRegistrations,
   issueTokens,
   verifyAccess,
 } = require("./admin");
