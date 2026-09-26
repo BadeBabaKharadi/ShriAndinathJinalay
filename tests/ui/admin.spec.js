@@ -198,4 +198,46 @@ test.describe("Kshamawani admin access", () => {
     await expect(page.locator("#access-verified")).toBeHidden();
     await expect(page.locator("#dashboard")).toBeHidden();
   });
+  test("loads registrations only after the records button is clicked and paginates", async ({
+    page,
+  }) => {
+    await mockService(page, "kshamawaniVerifyAccess", {
+      data: { verified: true },
+    });
+    await mockService(page, "kshamawaniAdminStats", {
+      data: stats,
+    });
+    let recordsCalls = 0;
+    await page.route(
+      `${SERVICE_BASE}/kshamawaniAdminRegistrations`,
+      async (route) => {
+        recordsCalls += 1;
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(recordsCalls === 1 ? {"data":{"records":[{"applicationCode":"KW26-0012","name":"Test Registration","mobile":"9028256379","address":"Test Address","coupons":3,"tokensIssued":false,"createdAt":"2026-09-25T10:00:00.000Z","issuedAt":"","issuedBy":""}],"pageSize":25,"nextCursor":"KW26-0012","hasMore":true}} : {"data":{"records":[{"applicationCode":"KW26-0001","name":"Older Registration","mobile":"9876543210","address":"Older Address","coupons":2,"tokensIssued":true,"createdAt":"2026-09-24T10:00:00.000Z","issuedAt":"2026-09-24T12:00:00.000Z","issuedBy":"COORDINATOR"}],"pageSize":25,"nextCursor":"","hasMore":false}}),
+        });
+      },
+    );
+
+    await page.goto("/admin-7x9p2.html");
+    await page.locator("#admin-key").fill("test-access-key");
+    await page.locator("#unlock").click();
+
+    await expect(page.locator("#records-panel")).toBeHidden();
+    expect(recordsCalls).toBe(0);
+
+    await page.locator("#show-records").click();
+    await expect(page.locator("#records-panel")).toBeVisible();
+    await expect(page.locator("#records-body tr")).toHaveCount(1);
+    await expect(page.locator("#records-body")).toContainText("KW26-0012");
+    await expect(page.locator("#records-next")).toBeEnabled();
+
+    await page.locator("#records-next").click();
+    await expect(page.locator("#records-body")).toContainText("KW26-0001");
+    await expect(page.locator("#records-page-label")).toHaveText("पृष्ठ 2");
+    await expect(page.locator("#records-prev")).toBeEnabled();
+    expect(recordsCalls).toBe(2);
+  });
+
 });
