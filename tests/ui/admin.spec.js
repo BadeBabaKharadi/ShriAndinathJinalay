@@ -16,7 +16,7 @@ async function mockService(
       "application/json",
     );
     expect(route.request().postDataJSON()).toHaveProperty("data");
-    if (delayMs) await new Promise((resolve) => setTimeout(resolve, delayMs));
+    if (delayMs) await page.waitForTimeout(delayMs);
     await route.fulfill({
       status,
       contentType: "application/json",
