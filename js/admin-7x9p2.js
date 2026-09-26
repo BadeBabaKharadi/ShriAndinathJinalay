@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const accessPanel = document.getElementById("access-panel");
   const accessVerified = document.getElementById("access-verified");
   const message = document.getElementById("admin-message");
+  const dashboardMessage = document.getElementById("admin-dashboard-message");
   const dashboard = document.getElementById("dashboard");
   const searchMobile = document.getElementById("search-mobile");
   const searchButton = document.getElementById("search");
@@ -29,10 +30,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   const showMessage = (text) => {
     message.textContent = text;
     message.classList.remove("hidden");
+    if (dashboardMessage && !dashboard.classList.contains("hidden")) {
+      dashboardMessage.textContent = text;
+      dashboardMessage.classList.remove("hidden");
+    }
   };
   const clearMessage = () => {
     message.textContent = "";
     message.classList.add("hidden");
+    if (dashboardMessage) {
+      dashboardMessage.textContent = "";
+      dashboardMessage.classList.add("hidden");
+    }
   };
 
   const callService = async (functionName, data) => {
@@ -194,7 +203,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         eventId: config.id,
         accessKey,
       });
+      if (
+        typeof stats.registrations !== "number" ||
+        typeof stats.totalCouponsBooked !== "number" ||
+        !Array.isArray(stats.byCouponCount)
+      ) {
+        throw new Error("सर्वर से आँकड़ों का प्रारूप सही नहीं मिला।");
+      }
       renderStats(stats);
+      clearMessage();
     } catch (error) {
       showMessage(error.message);
     } finally {
