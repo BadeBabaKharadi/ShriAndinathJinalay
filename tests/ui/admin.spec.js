@@ -296,29 +296,31 @@ test.describe("Kshamawani admin access", () => {
         `${SERVICE_BASE}/kshamawaniAdminRegistrations`,
         async (route) => {
           const request = route.request().postDataJSON();
-          expect(request.data.filter).toBe("kharadi");
+          const isFiltered = request.data.filter === "kharadi";
           await route.fulfill({
             status: 200,
             contentType: "application/json",
             body: JSON.stringify({
               data: {
-                records: [
-                  {
-                    applicationCode: "KW26-0012",
-                    name: "Test Registration",
-                    mobile: "9028256379",
-                    address: "Kharadi Pune",
-                    coupons: 3,
-                    tokensIssued: false,
-                    createdAt: "2026-09-25T10:00:00.000Z",
-                    issuedAt: "",
-                  },
-                ],
+                records: isFiltered
+                  ? [
+                      {
+                        applicationCode: "KW26-0012",
+                        name: "Test Registration",
+                        mobile: "9028256379",
+                        address: "Kharadi Pune",
+                        coupons: 3,
+                        tokensIssued: false,
+                        createdAt: "2026-09-25T10:00:00.000Z",
+                        issuedAt: "",
+                      },
+                    ]
+                  : [],
                 pageSize: 25,
-                totalMatches: 1,
+                totalMatches: isFiltered ? 1 : 0,
                 nextCursor: "",
                 hasMore: false,
-                filter: "kharadi",
+                filter: request.data.filter || "",
               },
             }),
           });
