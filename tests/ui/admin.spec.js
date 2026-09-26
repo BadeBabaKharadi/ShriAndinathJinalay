@@ -280,8 +280,7 @@ test.describe("Kshamawani admin access", () => {
     await expect(page.locator("#records-page-label")).toHaveText("पृष्ठ 2");
     await expect(page.locator("#records-prev")).toBeEnabled();
     expect(recordsCalls).toBe(2);
-  },
-);
+  });
 
   test("filters registrations by keyword and keeps pagination within matches", async ({
   page,
@@ -340,6 +339,5 @@ test.describe("Kshamawani admin access", () => {
       "1 रिकॉर्ड मिले",
     );
     await expect(page.locator("#records-next")).toBeDisabled();
-  },
-);
+  });
 });
