@@ -3,13 +3,20 @@ import { expect, test } from "@playwright/test";
 const SERVICE_BASE =
   "https://asia-south1-jain-community-platform.cloudfunctions.net";
 
-async function mockService(page, functionName, payload, status = 200) {
+async function mockService(
+  page,
+  functionName,
+  payload,
+  status = 200,
+  delayMs = 0,
+) {
   const url = `${SERVICE_BASE}/${functionName}`;
   await page.route(url, async (route) => {
     expect(route.request().headers()["content-type"]).toContain(
       "application/json",
     );
     expect(route.request().postDataJSON()).toHaveProperty("data");
+    if (delayMs) await page.waitForTimeout(delayMs);
     await route.fulfill({
       status,
       contentType: "application/json",
@@ -54,10 +61,10 @@ test.describe("Kshamawani admin access", () => {
     page,
   }) => {
     await mockService(page, "kshamawaniVerifyAccess", {
-      result: { verified: true },
+      data: { verified: true },
     });
     await mockService(page, "kshamawaniAdminStats", {
-      result: stats,
+      data: stats,
     });
 
     await page.goto("/admin-7x9p2.html");
@@ -96,15 +103,41 @@ test.describe("Kshamawani admin access", () => {
     await expect(page.locator("#trend-chart .trend-point")).toHaveCount(2);
   });
 
+  test("shows refresh progress while stats are loading", async ({ page }) => {
+    await mockService(page, "kshamawaniVerifyAccess", {
+      data: { verified: true },
+    });
+    await mockService(page, "kshamawaniAdminStats", { data: stats }, 200, 350);
+
+    await page.goto("/admin-7x9p2.html");
+    await page.locator("#admin-key").fill("test-access-key");
+    await page.locator("#unlock").click();
+
+    await expect(page.locator("#refresh")).toHaveClass(/is-loading/);
+    await expect(page.locator("#refresh")).toHaveAttribute("aria-busy", "true");
+    await expect(page.locator("#refresh")).toHaveAttribute(
+      "aria-label",
+      "आँकड़े ताज़ा हो रहे हैं…",
+    );
+
+    await expect(page.locator("#registrations")).toHaveText("12");
+    await expect(page.locator("#refresh")).not.toHaveClass(/is-loading/);
+    await expect(page.locator("#refresh")).not.toHaveAttribute("aria-busy");
+    await expect(page.locator("#refresh")).toHaveAttribute(
+      "aria-label",
+      "आँकड़े ताज़ा करें",
+    );
+  });
+
   test("clears the search after a successful deletion", async ({ page }) => {
     await mockService(page, "kshamawaniVerifyAccess", {
-      result: { verified: true },
+      data: { verified: true },
     });
     await mockService(page, "kshamawaniAdminStats", {
-      result: stats,
+      data: stats,
     });
     await mockService(page, "kshamawaniAdminLookup", {
-      result: {
+      data: {
         registration: {
           applicationCode: "KW26-0012",
           mobile: "9028256379",
@@ -116,7 +149,7 @@ test.describe("Kshamawani admin access", () => {
       },
     });
     await mockService(page, "kshamawaniAdminDelete", {
-      result: {
+      data: {
         deleted: {
           applicationCode: "KW26-0012",
           mobile: "9028256379",

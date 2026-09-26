@@ -61,7 +61,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       throw new Error(payload.error?.message || "ऑपरेशन पूरा नहीं हो सका।");
     }
-    return payload.result;
+    // Firebase callable HTTP responses return the function result in "data".
+    return payload.data;
   };
 
   const verifyAccessKey = async (candidateKey, { persist = true } = {}) => {
@@ -180,6 +181,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const refresh = async () => {
     refreshButton.disabled = true;
+    refreshButton.classList.add("is-loading");
+    refreshButton.setAttribute("aria-busy", "true");
+    refreshButton.setAttribute("aria-label", "आँकड़े ताज़ा हो रहे हैं…");
     try {
       const stats = await callService("kshamawaniAdminStats", {
         eventId: config.id,
@@ -190,6 +194,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       showMessage(error.message);
     } finally {
       refreshButton.disabled = false;
+      refreshButton.classList.remove("is-loading");
+      refreshButton.removeAttribute("aria-busy");
+      refreshButton.setAttribute("aria-label", "आँकड़े ताज़ा करें");
     }
   };
 
