@@ -243,6 +243,65 @@ async function getAdminStats({
   };
 }
 
+async function getAdminRegistrations({
+  db,
+  eventId = "kshamawani-2026",
+  accessKey,
+  expectedKey,
+  pageSize = 25,
+  cursor = "",
+  filter = "",
+}) {
+  assertAdminKey(accessKey, expectedKey);
+  const size = Math.min(Math.max(Number(pageSize) || 25, 1), 100);
+  const keyword = String(filter || "")
+    .trim()
+    .toLowerCase();
+
+  const snapshot = await db
+    .collection("registrations")
+    .where("eventId", "==", eventId)
+    .orderBy("createdAt", "desc")
+    .get();
+
+  const allRecords = snapshot.docs.map((doc) =>
+    serializeRegistration(doc.data()),
+  );
+  const filteredRecords = keyword
+    ? allRecords.filter((record) =>
+        [record.name, record.mobile, record.address].some((value) =>
+          String(value || "")
+            .toLowerCase()
+            .includes(keyword),
+        ),
+      )
+    : allRecords;
+
+  let startIndex = 0;
+  if (cursor) {
+    const cursorIndex = filteredRecords.findIndex(
+      (record) => record.applicationCode === String(cursor),
+    );
+    if (cursorIndex < 0) throw new Error("Invalid pagination cursor.");
+    startIndex = cursorIndex + 1;
+  }
+
+  const records = filteredRecords.slice(startIndex, startIndex + size);
+  const nextCursor =
+    startIndex + records.length < filteredRecords.length
+      ? records[records.length - 1]?.applicationCode || ""
+      : "";
+
+  return {
+    records,
+    pageSize: size,
+    totalMatches: filteredRecords.length,
+    nextCursor,
+    hasMore: Boolean(nextCursor),
+    filter: keyword,
+  };
+}
+
 async function findRegistrationByMobile({
   db,
   mobile,
@@ -333,6 +392,7 @@ module.exports = {
   deleteRegistration,
   findRegistrationByMobile,
   getAdminStats,
+  getAdminRegistrations,
   issueTokens,
   normalizeMobile,
 };
