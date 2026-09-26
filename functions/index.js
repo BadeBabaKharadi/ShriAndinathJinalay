@@ -30,6 +30,8 @@ setGlobalOptions({
 const ALLOWED_ORIGINS = [
   "https://badebabakharadi.com",
   "https://www.badebabakharadi.com",
+  "https://babakharadi.com",
+  "https://www.babakharadi.com",
   "https://badebabakharadi.github.io",
 ];
 
