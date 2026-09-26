@@ -57,6 +57,49 @@
         <div id="coupon-breakdown" class="chips"></div>
       </section>
 
+      <section class="admin-section records-section">
+        <div class="section-heading records-heading">
+          <div>
+            <h2>सभी पंजीकरण</h2>
+            <p class="muted">तालिका केवल अनुरोध करने पर लोड होगी।</p>
+          </div>
+          <div class="record-actions">
+            <button id="show-records" class="button secondary" type="button">सभी पंजीकरण देखें</button>
+            <button id="export-csv" class="button secondary hidden" type="button" disabled>CSV डाउनलोड</button>
+            <button id="export-excel" class="button secondary hidden" type="button" disabled>Excel डाउनलोड</button>
+          </div>
+        </div>
+        <div id="records-panel" class="records-panel hidden">
+          <div class="records-meta">
+            <span id="records-count">—</span>
+            <label>प्रति पृष्ठ
+              <select id="records-page-size" aria-label="प्रति पृष्ठ रिकॉर्ड">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
+          </div>
+          <div class="records-table-wrap">
+            <table class="records-table">
+              <thead>
+                <tr>
+                  <th>आवेदन</th><th>नाम</th><th>मोबाइल</th><th>पता</th><th>कूपन</th><th>स्थिति</th><th>पंजीकरण समय</th><th>जारी समय</th>
+                </tr>
+              </thead>
+              <tbody id="records-body"></tbody>
+            </table>
+            <p id="records-empty" class="muted records-empty hidden">कोई पंजीकरण उपलब्ध नहीं है।</p>
+          </div>
+          <div class="records-pagination">
+            <button id="records-prev" class="button secondary" type="button" disabled>← पिछला</button>
+            <span id="records-page-label">पृष्ठ 1</span>
+            <button id="records-next" class="button secondary" type="button" disabled>अगला →</button>
+          </div>
+          <p id="records-message" class="form-message hidden" role="alert"></p>
+        </div>
+      </section>
+
       <section class="admin-section">
         <h2>मोबाइल से पंजीकरण खोजें</h2>
         <div class="access-row"><input id="search-mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10 अंकों का मोबाइल नंबर"><button id="search" class="button primary" type="button">खोजें</button></div>
@@ -71,6 +114,6 @@
     </section>
   </section>
 </main>
-<script src="js/admin-7x9p2.js?v=20260926-3"></script>
+<script src="js/admin-7x9p2.js?v=20260926-4"></script>
 </body>
 </html>
