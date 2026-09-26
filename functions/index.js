@@ -195,6 +195,7 @@ exports.kshamawaniAdminRegistrations = onCall(
         expectedKey: ADMIN_ACCESS_KEY.value(),
         pageSize: data.pageSize,
         cursor: data.cursor,
+        filter: data.filter,
       });
     } catch (error) {
       return mapError(error);
