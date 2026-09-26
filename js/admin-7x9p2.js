@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let recordPageCursors = [""];
   let recordPageIndex = 0;
   let recordsHasMore = false;
+  let recordsTotalMatches = 0;
   let recordsFilter = "";
 
   const showMessage = (text) => {
@@ -284,8 +285,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     recordsEmpty.classList.toggle("hidden", rows.length > 0);
     recordsBody.classList.toggle("hidden", rows.length === 0);
     recordsCount.textContent = rows.length
-      ? rows.length + " रिकॉर्ड इस पृष्ठ पर"
-      : "कोई रिकॉर्ड नहीं";
+      ? recordsTotalMatches + " रिकॉर्ड मिले • " + rows.length + " इस पृष्ठ पर"
+      : recordsTotalMatches
+        ? recordsTotalMatches + " रिकॉर्ड मिले"
+        : "कोई रिकॉर्ड नहीं";
     recordsPageLabel.textContent = "पृष्ठ " + (recordPageIndex + 1);
     recordsPrev.disabled = recordPageIndex === 0;
     recordsNext.disabled = !recordsHasMore;
@@ -322,6 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const response = await fetchRecordPage(cursor);
       records = response.records || [];
       recordsHasMore = response.hasMore === true;
+      recordsTotalMatches = Number(response.totalMatches || 0);
       recordPageIndex = pageIndex;
       if (recordsHasMore && response.nextCursor) {
         recordPageCursors[pageIndex + 1] = response.nextCursor;
@@ -330,6 +334,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
       records = [];
       recordsHasMore = false;
+      recordsTotalMatches = 0;
       renderRecords([]);
       showRecordsMessage(error.message);
     }
@@ -405,6 +410,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         accessKey,
         pageSize: 100,
         cursor,
+        filter: recordsFilter,
       });
       all.push(...(response.records || []));
       cursor = response.hasMore ? response.nextCursor || "" : "";
