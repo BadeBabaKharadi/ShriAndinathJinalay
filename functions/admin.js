@@ -262,7 +262,9 @@ async function getAdminRegistrations({
     .orderBy("createdAt", "desc")
     .get();
 
-  const allRecords = snapshot.docs.map((doc) => serializeRegistration(doc.data()));
+  const allRecords = snapshot.docs.map((doc) =>
+    serializeRegistration(doc.data()),
+  );
   const filteredRecords = keyword
     ? allRecords.filter((record) =>
         [record.name, record.mobile, record.address].some((value) =>
@@ -386,6 +388,7 @@ module.exports = {
   deleteRegistration,
   findRegistrationByMobile,
   getAdminStats,
+  getAdminRegistrations,
   issueTokens,
   normalizeMobile,
 };
