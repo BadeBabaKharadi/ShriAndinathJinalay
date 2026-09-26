@@ -14,6 +14,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   const searchResult = document.getElementById("search-result");
   const deleteButton = document.getElementById("delete");
   const refreshButton = document.getElementById("refresh");
+  const showRecordsButton = document.getElementById("show-records");
+  const recordsPanel = document.getElementById("records-panel");
+  const recordsBody = document.getElementById("records-body");
+  const recordsEmpty = document.getElementById("records-empty");
+  const recordsCount = document.getElementById("records-count");
+  const recordsPageSize = document.getElementById("records-page-size");
+  const recordsPrev = document.getElementById("records-prev");
+  const recordsNext = document.getElementById("records-next");
+  const recordsPageLabel = document.getElementById("records-page-label");
+  const recordsMessage = document.getElementById("records-message");
+  const exportCsvButton = document.getElementById("export-csv");
+  const exportExcelButton = document.getElementById("export-excel");
   const trendChart = document.getElementById("trend-chart");
   const trendEmpty = document.getElementById("trend-empty");
   const trendControls = [...document.querySelectorAll("[data-trend]")];
@@ -26,6 +38,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     twoHourly: [],
   };
   let selectedTrend = "daily";
+  let records = [];
+  let recordPageCursors = [""];
+  let recordPageIndex = 0;
+  let recordsHasMore = false;
 
   const showMessage = (text) => {
     message.textContent = text;
@@ -222,6 +238,231 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
+  const formatRecordDate = (value) => {
+    if (!value) return "—";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    return new Intl.DateTimeFormat("hi-IN", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(date);
+  };
+
+  const escapeHtml = (value) =>
+    String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+  const renderRecords = (rows) => {
+    recordsBody.innerHTML = rows
+      .map((row) => {
+        const status = row.tokensIssued
+          ? "<span class=\"record-status issued\">कूपन जारी</span>"
+          : "<span class=\"record-status pending\">जारी होना बाकी</span>";
+        return [
+          "<tr>",
+          "<td><strong>" + escapeHtml(row.applicationCode) + "</strong></td>",
+          "<td>" + escapeHtml(row.name) + "</td>",
+          "<td>" + escapeHtml(row.mobile) + "</td>",
+          "<td>" + escapeHtml(row.address) + "</td>",
+          "<td>" + escapeHtml(row.coupons) + "</td>",
+          "<td>" + status + "</td>",
+          "<td>" + escapeHtml(formatRecordDate(row.createdAt)) + "</td>",
+          "<td>" + escapeHtml(formatRecordDate(row.issuedAt)) + "</td>",
+          "</tr>",
+        ].join("");
+      })
+      .join("");
+
+    recordsEmpty.classList.toggle("hidden", rows.length > 0);
+    recordsBody.classList.toggle("hidden", rows.length === 0);
+    recordsCount.textContent = rows.length
+      ? rows.length + " रिकॉर्ड इस पृष्ठ पर"
+      : "कोई रिकॉर्ड नहीं";
+    recordsPageLabel.textContent = "पृष्ठ " + (recordPageIndex + 1);
+    recordsPrev.disabled = recordPageIndex === 0;
+    recordsNext.disabled = !recordsHasMore;
+    exportCsvButton.disabled = rows.length === 0;
+    exportExcelButton.disabled = rows.length === 0;
+  };
+
+  const showRecordsMessage = (text) => {
+    recordsMessage.textContent = text;
+    recordsMessage.classList.remove("hidden");
+  };
+
+  const clearRecordsMessage = () => {
+    recordsMessage.textContent = "";
+    recordsMessage.classList.add("hidden");
+  };
+
+  const fetchRecordPage = async (cursor = "") =>
+    callService("kshamawaniAdminRegistrations", {
+      eventId: config.id,
+      accessKey,
+      pageSize: Number(recordsPageSize.value),
+      cursor,
+    });
+
+  const loadRecordPage = async (pageIndex = recordPageIndex) => {
+    const cursor = recordPageCursors[pageIndex] || "";
+    recordsPrev.disabled = true;
+    recordsNext.disabled = true;
+    clearRecordsMessage();
+
+    try {
+      const response = await fetchRecordPage(cursor);
+      records = response.records || [];
+      recordsHasMore = response.hasMore === true;
+      recordPageIndex = pageIndex;
+      if (recordsHasMore && response.nextCursor) {
+        recordPageCursors[pageIndex + 1] = response.nextCursor;
+      }
+      renderRecords(records);
+    } catch (error) {
+      records = [];
+      recordsHasMore = false;
+      renderRecords([]);
+      showRecordsMessage(error.message);
+    }
+  };
+
+  const openRecords = async () => {
+    recordsPanel.classList.remove("hidden");
+    showRecordsButton.classList.add("hidden");
+    exportCsvButton.classList.remove("hidden");
+    exportExcelButton.classList.remove("hidden");
+    recordPageCursors = [""];
+    recordPageIndex = 0;
+    await loadRecordPage(0);
+  };
+
+  const changeRecordPageSize = async () => {
+    recordPageCursors = [""];
+    recordPageIndex = 0;
+    await loadRecordPage(0);
+  };
+
+  const csvSafe = (value) => {
+    const text = String(value ?? "");
+    return /^[=+\-@]/.test(text) ? "'" + text : text;
+  };
+
+  const recordRowsForExport = (rows) =>
+    rows.map((row) => [
+      row.applicationCode,
+      row.name,
+      row.mobile,
+      row.address,
+      row.coupons,
+      row.tokensIssued ? "कूपन जारी" : "जारी होना बाकी",
+      formatRecordDate(row.createdAt),
+      formatRecordDate(row.issuedAt),
+      row.issuedBy,
+    ]);
+
+  const downloadBlob = (blob, filename) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const fetchAllRecords = async () => {
+    const all = [];
+    let cursor = "";
+
+    do {
+      const response = await callService("kshamawaniAdminRegistrations", {
+        eventId: config.id,
+        accessKey,
+        pageSize: 100,
+        cursor,
+      });
+      all.push(...(response.records || []));
+      cursor = response.hasMore ? response.nextCursor || "" : "";
+    } while (cursor);
+
+    return all;
+  };
+
+  const exportRecords = async (format) => {
+    exportCsvButton.disabled = true;
+    exportExcelButton.disabled = true;
+    showRecordsMessage("सभी रिकॉर्ड तैयार किए जा रहे हैं…");
+
+    try {
+      const allRecords = await fetchAllRecords();
+      if (!allRecords.length) {
+        throw new Error("डाउनलोड करने के लिए कोई रिकॉर्ड नहीं है।");
+      }
+
+      const headers = [
+        "Application",
+        "Name",
+        "Mobile",
+        "Address",
+        "Coupons",
+        "Status",
+        "Registered At",
+        "Issued At",
+        "Issued By",
+      ];
+      const rows = recordRowsForExport(allRecords);
+      const dateSuffix = new Date().toISOString().slice(0, 10);
+
+      if (format === "csv") {
+        const csv = [headers, ...rows]
+          .map((row) =>
+            row
+              .map((value) => '"' + csvSafe(value).replaceAll('"', '""') + '"' )
+              .join(","),
+          )
+          .join("\r\n");
+        downloadBlob(
+          new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" }),
+          "kshamawani-2026-registrations-" + dateSuffix + ".csv",
+        );
+      } else {
+        const headerHtml = headers
+          .map((header) => "<th>" + escapeHtml(header) + "</th>")
+          .join("");
+        const bodyHtml = rows
+          .map(
+            (row) =>
+              "<tr>" +
+              row.map((value) => "<td>" + escapeHtml(value) + "</td>").join("") +
+              "</tr>",
+          )
+          .join("");
+        const excelHtml =
+          '<html><head><meta charset="utf-8"></head><body><table><thead><tr>' +
+          headerHtml +
+          "</tr></thead><tbody>" +
+          bodyHtml +
+          "</tbody></table></body></html>";
+        downloadBlob(
+          new Blob([excelHtml], { type: "application/vnd.ms-excel" }),
+          "kshamawani-2026-registrations-" + dateSuffix + ".xls",
+        );
+      }
+
+      clearRecordsMessage();
+    } catch (error) {
+      showRecordsMessage(error.message);
+    } finally {
+      exportCsvButton.disabled = records.length === 0;
+      exportExcelButton.disabled = records.length === 0;
+    }
+  };
+
   const clearSearch = () => {
     selectedRegistration = null;
     searchMobile.value = "";
@@ -278,6 +519,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   trendControls.forEach((button) => {
     button.addEventListener("click", () => renderTrend(button.dataset.trend));
   });
+
+  showRecordsButton.addEventListener("click", openRecords);
+  recordsPageSize.addEventListener("change", changeRecordPageSize);
+  recordsPrev.addEventListener("click", async () => {
+    if (recordPageIndex > 0) {
+      await loadRecordPage(recordPageIndex - 1);
+    }
+  });
+  recordsNext.addEventListener("click", async () => {
+    if (recordsHasMore) {
+      await loadRecordPage(recordPageIndex + 1);
+    }
+  });
+  exportCsvButton.addEventListener("click", () => exportRecords("csv"));
+  exportExcelButton.addEventListener("click", () => exportRecords("excel"));
 
   searchButton.addEventListener("click", async () => {
     const mobile = searchMobile.value.replace(/\D/g, "");
