@@ -199,8 +199,8 @@ test.describe("Kshamawani admin access", () => {
     await expect(page.locator("#dashboard")).toBeHidden();
   });
   test("loads registrations only after the records button is clicked and paginates", async ({
-  page,
-}) => {
+    page,
+  }) => {
     await mockService(page, "kshamawaniVerifyAccess", {
       data: { verified: true },
     });
@@ -283,8 +283,8 @@ test.describe("Kshamawani admin access", () => {
   });
 
   test("filters registrations by keyword and keeps pagination within matches", async ({
-  page,
-}) => {
+    page,
+  }) => {
     await mockService(page, "kshamawaniVerifyAccess", {
       data: { verified: true },
     });
