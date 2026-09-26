@@ -182,6 +182,25 @@ exports.kshamawaniAdminStats = onCall(
   },
 );
 
+exports.kshamawaniAdminRegistrations = onCall(
+  protectedCallableOptions(),
+  async (request) => {
+    try {
+      const data = request.data || {};
+      return await getAdminRegistrations({
+        db: getFirestore(),
+        eventId: data.eventId,
+        accessKey: data.accessKey,
+        expectedKey: ADMIN_ACCESS_KEY.value(),
+        pageSize: data.pageSize,
+        cursor: data.cursor,
+      });
+    } catch (error) {
+      return mapError(error);
+    }
+  },
+);
+
 exports.kshamawaniAdminLookup = onCall(
   protectedCallableOptions(),
   async (request) => {
