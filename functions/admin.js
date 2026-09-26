@@ -243,6 +243,40 @@ async function getAdminStats({
   };
 }
 
+async function getAdminRegistrations({
+  db,
+  eventId = "kshamawani-2026",
+  accessKey,
+  expectedKey,
+  pageSize = 25,
+  cursor = "",
+}) {
+  assertAdminKey(accessKey, expectedKey);
+  const size = Math.min(Math.max(Number(pageSize) || 25, 1), 100);
+  let query = db
+    .collection("registrations")
+    .where("eventId", "==", eventId)
+    .orderBy("createdAt", "desc")
+    .limit(size);
+
+  if (cursor) {
+    const cursorSnapshot = await db.collection("registrations").doc(String(cursor)).get();
+    if (!cursorSnapshot.exists) throw new Error("Invalid pagination cursor.");
+    query = query.startAfter(cursorSnapshot);
+  }
+
+  const snapshot = await query.get();
+  const records = snapshot.docs.map((doc) => serializeRegistration(doc.data()));
+  const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+
+  return {
+    records,
+    pageSize: size,
+    nextCursor: lastDoc?.id || "",
+    hasMore: snapshot.size === size,
+  };
+}
+
 async function findRegistrationByMobile({
   db,
   mobile,
