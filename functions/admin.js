@@ -254,7 +254,9 @@ async function getAdminRegistrations({
 }) {
   assertAdminKey(accessKey, expectedKey);
   const size = Math.min(Math.max(Number(pageSize) || 25, 1), 100);
-  const keyword = String(filter || "").trim().toLowerCase();
+  const keyword = String(filter || "")
+    .trim()
+    .toLowerCase();
 
   const snapshot = await db
     .collection("registrations")
@@ -268,7 +270,9 @@ async function getAdminRegistrations({
   const filteredRecords = keyword
     ? allRecords.filter((record) =>
         [record.name, record.mobile, record.address].some((value) =>
-          String(value || "").toLowerCase().includes(keyword),
+          String(value || "")
+            .toLowerCase()
+            .includes(keyword),
         ),
       )
     : allRecords;
