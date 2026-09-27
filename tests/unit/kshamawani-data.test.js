@@ -29,32 +29,14 @@ describe("Kshamawani configuration", () => {
     );
   });
 
-  it("keeps the coordinator route out of search indexes", async () => {
-    const html = await readFileText("coordinator-7x9p2.html");
-
-    expect(html).toContain(
-      'name="robots" content="noindex,nofollow,noarchive"',
-    );
-    expect(html).toContain("html5-qrcode");
+  it("keeps the public registration and coordinator routes retired", async () => {
+    await expect(readFileText("registration.html").catch(() => null)).resolves.toBeNull();
+    await expect(readFileText("coordinator-7x9p2.html").catch(() => null)).resolves.toBeNull();
   });
 
-  it("uses Firebase for public registration and protected Firebase coordination", async () => {
-    const client = await readFileText("js/registration.js");
-    const functions = await readFileText("functions/index.js");
-    const coordinator = await readFileText("js/coordinator.js");
-
-    expect(client).toContain("kshamawaniLookup");
-    expect(client).toContain("kshamawaniCreate");
-    expect(client).toContain("kshamawaniUpdate");
-    expect(client).not.toContain("api=lookupRegistration");
-    expect(client).not.toContain("iframe");
-    expect(functions).toContain("kshamawaniCoordinatorLookup");
-    expect(functions).toContain("kshamawaniIssue");
-    expect(coordinator).toContain("kshamawaniCoordinatorLookup");
-    expect(coordinator).toContain("kshamawaniIssue");
-    expect(coordinator).toContain("getCameras");
-    expect(coordinator).not.toContain("markTokensIssued");
-    expect(coordinator).not.toContain("apiUrl");
+  it("keeps the protected admin route available", async () => {
+    const html = await readFileText("admin-7x9p2.html");
+    expect(html).toContain("कुल बुक कूपन");
   });
 
   it("allows both public domain aliases to call protected functions", async () => {
