@@ -29,33 +29,16 @@ describe("Kshamawani Firebase registration", () => {
     expect(rules).toContain("allow read, write: if false;");
   });
 
-  it("moves the coordinator to protected Firebase callables", async () => {
-    const page = await readFileText("coordinator-7x9p2.html");
-    const script = await readFileText("js/coordinator.js");
-    const functions = await readFileText("functions/index.js");
+  it("keeps the public registration route removed while preserving admin operations", async () => {
+    await expect(readFileText("registration.html")).rejects.toThrow();
+    await expect(readFileText("coordinator-7x9p2.html")).rejects.toThrow();
 
-    expect(page).toContain("coordinator.js");
-    expect(script).toContain("kshamawaniVerifyAccess");
-    expect(script).toContain("kshamawaniCoordinatorLookup");
-    expect(script).toContain("kshamawaniIssue");
-    expect(script).toContain("getCameras");
-    expect(script).not.toContain("markTokensIssued");
-    expect(script).not.toContain("apiUrl");
-    expect(functions).toContain("defineSecret");
-    expect(functions).toContain("KSHAMAWANI_ADMIN_KEY");
-    expect(functions).toContain("kshamawaniVerifyAccess");
-  });
-
-  it("adds a protected operations dashboard", async () => {
-    const page = await readFileText("admin-7x9p2.html");
+    const admin = await readFileText("admin-7x9p2.html");
     const script = await readFileText("js/admin-7x9p2.js");
     const functions = await readFileText("functions/index.js");
 
-    expect(page).toContain("कुल बुक कूपन");
-    expect(page).toContain("भौतिक कूपन जारी");
+    expect(admin).toContain("कुल बुक कूपन");
     expect(script).toContain("kshamawaniAdminStats");
-    expect(script).toContain("kshamawaniAdminLookup");
-    expect(script).toContain("kshamawaniAdminDelete");
     expect(functions).toContain("kshamawaniAdminStats");
     expect(functions).toContain("kshamawaniAdminDelete");
   });
@@ -67,16 +50,6 @@ describe("Kshamawani Firebase registration", () => {
       expect(page).toContain(`<option value="${value}">${value}</option>`);
     }
     expect(page).not.toContain('id="coupons" name="coupons" type="number"');
-  });
-
-  it("moves public registration calls to Firebase callable endpoints", async () => {
-    const client = await readFileText("js/registration.js");
-
-    expect(client).toContain("kshamawaniLookup");
-    expect(client).toContain("kshamawaniCreate");
-    expect(client).toContain("kshamawaniUpdate");
-    expect(client).not.toContain("api=lookupRegistration");
-    expect(client).not.toContain("iframe");
   });
 
   it("keeps coordinator and admin operations protected", async () => {
