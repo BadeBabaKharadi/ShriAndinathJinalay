@@ -30,8 +30,12 @@ describe("Kshamawani configuration", () => {
   });
 
   it("keeps the public registration and coordinator routes retired", async () => {
-    await expect(readFileText("registration.html").catch(() => null)).resolves.toBeNull();
-    await expect(readFileText("coordinator-7x9p2.html").catch(() => null)).resolves.toBeNull();
+    await expect(
+      readFileText("registration.html").catch(() => null),
+    ).resolves.toBeNull();
+    await expect(
+      readFileText("coordinator-7x9p2.html").catch(() => null),
+    ).resolves.toBeNull();
   });
 
   it("keeps the protected admin route available", async () => {
