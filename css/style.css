@@ -714,6 +714,95 @@ body {
 
 }
 
+
+/* =========================================================
+   REGISTRATION CLOSED DIALOG
+   ========================================================= */
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.registration-closed-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(57, 39, 28, 0.58);
+  backdrop-filter: blur(3px);
+}
+
+.registration-closed-overlay.hidden {
+  display: none;
+}
+
+.registration-closed-modal {
+  position: relative;
+  width: min(100%, 520px);
+  padding: 32px 28px 28px;
+  text-align: center;
+  background: var(--white);
+  border: 1px solid var(--gold-soft);
+  border-top: 4px solid var(--saffron);
+  border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(57, 39, 28, 0.28);
+}
+
+.registration-closed-icon {
+  font-size: 2.4rem;
+  margin-bottom: 8px;
+}
+
+.registration-closed-modal h2 {
+  color: var(--maroon);
+  font-family: 'Noto Sans Devanagari', serif;
+  font-size: clamp(1.45rem, 4vw, 1.9rem);
+  line-height: 1.35;
+}
+
+.registration-closed-modal p {
+  margin: 12px auto 22px;
+  max-width: 430px;
+  color: var(--text-soft);
+  font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif;
+}
+
+.registration-closed-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--maroon);
+  background: var(--bg-soft);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.registration-closed-modal .button {
+  min-width: 120px;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 22px;
+  color: var(--white);
+  background: linear-gradient(120deg, var(--maroon), #7B211C);
+  font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 540px) {
+  .registration-closed-modal {
+    padding: 28px 20px 22px;
+  }
+}
+
 /* Shared animations and utility polish */
 .hero-copy,
 .hero-image-panel,

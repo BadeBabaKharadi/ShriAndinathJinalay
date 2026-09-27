@@ -28,7 +28,6 @@ Existing public pages include:
 - `/kalash.html`
 - `/gallery.html`
 - `/team.html`
-- `/registration.html`
 - `/chowka.html`
 
 ## 3. Non-negotiable compatibility contract
@@ -54,7 +53,7 @@ Until the temple home page is explicitly approved for production:
 | Event timetable | `/events/{event-id}/timetable/` | `/dainik-karyakram.html` for Chaturmas |
 | Event gallery | `/events/{event-id}/gallery/` | `/gallery.html` for Chaturmas |
 | Event contacts | `/events/{event-id}/contacts/` | `/team.html` for Chaturmas |
-| Event registration | `/events/{event-id}/forms/{form-id}/` | `/registration.html` for the current form |
+| Event registration | `/events/{event-id}/forms/{form-id}/` | Public registration is closed for the 2026 Kshamawani event; the homepage shows a closed-registration dialog |
 
 The exact static-hosting route implementation may use HTML files internally, but these user-facing paths are the intended contract.
 
@@ -137,7 +136,7 @@ The public form captures:
 
 On successful registration, the service returns an application code. The confirmation screen renders a QR containing the event id, application code and mobile number so the attendee can keep a screenshot and show it at the venue.
 
-A deliberately non-navigated coordinator route (`/coordinator-7x9p2.html`) provides camera/file QR scanning plus manual application-code entry. The coordinator view verifies the scanned mobile/application-code pair against the registration service and records physical-token issuance.
+The 2026 Kshamawani public registration and coordinator web pages have been retired after the event. The protected Firebase operations and registration records remain available to the admin tooling for the time being.
 
 Registration and audit records are stored in Google Sheets through the repository's Apps Script backend contract. The audit sheet records creation and token-issuance events. The backend uses a script lock when enforcing mobile uniqueness and token issuance to avoid duplicate concurrent writes.
 

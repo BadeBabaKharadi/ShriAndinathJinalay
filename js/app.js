@@ -137,3 +137,43 @@ async function loadTodayShravak() {
 
 // Dynamic content is now refreshed after footer markup is inserted by the component loader.
 // The page fragments are injected during DOMContentLoaded, so the JSON bindings run there.
+
+function setupRegistrationClosedDialog() {
+  const trigger = document.getElementById("registration-closed-button");
+  const overlay = document.getElementById("registration-closed-modal");
+  const closeButton = document.getElementById("registration-closed-close");
+  const okButton = document.getElementById("registration-closed-ok");
+
+  if (!trigger || !overlay || !closeButton || !okButton) {
+    return;
+  }
+
+  const close = () => {
+    overlay.classList.add("hidden");
+    document.body.classList.remove("modal-open");
+  };
+
+  const open = () => {
+    overlay.classList.remove("hidden");
+    document.body.classList.add("modal-open");
+    closeButton.focus();
+  };
+
+  trigger.addEventListener("click", open);
+  closeButton.addEventListener("click", close);
+  okButton.addEventListener("click", close);
+
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay) {
+      close();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !overlay.classList.contains("hidden")) {
+      close();
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", setupRegistrationClosedDialog);
