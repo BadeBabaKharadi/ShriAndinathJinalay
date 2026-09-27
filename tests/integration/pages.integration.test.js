@@ -6,7 +6,12 @@ const root = path.resolve(process.cwd());
 
 describe("website entry points", () => {
   it("contains the main website pages", () => {
-    const expected = ["index.html", "team.html", "kalash.html", "admin-7x9p2.html"];
+    const expected = [
+      "index.html",
+      "team.html",
+      "kalash.html",
+      "admin-7x9p2.html",
+    ];
 
     for (const file of expected) {
       expect(fs.existsSync(path.join(root, file)), `${file} should exist`).toBe(
@@ -17,7 +22,10 @@ describe("website entry points", () => {
 
   it("does not publish retired registration or coordinator pages", () => {
     for (const file of ["registration.html", "coordinator-7x9p2.html"]) {
-      expect(fs.existsSync(path.join(root, file)), file + " should be removed").toBe(false);
+      expect(
+        fs.existsSync(path.join(root, file)),
+        file + " should be removed",
+      ).toBe(false);
     }
   });
 });
