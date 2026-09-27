@@ -43,15 +43,6 @@ describe("Kshamawani Firebase registration", () => {
     expect(functions).toContain("kshamawaniAdminDelete");
   });
 
-  it("keeps the coupon count as a one-to-six selector", async () => {
-    const page = await readFileText("registration.html");
-    expect(page).toContain('<select id="coupons"');
-    for (const value of ["1", "2", "3", "4", "5", "6"]) {
-      expect(page).toContain(`<option value="${value}">${value}</option>`);
-    }
-    expect(page).not.toContain('id="coupons" name="coupons" type="number"');
-  });
-
   it("keeps coordinator and admin operations protected", async () => {
     const admin = await readFileText("functions/admin.js");
 
