@@ -192,3 +192,8 @@ Before opening a PR, verify:
 * [ ] Regression coverage exists for changed behaviour.
 
 The goal is to make small, reliable changes that preserve the existing Shri Andinath Jinalay website rather than continuously introducing new parallel patterns.
+
+
+## AI Repository Profile
+
+Before starting work, read and apply [`.ai/repo-profile.md`](../.ai/repo-profile.md). It defines the repository-specific operating contract for Developer, Product Owner, QA, Architecture and Release workflows. This profile complements these instructions; when this file is more specific, follow this file.
