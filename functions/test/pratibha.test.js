@@ -68,7 +68,9 @@ test("filters admin applications", async () => {
   const db = {
     collection() {
       return {
-        limit() {\n          return { get: async () => ({ docs }) };\n        },
+        limit() {
+          return { get: async () => ({ docs }) };
+        },
       };
     },
   };
@@ -103,7 +105,9 @@ test("finds registration by normalized mobile", async () => {
       return {
         where() {
           return {
-            limit() {\n              return { get: async () => ({ empty: false, size: 1, docs: [doc] }) };\n            },
+            limit() {
+              return { get: async () => ({ empty: false, size: 1, docs: [doc] }) };
+            },
           };
         },
       };
