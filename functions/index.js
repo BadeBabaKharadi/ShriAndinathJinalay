@@ -18,8 +18,6 @@ const {
   issueTokens,
   verifyAccess,
 } = require("./admin");
-const pratibha = require("./pratibha.cjs");
-
 initializeApp();
 
 setGlobalOptions({
