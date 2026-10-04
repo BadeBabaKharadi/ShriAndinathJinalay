@@ -26,6 +26,13 @@ module.exports = {
     pratibha.getPublicConfig({ db: getFirestore() })),
   pratibhaCreate: onCall({ ...publicOptions(), timeoutSeconds: 60, memory: "512MiB" }, async request =>
     pratibha.createApplication({ db: getFirestore(), data: request.data || {} })),
+  pratibhaFindByMobile: onCall(publicOptions(), async request => {
+    const data = request.data || {};
+    return pratibha.findApplicationByMobile({
+      db: getFirestore(),
+      mobileNumber: data.mobileNumber,
+    });
+  }),
   pratibhaGet: onCall(publicOptions(), async request => {
     const data = request.data || {};
     return pratibha.getApplication({
