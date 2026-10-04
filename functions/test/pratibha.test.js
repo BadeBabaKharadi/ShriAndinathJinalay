@@ -85,7 +85,6 @@ test("sorts and filters admin applications without a composite Firestore query",
   assert.equal(result.records[0].applicationId, "PS26-00002");
 });
 
-
 test("finds an existing registration by normalized mobile number", async () => {
   const doc = {
     data: () => ({
