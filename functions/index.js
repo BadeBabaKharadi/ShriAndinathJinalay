@@ -18,7 +18,7 @@ const {
   issueTokens,
   verifyAccess,
 } = require("./admin");
-const pratibha = require("./pratibha");
+const pratibha = require("./pratibha.cjs");
 
 initializeApp();
 
