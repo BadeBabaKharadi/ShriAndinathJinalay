@@ -6,7 +6,12 @@ const { getStorage } = require("firebase-admin/storage");
 const APPS="pratibhaSammanApplications", CFG="pratibhaSammanConfig", RULES="pratibhaSammanRules";
 const DEFAULT_RULES=[
   {id:"pratibha-batch-2025-26",hindi:"यह सम्मान २०२५-२६ शैक्षणिक सत्र के विद्यार्थियों के लिए है।",displayOrder:1,active:true},
-  {id:"pratibha-pune-eligibility",hindi:"केवल पुणे के विद्यार्थी पात्र हैं।",displayOrder:2,active:true},
+  {id:"pratibha-pune-eligibility",hindi:"उम्मीदवार पुणे का होना चाहिए और स्कूल भी पुणे में होना चाहिए।",displayOrder:2,active:true},
+  {id:"pratibha-minimum-80-percent",hindi:"न्यूनतम कुल अंक 80% या उससे अधिक होने चाहिए।",displayOrder:3,active:true},
+  {id:"pratibha-grade-mapping",hindi:"ग्रेडिंग प्रणाली होने पर ग्रेड और अंकों का समतुल्य मानचित्र आवेदन के साथ देना होगा।",displayOrder:4,active:true},
+  {id:"pratibha-top-50",hindi:"केवल शीर्ष 50 पात्र बच्चों को सम्मानित किया जाएगा।",displayOrder:5,active:true},
+  {id:"pratibha-tie-breaker",hindi:"टाई होने पर उम्मीदवारों के प्रत्येक विषय के अंकों की तुलना की जाएगी।",displayOrder:6,active:true},
+  {id:"pratibha-attendance",hindi:"उम्मीदवार का पुरस्कार समारोह में उपस्थित होना आवश्यक है। रिश्तेदार उसकी ओर से पुरस्कार नहीं ले सकता।",displayOrder:7,active:true},
 ];
 const MAX_DOCS=10, MAX_IMG=3*1024*1024, MAX_FILE=5*1024*1024;
 const MIME=new Set(["image/jpeg","image/png","image/webp","application/pdf"]);
@@ -15,7 +20,28 @@ const mobile=v=>{let x=String(v||"").replace(/\D/g,"");if(x.length===12&&x.start
 const date=v=>{if(!v)return "";const d=v?.toDate?v.toDate():new Date(v);return Number.isNaN(d.getTime())?"":d.toISOString()};
 const admin=(key,expected)=>{if(!expected||!key||key!==expected)throw new Error("Unauthorized.")};
 const config=async db=>{const s=await db.collection(CFG).doc("current").get();return s.exists?s.data():{enabled:true,opensAt:"",registrationLastDate:"",eventDate:"2026-10-25",title:"प्रतिभा सम्मान २०२६",description:"प्रतिभाशाली विद्यार्थियों के सम्मान के लिए आवेदन"}};
-const rules=async db=>{let snap=await db.collection(RULES).get();if(snap.empty){await Promise.all(DEFAULT_RULES.map(r=>db.collection(RULES).doc(r.id).set({...r,updatedAt:FieldValue.serverTimestamp()},{merge:true})));snap=await db.collection(RULES).get()}return snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.active!==false).sort((a,b)=>Number(a.displayOrder||0)-Number(b.displayOrder||0))};
+const rules=async db=>{
+  let snap=await db.collection(RULES).get();
+  if(snap.empty){
+    await Promise.all(DEFAULT_RULES.map(r=>db.collection(RULES).doc(r.id).set({...r,updatedAt:FieldValue.serverTimestamp()},{merge:true})));
+    snap=await db.collection(RULES).get();
+  }else{
+    const existing=new Map(snap.docs.map(d=>[d.id,d.data()]));
+    const updates=[];
+    for(const r of DEFAULT_RULES){
+      if(!existing.has(r.id)){
+        updates.push(db.collection(RULES).doc(r.id).set({...r,updatedAt:FieldValue.serverTimestamp()},{merge:true}));
+      }
+    }
+    const legacyPune=existing.get("pratibha-pune-eligibility");
+    if(legacyPune?.hindi==="केवल पुणे के विद्यार्थी पात्र हैं。"){
+      updates.push(db.collection(RULES).doc("pratibha-pune-eligibility").update({hindi:"उम्मीदवार पुणे का होना चाहिए और स्कूल भी पुणे में होना चाहिए。",displayOrder:2,active:true,updatedAt:FieldValue.serverTimestamp()}));
+    }
+    if(updates.length) await Promise.all(updates);
+    snap=await db.collection(RULES).get();
+  }
+  return snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.active!==false).sort((a,b)=>Number(a.displayOrder||0)-Number(b.displayOrder||0));
+};
 function windowOpen(c){if(c.enabled===false)throw new Error("Form submission is currently paused.");const n=Date.now();if(c.opensAt&&n<new Date(c.opensAt).getTime())throw new Error("Form submission has not opened yet.");if(c.registrationLastDate&&n>new Date(c.registrationLastDate).getTime())throw new Error("Registration is closed.")}
 function validate(d, requireMedia=true){for(const k of ["name","mobile","address","city","state","pincode","motherName","fatherName","dateOfBirth","classStandard","schoolInstitute","achievementDetails","overallPercentage"])if(!String(d[k]||"").trim())throw new Error("Required field missing: "+k);d.mobile=mobile(d.mobile);if(!/^[6-9]\d{9}$/.test(d.mobile))throw new Error("Invalid mobile number.");if(!/^\d{6}$/.test(String(d.pincode)))throw new Error("Invalid PIN code.");const p=Number(d.overallPercentage);if(!Number.isFinite(p)||p<0||p>100)throw new Error("Overall percentage must be between 0 and 100.");d.overallPercentage=p;if(requireMedia&&!d.facePhoto)throw new Error("Face photo is required.");if((d.supportingDocuments||[]).length>MAX_DOCS)throw new Error("Maximum 10 supporting documents are allowed.");return d}
 async function nextId(db){return db.runTransaction(async tx=>{const r=db.doc("pratibhaSammanMeta/counter"),s=await tx.get(r),n=(s.exists?Number(s.data().value||0):0)+1;tx.set(r,{value:n,updatedAt:FieldValue.serverTimestamp()},{merge:true});return "PS26-"+String(n).padStart(5,"0")})}
