@@ -126,3 +126,28 @@ test("finds registration by normalized mobile", async () => {
   assert.equal(result.application.name, "Test Student");
   assert.equal(typeof result.accessToken, "string");
 });
+
+
+test("requires applicant overall percentage", async () => {
+  await assert.rejects(
+    () =>
+      service.createApplication({
+        db: {},
+        data: {
+          name: "Test Student",
+          mobile: "9876543210",
+          address: "Test Address",
+          city: "Pune",
+          state: "Maharashtra",
+          pincode: "411001",
+          motherName: "Mother",
+          fatherName: "Father",
+          dateOfBirth: "2010-01-01",
+          classStandard: "10",
+          schoolInstitute: "Test School",
+          achievementDetails: "Achievement",
+        },
+      }),
+    /Required field missing: overallPercentage/,
+  );
+});
