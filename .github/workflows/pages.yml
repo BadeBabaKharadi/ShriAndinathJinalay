@@ -32,6 +32,12 @@ jobs:
         run: PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install --with-deps chromium
       - name: Run required checks
         run: npm run check
+      - name: Install Functions dependencies
+        working-directory: functions
+        run: npm ci
+      - name: Run Functions tests
+        working-directory: functions
+        run: npm test
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4
