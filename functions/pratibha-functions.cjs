@@ -113,6 +113,7 @@ module.exports = {
       applicationId: data.applicationId,
       status: data.status,
       overallPercentage: data.overallPercentage,
+      score: data.score,
       comment: data.comment,
       clarification: data.clarification,
     });
