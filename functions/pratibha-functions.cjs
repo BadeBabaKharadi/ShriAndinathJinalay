@@ -1,5 +1,5 @@
 const { getFirestore } = require("firebase-admin/firestore");
-const { onCall } = require("firebase-functions/v2/https");
+const { onCall, onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const pratibha = require("./pratibha.cjs");
 
@@ -105,6 +105,25 @@ module.exports = {
       expectedKey: ADMIN_ACCESS_KEY.value(),
       applicationId: data.applicationId,
     });
+  }),
+  pratibhaAdminMedia: onRequest({ cors: true, secrets: [ADMIN_ACCESS_KEY], timeoutSeconds: 60, memory: "512MiB" }, async (request, response) => {
+    try {
+      if (request.method !== "POST") return response.status(405).send("Method Not Allowed");
+      const data = request.body || {};
+      const media = await pratibha.downloadMedia({
+        db: getFirestore(),
+        accessKey: data.accessKey,
+        expectedKey: ADMIN_ACCESS_KEY.value(),
+        applicationId: data.applicationId,
+        path: data.path,
+      });
+      response.set("Content-Type", media.contentType);
+      response.set("Content-Disposition", `inline; filename="${String(media.name).replace(/["\\\\]/g, "")}"`);
+      response.set("Cache-Control", "private, no-store");
+      return response.status(200).send(media.buffer);
+    } catch (error) {
+      return response.status(403).json({ error: error.message || "Media access denied." });
+    }
   }),
   pratibhaAdminReview: onCall(adminOptions(), async request => {
     const data = request.data || {};
