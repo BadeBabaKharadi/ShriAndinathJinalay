@@ -13,14 +13,6 @@ const origins = [
 ];
 const publicOptions = () => ({ cors: origins });
 const adminOptions = () => ({ ...publicOptions(), secrets: [ADMIN_ACCESS_KEY] });
-const handle = fn => onCall(fn.options, async request => {
-  try {
-    return await fn.run(request);
-  } catch (error) {
-    throw error;
-  }
-});
-
 module.exports = {
   pratibhaConfig: onCall(publicOptions(), async () =>
     pratibha.getPublicConfig({ db: getFirestore() })),
