@@ -22,14 +22,6 @@ const handle = fn => onCall(fn.options, async request => {
 });
 
 module.exports = {
-  pratibhaAdminVerify: onCall(adminOptions(), async request => {
-    const data = request.data || {};
-    return pratibha.adminConfig({
-      db: getFirestore(),
-      accessKey: data.accessKey,
-      expectedKey: ADMIN_ACCESS_KEY.value(),
-    }).then(() => ({ verified: true }));
-  }),
   pratibhaConfig: onCall(publicOptions(), async () =>
     pratibha.getPublicConfig({ db: getFirestore() })),
   pratibhaCreate: onCall({ ...publicOptions(), timeoutSeconds: 60, memory: "512MiB" }, async request =>
