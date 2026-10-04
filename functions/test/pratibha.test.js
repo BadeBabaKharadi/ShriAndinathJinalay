@@ -127,7 +127,6 @@ test("finds registration by normalized mobile", async () => {
   assert.equal(typeof result.accessToken, "string");
 });
 
-
 test("requires applicant overall percentage", async () => {
   await assert.rejects(
     () =>
