@@ -1,3 +1,4 @@
+const { Buffer } = require("node:buffer");
 const crypto = require("node:crypto");
 const { FieldValue } = require("firebase-admin/firestore");
 const { getStorage } = require("firebase-admin/storage");
@@ -32,4 +33,4 @@ async function adminConfig({db,accessKey,expectedKey}){admin(accessKey,expectedK
 async function saveConfig({db,accessKey,expectedKey,value}){admin(accessKey,expectedKey);await db.collection(CFG).doc("current").set({...value,enabled:value.enabled!==false,updatedAt:FieldValue.serverTimestamp()},{merge:true});return adminConfig({db,accessKey,expectedKey})}
 async function saveRule({db,accessKey,expectedKey,id,hindi,displayOrder,active}){admin(accessKey,expectedKey);if(!String(hindi||"").trim())throw new Error("Hindi rule is required.");const ref=id?db.collection(RULES).doc(id):db.collection(RULES).doc();await ref.set({hindi:String(hindi).trim().slice(0,2000),displayOrder:Number(displayOrder||0),active:active!==false,updatedAt:FieldValue.serverTimestamp()},{merge:true});return{success:true,id:ref.id}}
 async function getPublicConfig({db}){const c=await config(db);return{config:c,rules:await rules(db)}}
-module.exports={createApplication,findApplicationByMobile,getApplication,updateApplication,adminList,adminGet,stats,review,adminConfig,saveConfig,saveRule,getPublicConfig};
+module.exports={createApplication,findApplicationByMobile,getApplication,updateApplication,adminList,adminGet,stats,review,adminConfig,saveConfig,saveRule,getPublicConfig,downloadMedia};
