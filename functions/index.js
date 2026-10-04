@@ -243,47 +243,4 @@ exports.kshamawaniAdminDelete = onCall(
 );
 
 
-exports.pratibhaConfig = onCall(callableOptions(), async () => {
-  try { return await pratibha.getPublicConfig({ db: getFirestore() }); }
-  catch (error) { return mapError(error); }
-});
-exports.pratibhaCreate = onCall({...callableOptions(), timeoutSeconds: 60, memory: "512MiB"}, async request => {
-  try { return await pratibha.createApplication({db:getFirestore(),data:request.data||{}}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaGet = onCall(callableOptions(), async request => {
-  try { const d=request.data||{}; return await pratibha.getApplication({db:getFirestore(),applicationId:d.applicationId,accessToken:d.accessToken}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaUpdate = onCall({...callableOptions(), timeoutSeconds:60, memory:"512MiB"}, async request => {
-  try { const d=request.data||{}; return await pratibha.updateApplication({db:getFirestore(),applicationId:d.applicationId,accessToken:d.accessToken,data:d}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaAdminConfig = onCall(protectedCallableOptions(), async request => {
-  try { const d=request.data||{}; return await pratibha.adminConfig({db:getFirestore(),accessKey:d.accessKey,expectedKey:ADMIN_ACCESS_KEY.value()}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaAdminSaveConfig = onCall(protectedCallableOptions(), async request => {
-  try { const d=request.data||{}; return await pratibha.saveConfig({db:getFirestore(),accessKey:d.accessKey,expectedKey:ADMIN_ACCESS_KEY.value(),value:d.value||{}}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaAdminSaveRule = onCall(protectedCallableOptions(), async request => {
-  try { const d=request.data||{}; return await pratibha.saveRule({db:getFirestore(),accessKey:d.accessKey,expectedKey:ADMIN_ACCESS_KEY.value(),id:d.id,hindi:d.hindi,displayOrder:d.displayOrder,active:d.active}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaAdminStats = onCall(protectedCallableOptions(), async request => {
-  try { const d=request.data||{}; return await pratibha.stats({db:getFirestore(),accessKey:d.accessKey,expectedKey:ADMIN_ACCESS_KEY.value()}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaAdminList = onCall(protectedCallableOptions(), async request => {
-  try { const d=request.data||{}; return await pratibha.adminList({db:getFirestore(),accessKey:d.accessKey,expectedKey:ADMIN_ACCESS_KEY.value(),status:d.status,filter:d.filter}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaAdminGet = onCall(protectedCallableOptions(), async request => {
-  try { const d=request.data||{}; return await pratibha.adminGet({db:getFirestore(),accessKey:d.accessKey,expectedKey:ADMIN_ACCESS_KEY.value(),applicationId:d.applicationId}); }
-  catch(error){ return mapError(error); }
-});
-exports.pratibhaAdminReview = onCall(protectedCallableOptions(), async request => {
-  try { const d=request.data||{}; return await pratibha.review({db:getFirestore(),accessKey:d.accessKey,expectedKey:ADMIN_ACCESS_KEY.value(),applicationId:d.applicationId,status:d.status,overallPercentage:d.overallPercentage,comment:d.comment,clarification:d.clarification}); }
-  catch(error){ return mapError(error); }
-});
+Object.assign(exports, require("./pratibha-functions.cjs"));
