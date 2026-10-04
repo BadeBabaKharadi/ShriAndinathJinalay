@@ -69,7 +69,9 @@ test("filters admin applications", async () => {
     collection() {
       return {
         limit() {
-          return {\n            get: async () => ({ docs }),\n          };
+          return {
+            get: async () => ({ docs }),
+          };
         },
       };
     },
@@ -106,7 +108,9 @@ test("finds registration by normalized mobile", async () => {
         where() {
           return {
             limit() {
-              return {\n                get: async () => ({ empty: false, size: 1, docs: [doc] }),\n              };
+              return {
+                get: async () => ({ empty: false, size: 1, docs: [doc] }),
+              };
             },
           };
         },
