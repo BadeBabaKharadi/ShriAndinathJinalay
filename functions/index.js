@@ -242,5 +242,4 @@ exports.kshamawaniAdminDelete = onCall(
   },
 );
 
-
 Object.assign(exports, require("./pratibha-functions.cjs"));
