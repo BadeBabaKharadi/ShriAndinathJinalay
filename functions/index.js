@@ -57,6 +57,10 @@ function mapError(error) {
     ["Unauthorized.", "permission-denied"],
     ["Issued-token registrations cannot be deleted.", "failed-precondition"],
     ["Tokens have already been issued.", "failed-precondition"],
+    ["Form submission is currently paused.", "failed-precondition"],
+    ["Form submission has not opened yet.", "failed-precondition"],
+    ["Registration is closed.", "failed-precondition"],
+    ["Finalized applications cannot be edited.", "failed-precondition"],
   ]);
 
   const code = messages.get(error.message);
