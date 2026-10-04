@@ -1,6 +1,6 @@
 let editing=null,loadedApplication=null;
 const BASE=location.hostname==="localhost"||location.hostname==="127.0.0.1"?"http://127.0.0.1:5001/jain-community-platform/asia-south1":"https://asia-south1-jain-community-platform.cloudfunctions.net";
-const call=async(name,data)=>{const r=await fetch(BASE+"/"+name,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data})});const j=await r.json();if(!r.ok||j.error)throw new Error(j.error?.message||"सेवा उपलब्ध नहीं है।");return j.data};
+const call=async(name,data)=>{const r=await fetch(BASE+"/"+name,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data})});const j=await r.json();if(!r.ok||j.error)throw new Error(j.error?.message||"सेवा उपलब्ध नहीं है।");return j.result ?? j.data};
 let config={},rules=[];
 const $=id=>document.getElementById(id);
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
