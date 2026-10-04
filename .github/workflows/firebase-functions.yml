@@ -55,6 +55,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install Functions dependencies
+        working-directory: functions
+        run: npm ci
       - name: Deploy Pratibha functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
