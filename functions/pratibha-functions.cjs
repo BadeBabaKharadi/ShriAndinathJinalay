@@ -1,5 +1,5 @@
 const { getFirestore } = require("firebase-admin/firestore");
-const { onCall, onRequest } = require("firebase-functions/v2/https");
+const { onCall, onRequest, HttpsError } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const pratibha = require("./pratibha.cjs");
 
@@ -12,28 +12,36 @@ const origins = [
   "https://badebabakharadi.github.io",
 ];
 const publicOptions = () => ({ cors: origins });
+const publicCall = fn => async request => {
+  try {
+    return await fn(request);
+  } catch (error) {
+    if (error instanceof HttpsError) throw error;
+    throw new HttpsError("invalid-argument", error?.message || "Request could not be accepted.");
+  }
+};
 const adminOptions = () => ({ ...publicOptions(), secrets: [ADMIN_ACCESS_KEY] });
 module.exports = {
-  pratibhaConfig: onCall(publicOptions(), async () =>
-    pratibha.getPublicConfig({ db: getFirestore() })),
-  pratibhaCreate: onCall({ ...publicOptions(), timeoutSeconds: 60, memory: "512MiB" }, async request =>
-    pratibha.createApplication({ db: getFirestore(), data: request.data || {} })),
-  pratibhaFindByMobile: onCall(publicOptions(), async request => {
+  pratibhaConfig: onCall(publicOptions(), publicCall(async () =>
+    pratibha.getPublicConfig({ db: getFirestore() }))),
+  pratibhaCreate: onCall({ ...publicOptions(), timeoutSeconds: 60, memory: "512MiB" }, publicCall(async request =>
+    pratibha.createApplication({ db: getFirestore(), data: request.data || {} }))),
+  pratibhaFindByMobile: onCall(publicOptions(), publicCall(async request => {
     const data = request.data || {};
     return pratibha.findApplicationByMobile({
       db: getFirestore(),
       mobileNumber: data.mobileNumber,
     });
-  }),
-  pratibhaGet: onCall(publicOptions(), async request => {
+  })),
+  pratibhaGet: onCall(publicOptions(), publicCall(async request => {
     const data = request.data || {};
     return pratibha.getApplication({
       db: getFirestore(),
       applicationId: data.applicationId,
       accessToken: data.accessToken,
     });
-  }),
-  pratibhaUpdate: onCall({ ...publicOptions(), timeoutSeconds: 60, memory: "512MiB" }, async request => {
+  })),
+  pratibhaUpdate: onCall({ ...publicOptions(), timeoutSeconds: 60, memory: "512MiB" }, publicCall(async request => {
     const data = request.data || {};
     return pratibha.updateApplication({
       db: getFirestore(),
@@ -41,7 +49,7 @@ module.exports = {
       accessToken: data.accessToken,
       data,
     });
-  }),
+  })),
   pratibhaAdminConfig: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.adminConfig({
