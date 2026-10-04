@@ -17,7 +17,8 @@ const {
   getAdminRegistrations,
   issueTokens,
   verifyAccess,
-} = require("./admin");\nconst pratibha = require("./pratibha");
+} = require("./admin");
+const pratibha = require("./pratibha");
 
 initializeApp();
 
