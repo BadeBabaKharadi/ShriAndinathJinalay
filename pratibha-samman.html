@@ -37,8 +37,7 @@ body{font-family:"Noto Sans Devanagari",sans-serif;background:#faf7f0}.ps-wrap{m
 <h3>फोटो एवं प्रमाणपत्र</h3>
 <label>स्पष्ट चेहरे का फोटो <span class="required">*</span></label>
 <p class="muted">इसी फोटो का उपयोग आवेदन और प्रमाणपत्र दोनों के लिए किया जाएगा।</p>
-<input id="facePhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="user">
-<img id="facePreview" class="preview hidden">
+<div class="actions" style="margin-top:8px"><button class="button secondary" type="button" id="chooseGallery">🖼️ गैलरी से फोटो चुनें</button><button class="button secondary" type="button" id="takeCamera">📷 कैमरे से फोटो लें</button></div><input id="facePhotoGallery" type="file" accept="image/jpeg,image/png,image/webp" class="hidden"><input id="facePhotoCamera" type="file" accept="image/jpeg,image/png,image/webp" capture="user" class="hidden"><div id="facePhotoName" class="muted">अभी कोई फोटो नहीं चुना गया है।</div><img id="facePreview" class="preview hidden">
 <label>सहायक प्रमाणपत्र / उपलब्धि दस्तावेज़ (अधिकतम 10)</label>
 <input id="documents" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple>
 <div id="docCount" class="muted"></div>
