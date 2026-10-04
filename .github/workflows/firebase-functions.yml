@@ -61,4 +61,4 @@ jobs:
         run: |
           npx --yes firebase-tools@latest deploy \
             --project jain-community-platform \
-            --only functions:pratibhaConfig,functions:pratibhaCreate,functions:pratibhaFindByMobile,functions:pratibhaGet,functions:pratibhaUpdate,functions:pratibhaAdminConfig,functions:pratibhaAdminSaveConfig,functions:pratibhaAdminSaveRule,functions:pratibhaAdminStats,functions:pratibhaAdminList,functions:pratibhaAdminGet,functions:pratibhaAdminReview
+            --only functions:pratibhaConfig,functions:pratibhaCreate,functions:pratibhaFindByMobile,functions:pratibhaGet,functions:pratibhaUpdate,functions:pratibhaAdminConfig,functions:pratibhaAdminSaveConfig,functions:pratibhaAdminSaveRule,functions:pratibhaAdminStats,functions:pratibhaAdminList,functions:pratibhaAdminGet,functions:pratibhaAdminMedia,functions:pratibhaAdminReview
