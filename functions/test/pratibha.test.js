@@ -88,7 +88,9 @@ test(
   },
 );
 
-test("finds an existing registration by normalized mobile number", async () => {
+test(
+  "finds an existing registration by normalized mobile number",
+  async () => {
     const doc = {
       data: () => ({
         applicationId: "PS26-00009",
