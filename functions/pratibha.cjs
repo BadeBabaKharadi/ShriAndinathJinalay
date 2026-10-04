@@ -6,7 +6,7 @@ const { getStorage } = require("firebase-admin/storage");
 const APPS="pratibhaSammanApplications", CFG="pratibhaSammanConfig", RULES="pratibhaSammanRules";
 const DEFAULT_RULES=[
   {id:"pratibha-batch-2025-26",hindi:"यह सम्मान २०२५-२६ शैक्षणिक सत्र के विद्यार्थियों के लिए है।",displayOrder:1,active:true},
-  {id:"pratibha-pune-school-eligibility",hindi:"उम्मीदवार पुणे का होना चाहिए और स्कूल भी पुणे में होना चाहिए।",displayOrder:2,active:true},
+  {id:"pratibha-pune-eligibility",hindi:"उम्मीदवार पुणे का होना चाहिए और स्कूल भी पुणे में होना चाहिए।",displayOrder:2,active:true},
   {id:"pratibha-minimum-80-percent",hindi:"न्यूनतम कुल अंक 80% या उससे अधिक होने चाहिए।",displayOrder:3,active:true},
   {id:"pratibha-grade-mapping",hindi:"ग्रेडिंग प्रणाली होने पर ग्रेड और अंकों का समतुल्य मानचित्र आवेदन के साथ देना होगा।",displayOrder:4,active:true},
   {id:"pratibha-top-50",hindi:"केवल शीर्ष 50 पात्र बच्चों को सम्मानित किया जाएगा।",displayOrder:5,active:true},
@@ -27,20 +27,15 @@ const rules=async db=>{
     snap=await db.collection(RULES).get();
   }else{
     const existing=new Map(snap.docs.map(d=>[d.id,d.data()]));
-    const legacyPune=existing.get("pratibha-pune-eligibility");
     const updates=[];
     for(const r of DEFAULT_RULES){
       if(!existing.has(r.id)){
         updates.push(db.collection(RULES).doc(r.id).set({...r,updatedAt:FieldValue.serverTimestamp()},{merge:true}));
       }
     }
+    const legacyPune=existing.get("pratibha-pune-eligibility");
     if(legacyPune?.hindi==="केवल पुणे के विद्यार्थी पात्र हैं。"){
-      updates.push(db.collection(RULES).doc("pratibha-pune-eligibility").update({
-        hindi:"उम्मीदवार पुणे का होना चाहिए और स्कूल भी पुणे में होना चाहिए。",
-        displayOrder:2,
-        active:true,
-        updatedAt:FieldValue.serverTimestamp(),
-      }));
+      updates.push(db.collection(RULES).doc("pratibha-pune-eligibility").update({hindi:"उम्मीदवार पुणे का होना चाहिए और स्कूल भी पुणे में होना चाहिए。",displayOrder:2,active:true,updatedAt:FieldValue.serverTimestamp()}));
     }
     if(updates.length) await Promise.all(updates);
     snap=await db.collection(RULES).get();
