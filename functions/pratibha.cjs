@@ -7,7 +7,7 @@ const APPS="pratibhaSammanApplications", CFG="pratibhaSammanConfig", RULES="prat
 const MAX_DOCS=10, MAX_IMG=3*1024*1024, MAX_FILE=5*1024*1024;
 const MIME=new Set(["image/jpeg","image/png","image/webp","application/pdf"]);
 const hash=v=>crypto.createHash("sha256").update(String(v||"")).digest("hex");
-const mobile=v=>String(v||"").replace(/\D/g,"");
+const mobile=v=>{let x=String(v||"").replace(/\D/g,"");if(x.length===12&&x.startsWith("91"))x=x.slice(2);return x};
 const date=v=>{if(!v)return "";const d=v?.toDate?v.toDate():new Date(v);return Number.isNaN(d.getTime())?"":d.toISOString()};
 const admin=(key,expected)=>{if(!expected||!key||key!==expected)throw new Error("Unauthorized.")};
 const config=async db=>{const s=await db.collection(CFG).doc("current").get();return s.exists?s.data():{enabled:true,opensAt:"",registrationLastDate:"",eventDate:"2026-10-25",title:"प्रतिभा सम्मान २०२६",description:"प्रतिभाशाली विद्यार्थियों के सम्मान के लिए आवेदन"}};
