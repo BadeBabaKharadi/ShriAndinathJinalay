@@ -1,0 +1,64 @@
+name: Deploy Pratibha Firebase Functions
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "functions/**"
+      - "firebase.json"
+      - ".firebaserc"
+      - ".github/workflows/firebase-functions.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-functions-production
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test Firebase Functions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install root dependencies
+        run: npm ci
+      - name: Install Functions dependencies
+        working-directory: functions
+        run: npm ci
+      - name: Run Functions tests
+        working-directory: functions
+        run: npm test
+
+  deploy:
+    name: Deploy Pratibha Functions
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Verify Firebase CI token
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          test -n "$FIREBASE_TOKEN"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Deploy Pratibha functions
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          npx --yes firebase-tools@latest deploy \
+            --project jain-community-platform \
+            --only functions:pratibhaConfig,functions:pratibhaCreate,functions:pratibhaFindByMobile,functions:pratibhaGet,functions:pratibhaUpdate,functions:pratibhaAdminConfig,functions:pratibhaAdminSaveConfig,functions:pratibhaAdminSaveRule,functions:pratibhaAdminStats,functions:pratibhaAdminList,functions:pratibhaAdminGet,functions:pratibhaAdminMedia,functions:pratibhaAdminReview
