@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>प्रतिभा सम्मान २०२६</title><link rel="stylesheet" href="css/style.css"><style>
+body{font-family:"Noto Sans Devanagari",sans-serif;background:#faf7f0}.ps-wrap{max-width:920px;margin:30px auto;padding:16px}.ps-card{background:#fff;border-radius:18px;padding:24px;margin:16px 0;box-shadow:0 5px 25px #00000010}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.grid{grid-template-columns:1fr}}label{display:block;font-weight:600;margin:8px 0 5px}input,textarea,select{width:100%;box-sizing:border-box;padding:11px;border:1px solid #ccc;border-radius:9px;font:inherit}textarea{min-height:110px}.button{border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}.primary{background:#7b3f00;color:white}.secondary{background:#eee}.rules label{font-weight:400}.preview{max-width:160px;max-height:160px;border-radius:10px;margin-top:8px}.msg{padding:12px;border-radius:10px;margin:12px 0}.error{background:#fff0f0;color:#a00}.success{background:#effbea;color:#176b1a}.muted{color:#666}.hidden{display:none}.required{color:#a00}.dates{display:flex;gap:12px;flex-wrap:wrap}.datebox{background:#fff8e7;padding:12px;border-radius:10px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+</style></head><body><main class="ps-wrap">
+<section class="ps-card"><h1>🏆 प्रतिभा सम्मान २०२६</h1><p id="description" class="muted">प्रतिभाशाली विद्यार्थियों के सम्मान के लिए आवेदन</p><div id="window" class="dates"></div><div id="message" class="msg hidden"></div></section>
+<section class="ps-card"><h2>आवेदन की जानकारी</h2><form id="form">
+<div class="grid">
+<div><label>पूरा नाम <span class="required">*</span></label><input name="name" required></div>
+<div><label>मोबाइल / WhatsApp नंबर <span class="required">*</span></label><input name="mobile" inputmode="numeric" maxlength="10" required></div>
+<div><label>ईमेल (वैकल्पिक)</label><input name="email" type="email"></div>
+<div><label>पिन कोड <span class="required">*</span></label><input name="pincode" inputmode="numeric" maxlength="6" required></div>
+<div><label>शहर <span class="required">*</span></label><input name="city" required></div>
+<div><label>राज्य <span class="required">*</span></label><input name="state" value="महाराष्ट्र" required></div>
+<div><label>माता का नाम <span class="required">*</span></label><input name="motherName" required></div>
+<div><label>पिता का नाम <span class="required">*</span></label><input name="fatherName" required></div>
+<div><label>जन्म तिथि <span class="required">*</span></label><input name="dateOfBirth" type="date" required></div>
+<div><label>कक्षा / मानक <span class="required">*</span></label><input name="classStandard" required></div>
+<div style="grid-column:1/-1"><label>पता <span class="required">*</span></label><textarea name="address" required></textarea></div>
+<div style="grid-column:1/-1"><label>विद्यालय / संस्थान का नाम <span class="required">*</span></label><input name="schoolInstitute" required></div>
+<div style="grid-column:1/-1"><label>उपलब्धि का विस्तृत विवरण <span class="required">*</span></label><textarea name="achievementDetails" required></textarea></div>
+<div style="grid-column:1/-1"><label>अन्य उपलब्धियाँ (वैकल्पिक)</label><textarea name="otherAccomplishments"></textarea></div>
+</div>
+<h3>फोटो एवं प्रमाणपत्र</h3>
+<label>स्पष्ट चेहरे का फोटो <span class="required">*</span></label><input id="facePhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="user" required><img id="facePreview" class="preview hidden">
+<label>प्रमाणपत्र के लिए स्पष्ट चेहरे का फोटो <span class="required">*</span></label><input id="certificatePhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="user" required><img id="certificatePreview" class="preview hidden">
+<label>सहायक प्रमाणपत्र / उपलब्धि दस्तावेज़ (अधिकतम 10)</label><input id="documents" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple><div id="docCount" class="muted"></div>
+<div class="rules"><h3>आवेदन के नियम</h3><div id="rules"></div></div>
+<div class="actions"><button class="button primary" id="submit" type="submit">आवेदन जमा करें</button></div>
+</form></section>
+<section class="ps-card"><h2>पहले से जमा आवेदन देखें</h2><div class="grid"><div><label>आवेदन क्रमांक</label><input id="lookupId" placeholder="PS26-00001"></div><div><label>सुरक्षा कोड</label><input id="lookupToken" type="password"></div></div><div class="actions"><button class="button secondary" id="lookup" type="button">आवेदन देखें</button></div><div id="lookupResult"></div></section>
+</main><script src="js/pratibha-samman.js"></script></body></html>
