@@ -261,7 +261,7 @@ async function migrate(filePath) {
     } else {
       batch.create(
         db.collection("registrations").doc(registration.applicationCode),
-        expected,
+        { ...expected, profileLinkSource: "jcp-mobile-migration" },
       );
       imported += 1;
     }
