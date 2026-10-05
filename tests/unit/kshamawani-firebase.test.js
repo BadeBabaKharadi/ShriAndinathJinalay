@@ -16,7 +16,9 @@ describe("Kshamawani Firebase registration", () => {
   it("configures the existing Firebase project and Mumbai region", async () => {
     const firebaseConfig = JSON.parse(await readFileText("firebase.json"));
     const firebaseProject = JSON.parse(await readFileText(".firebaserc"));
-    const functions = JSON.parse(await readFileText("functions/package.json"));
+    const functions = JSON.parse(
+      await readFileText("functions/package.json"),
+    );
 
     expect(firebaseProject.projects.default).toBe("jain-community-platform");
     expect(firebaseConfig.functions.runtime).toBe("nodejs22");
@@ -32,7 +34,9 @@ describe("Kshamawani Firebase registration", () => {
     expect(index).toContain("FIRESTORE_DATABASE_ID");
     expect(index).toContain("getFirestore(undefined, FIRESTORE_DATABASE_ID)");
     expect(pratibha).toContain("FIRESTORE_DATABASE_ID");
-    expect(pratibha).toContain("getFirestore(undefined, FIRESTORE_DATABASE_ID)");
+    expect(pratibha).toContain(
+      "getFirestore(undefined, FIRESTORE_DATABASE_ID)",
+    );
     expect(config).not.toContain('"(default)"');
   });
 
