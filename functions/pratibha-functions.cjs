@@ -1,4 +1,5 @@
 const { getFirestore } = require("firebase-admin/firestore");
+const { FIRESTORE_DATABASE_ID } = require("./config");
 const { onCall, onRequest, HttpsError } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const pratibha = require("./pratibha.cjs");
@@ -23,20 +24,20 @@ const publicCall = fn => async request => {
 const adminOptions = () => ({ ...publicOptions(), secrets: [ADMIN_ACCESS_KEY] });
 module.exports = {
   pratibhaConfig: onCall(publicOptions(), publicCall(async () =>
-    pratibha.getPublicConfig({ db: getFirestore() }))),
+    pratibha.getPublicConfig({ db: getFirestore(undefined, FIRESTORE_DATABASE_ID) }))),
   pratibhaCreate: onCall({ ...publicOptions(), timeoutSeconds: 60, memory: "512MiB" }, publicCall(async request =>
-    pratibha.createApplication({ db: getFirestore(), data: request.data || {} }))),
+    pratibha.createApplication({ db: getFirestore(undefined, FIRESTORE_DATABASE_ID), data: request.data || {} }))),
   pratibhaFindByMobile: onCall(publicOptions(), publicCall(async request => {
     const data = request.data || {};
     return pratibha.findApplicationByMobile({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       mobileNumber: data.mobileNumber,
     });
   })),
   pratibhaGet: onCall(publicOptions(), publicCall(async request => {
     const data = request.data || {};
     return pratibha.getApplication({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       applicationId: data.applicationId,
       accessToken: data.accessToken,
     });
@@ -44,7 +45,7 @@ module.exports = {
   pratibhaUpdate: onCall({ ...publicOptions(), timeoutSeconds: 60, memory: "512MiB" }, publicCall(async request => {
     const data = request.data || {};
     return pratibha.updateApplication({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       applicationId: data.applicationId,
       accessToken: data.accessToken,
       data,
@@ -53,7 +54,7 @@ module.exports = {
   pratibhaAdminConfig: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.adminConfig({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       accessKey: data.accessKey,
       expectedKey: ADMIN_ACCESS_KEY.value(),
     });
@@ -61,7 +62,7 @@ module.exports = {
   pratibhaAdminSaveConfig: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.saveConfig({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       accessKey: data.accessKey,
       expectedKey: ADMIN_ACCESS_KEY.value(),
       value: data.value || {},
@@ -70,7 +71,7 @@ module.exports = {
   pratibhaAdminSaveRule: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.saveRule({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       accessKey: data.accessKey,
       expectedKey: ADMIN_ACCESS_KEY.value(),
       id: data.id,
@@ -82,7 +83,7 @@ module.exports = {
   pratibhaAdminStats: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.stats({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       accessKey: data.accessKey,
       expectedKey: ADMIN_ACCESS_KEY.value(),
     });
@@ -90,7 +91,7 @@ module.exports = {
   pratibhaAdminList: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.adminList({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       accessKey: data.accessKey,
       expectedKey: ADMIN_ACCESS_KEY.value(),
       status: data.status,
@@ -100,7 +101,7 @@ module.exports = {
   pratibhaAdminGet: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.adminGet({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       accessKey: data.accessKey,
       expectedKey: ADMIN_ACCESS_KEY.value(),
       applicationId: data.applicationId,
@@ -111,7 +112,7 @@ module.exports = {
       if (request.method !== "POST") return response.status(405).send("Method Not Allowed");
       const data = request.body || {};
       const media = await pratibha.downloadMedia({
-        db: getFirestore(),
+        db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
         accessKey: data.accessKey,
         expectedKey: ADMIN_ACCESS_KEY.value(),
         applicationId: data.applicationId,
@@ -128,7 +129,7 @@ module.exports = {
   pratibhaAdminReview: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.review({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       accessKey: data.accessKey,
       expectedKey: ADMIN_ACCESS_KEY.value(),
       applicationId: data.applicationId,
