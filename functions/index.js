@@ -1,6 +1,6 @@
 const { initializeApp } = require("firebase-admin/app");
-const { FIRESTORE_DATABASE_ID } = require("./config");
 const { getFirestore } = require("firebase-admin/firestore");
+const { FIRESTORE_DATABASE_ID } = require("./config");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions");
 const { defineSecret } = require("firebase-functions/params");
