@@ -28,7 +28,7 @@ body{font-family:"Noto Sans Devanagari",sans-serif;background:#faf7f0}.ps-wrap{m
 <div><label>माता का नाम <span class="required">*</span></label><input name="motherName" required></div>
 <div><label>पिता का नाम <span class="required">*</span></label><input name="fatherName" required></div>
 <div><label>जन्म तिथि <span class="required">*</span></label><input name="dateOfBirth" type="date" required></div>
-<div><label>कक्षा / मानक <span class="required">*</span></label><input name="classStandard" required></div>
+<div><label>कक्षा / मानक <span class="required">*</span></label><select name="classStandard" required><option value="">चुनें</option><option value="10">10वीं</option><option value="12">12वीं</option></select></div>
 <div style="grid-column:1/-1"><label>पता <span class="required">*</span></label><textarea name="address" required></textarea></div>
 <div style="grid-column:1/-1"><label>विद्यालय / संस्थान का नाम <span class="required">*</span></label><input name="schoolInstitute" required></div>
 <div><label>कुल प्रतिशत <span class="required">*</span></label><input name="overallPercentage" type="number" min="0" max="100" step="0.01" inputmode="decimal" placeholder="0 से 100" required><p class="muted">अपने नवीनतम शैक्षणिक परिणाम का कुल प्रतिशत दर्ज करें।</p></div>
