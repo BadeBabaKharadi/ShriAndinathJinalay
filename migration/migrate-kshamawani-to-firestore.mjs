@@ -172,6 +172,7 @@ function parseRows(workbook) {
 function asFirestoreRegistration(registration) {
   return {
     ...registration,
+    userId: registration.userId,
     createdAt: Timestamp.fromDate(registration.createdAt),
     updatedAt: Timestamp.fromDate(registration.updatedAt),
     issuedAt: registration.issuedAt
