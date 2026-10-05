@@ -198,17 +198,19 @@ test("supports typed documents and requires Aadhaar plus marksheet", () => {
     { documentType: "OTHER" },
   ];
 
-  assert.equal(docs.filter((x) => x.documentType === "AADHAAR").length, 1);
-  assert.equal(docs.filter((x) => x.documentType === "MARKSHEET").length, 1);
+  assert.equal(
+    docs.filter((x) => x.documentType === "AADHAAR").length,
+    1,
+  );
+  assert.equal(
+    docs.filter((x) => x.documentType === "MARKSHEET").length,
+    1,
+  );
   assert.ok(docs.filter((x) => x.documentType === "OTHER").length > 1);
 
   assert.throws(() => {
-    const incomplete = docs.filter(
-      (x) => x.documentType !== "MARKSHEET",
-    );
-    if (
-      incomplete.filter((x) => x.documentType === "MARKSHEET").length !== 1
-    ) {
+    const incomplete = docs.filter((x) => x.documentType !== "MARKSHEET");
+    if (incomplete.filter((x) => x.documentType === "MARKSHEET").length !== 1) {
       throw new Error("marksheet required");
     }
   }, /marksheet required/);
