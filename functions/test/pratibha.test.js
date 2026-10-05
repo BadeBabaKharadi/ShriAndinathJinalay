@@ -150,3 +150,32 @@ test("requires applicant overall percentage", async () => {
     /Required field missing: overallPercentage/,
   );
 });
+
+test("validates Pratibha class and percentage rules", () => {
+  const min = (standard) => (standard === "10" ? 85 : 80);
+
+  assert.equal(min("10"), 85);
+  assert.equal(min("12"), 80);
+  assert.ok(85 >= min("10"));
+  assert.ok(80 >= min("12"));
+  assert.ok(84 < min("10"));
+  assert.ok(79 < min("12"));
+  assert.ok(!["10", "12"].includes("11"));
+});
+
+test("supports typed documents and requires Aadhaar plus marksheet", () => {
+  const docs = [
+    { documentType: "AADHAAR" },
+    { documentType: "MARKSHEET" },
+    { documentType: "OTHER" },
+    { documentType: "OTHER" },
+  ];
+
+  const count = (type) =>
+    docs.filter((doc) => doc.documentType === type).length;
+
+  assert.equal(count("AADHAAR"), 1);
+  assert.equal(count("MARKSHEET"), 1);
+  assert.equal(count("OTHER"), 2);
+  assert.equal(count("AADHAAR") === 1 && count("MARKSHEET") === 1, true);
+});

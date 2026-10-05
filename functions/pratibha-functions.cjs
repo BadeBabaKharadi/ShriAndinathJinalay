@@ -80,6 +80,15 @@ module.exports = {
       active: data.active,
     });
   }),
+  pratibhaAdminDeleteRule: onCall(adminOptions(), async request => {
+    const data = request.data || {};
+    return pratibha.deleteRule({
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
+      accessKey: data.accessKey,
+      expectedKey: ADMIN_ACCESS_KEY.value(),
+      id: data.id,
+    });
+  }),
   pratibhaAdminStats: onCall(adminOptions(), async request => {
     const data = request.data || {};
     return pratibha.stats({
