@@ -48,3 +48,10 @@ This file is the repository-local operating profile for AI agents. It complement
 
 ## Quality gate
 A change is complete only when the intended flow works, regression coverage exists, relevant checks are clean, CI is green, compatibility is preserved, and documentation impact is addressed.
+
+## Firebase Firestore database
+- Firebase project: `jain-community-platform`
+- Production Firestore database: `jcp-firestore-db-001`
+- Firestore location: `asia-south1`
+- Do not use or recreate the deleted `(default)` Firestore database.
+- Firebase Admin SDK code must explicitly target `jcp-firestore-db-001`.
