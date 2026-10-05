@@ -11,7 +11,7 @@ if (!apiBase || !integrationKey) {
 }
 
 async function jcpProvision(application) {
-  const response = await fetch(apiBase + "/api/profile/migrations/provision", {
+  const response = await fetch(apiBase + "/api/profile-migrations/provision", {
     method: "POST",
     headers: { "content-type": "application/json", [headerName]: integrationKey },
     body: JSON.stringify({
