@@ -65,7 +65,7 @@ async function jcpRequest(path, body) {
 }
 
 async function provisionProfile(registration) {
-  return jcpRequest("/api/profile/migrations/provision", {
+  return jcpRequest("/api/profile-migrations/provision", {
     value: registration.mobile,
     displayName: registration.name,
     address: registration.address,
