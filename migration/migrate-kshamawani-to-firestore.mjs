@@ -147,6 +147,7 @@ function parseRows(workbook) {
         updatedAt: timestamp,
         foodRequired: true,
         consentAccepted: true,
+        userId: null,
       };
     });
 
@@ -194,6 +195,11 @@ async function migrate(filePath) {
     cellDates: true,
   });
   const registrations = parseRows(workbook);
+  for (const registration of registrations) {
+    const profile = await provisionProfile(registration);
+    if (!profile?.id) throw new Error("JCP profile provisioning returned no id for " + registration.applicationCode);
+    registration.userId = profile.id;
+  }
   const db = getFirestore(undefined, FIRESTORE_DATABASE_ID);
 
   const eventRef = db.collection("events").doc(EVENT_ID);
