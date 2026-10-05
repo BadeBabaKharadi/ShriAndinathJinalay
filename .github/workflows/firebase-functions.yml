@@ -62,6 +62,7 @@ jobs:
       - name: Deploy Pratibha functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIRESTORE_DATABASE_ID: jcp-firestore-db-001
         run: |
           npx --yes firebase-tools@latest deploy \
             --project jain-community-platform \
