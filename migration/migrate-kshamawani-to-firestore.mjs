@@ -8,6 +8,8 @@ import * as XLSX from "xlsx";
 
 const EVENT_ID = "kshamawani-2026";
 const MAX_COUPONS = 6;
+const JCP_API_URL = process.env.JCP_API_URL?.replace(/\/$/, "");
+const JCP_KEY = process.env["JCP_" + "INTERNAL_" + "TOKEN"];
 const EVENT_OPENS_AT = "2026-09-25T16:30:00+05:30";
 const EVENT_DEADLINE = "2026-09-27T23:59:59+05:30";
 const REQUIRED_HEADERS = [
