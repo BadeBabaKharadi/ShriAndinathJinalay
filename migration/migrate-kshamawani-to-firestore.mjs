@@ -3,6 +3,7 @@ import process from "node:process";
 import { readFile } from "node:fs/promises";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
+import { FIRESTORE_DATABASE_ID } from "../functions/config.js";
 import * as XLSX from "xlsx";
 
 const EVENT_ID = "kshamawani-2026";
@@ -160,7 +161,7 @@ async function migrate(filePath) {
     cellDates: true,
   });
   const registrations = parseRows(workbook);
-  const db = getFirestore();
+  const db = getFirestore(undefined, FIRESTORE_DATABASE_ID);
 
   const eventRef = db.collection("events").doc(EVENT_ID);
   const registrationRefs = registrations.map((item) =>

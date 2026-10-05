@@ -23,6 +23,21 @@ describe("Kshamawani Firebase registration", () => {
     expect(functions.engines.node).toBe("22");
   });
 
+  it("targets the named production Firestore database and not (default)", async () => {
+    const config = await readFileText("functions/config.js");
+    const index = await readFileText("functions/index.js");
+    const pratibha = await readFileText("functions/pratibha-functions.cjs");
+
+    expect(config).toContain('"jcp-firestore-db-001"');
+    expect(index).toContain("FIRESTORE_DATABASE_ID");
+    expect(index).toContain("getFirestore(undefined, FIRESTORE_DATABASE_ID)");
+    expect(pratibha).toContain("FIRESTORE_DATABASE_ID");
+    expect(pratibha).toContain(
+      "getFirestore(undefined, FIRESTORE_DATABASE_ID)",
+    );
+    expect(config).not.toContain('"(default)"');
+  });
+
   it("keeps Firestore inaccessible from the public client", async () => {
     const rules = await readFileText("firestore.rules");
 

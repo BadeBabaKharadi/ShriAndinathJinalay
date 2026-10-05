@@ -1,5 +1,6 @@
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
+const { FIRESTORE_DATABASE_ID } = require("./config");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions");
 const { defineSecret } = require("firebase-functions/params");
@@ -81,7 +82,7 @@ exports.kshamawaniLookup = onCall(callableOptions(), async (request) => {
   try {
     const { eventId, mobile } = request.data || {};
     return await lookupRegistration({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       eventId,
       mobile,
     });
@@ -93,7 +94,7 @@ exports.kshamawaniLookup = onCall(callableOptions(), async (request) => {
 exports.kshamawaniCreate = onCall(callableOptions(), async (request) => {
   try {
     return await createRegistration({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       data: request.data || {},
     });
   } catch (error) {
@@ -104,7 +105,7 @@ exports.kshamawaniCreate = onCall(callableOptions(), async (request) => {
 exports.kshamawaniUpdate = onCall(callableOptions(), async (request) => {
   try {
     return await updateRegistration({
-      db: getFirestore(),
+      db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
       data: request.data || {},
     });
   } catch (error) {
@@ -133,7 +134,7 @@ exports.kshamawaniCoordinatorLookup = onCall(
     try {
       const data = request.data || {};
       return await coordinatorLookup({
-        db: getFirestore(),
+        db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
         applicationCode: {
           value: data.applicationCode,
           accessKey: data.accessKey,
@@ -157,7 +158,7 @@ exports.kshamawaniIssue = onCall(
     try {
       const data = request.data || {};
       return await issueTokens({
-        db: getFirestore(),
+        db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
         applicationCode: data.applicationCode,
         accessKey: data.accessKey,
         expectedKey: ADMIN_ACCESS_KEY.value(),
@@ -175,7 +176,7 @@ exports.kshamawaniAdminStats = onCall(
     try {
       const data = request.data || {};
       return await getAdminStats({
-        db: getFirestore(),
+        db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
         eventId: data.eventId,
         accessKey: data.accessKey,
         expectedKey: ADMIN_ACCESS_KEY.value(),
@@ -192,7 +193,7 @@ exports.kshamawaniAdminRegistrations = onCall(
     try {
       const data = request.data || {};
       return await getAdminRegistrations({
-        db: getFirestore(),
+        db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
         eventId: data.eventId,
         accessKey: data.accessKey,
         expectedKey: ADMIN_ACCESS_KEY.value(),
@@ -212,7 +213,7 @@ exports.kshamawaniAdminLookup = onCall(
     try {
       const data = request.data || {};
       return await findRegistrationByMobile({
-        db: getFirestore(),
+        db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
         mobile: data.mobile,
         accessKey: data.accessKey,
         expectedKey: ADMIN_ACCESS_KEY.value(),
@@ -229,7 +230,7 @@ exports.kshamawaniAdminDelete = onCall(
     try {
       const data = request.data || {};
       return await deleteRegistration({
-        db: getFirestore(),
+        db: getFirestore(undefined, FIRESTORE_DATABASE_ID),
         registrationId: data.registrationId,
         accessKey: data.accessKey,
         expectedKey: ADMIN_ACCESS_KEY.value(),
