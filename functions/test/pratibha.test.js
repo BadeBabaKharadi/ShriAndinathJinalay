@@ -151,7 +151,6 @@ test("requires applicant overall percentage", async () => {
   );
 });
 
-
 test("validates Pratibha class and percentage rules", () => {
   const base = {
     name: "Test Student",
