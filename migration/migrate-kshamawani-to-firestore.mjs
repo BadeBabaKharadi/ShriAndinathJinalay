@@ -8,6 +8,8 @@ import * as XLSX from "xlsx";
 
 const EVENT_ID = "kshamawani-2026";
 const MAX_COUPONS = 6;
+const JCP_API_URL = process.env.JCP_API_URL?.replace(/\/$/, "");
+const JCP_KEY = process.env["JCP_" + "INTERNAL_" + "TOKEN"];
 const EVENT_OPENS_AT = "2026-09-25T16:30:00+05:30";
 const EVENT_DEADLINE = "2026-09-27T23:59:59+05:30";
 const REQUIRED_HEADERS = [
@@ -48,6 +50,35 @@ function mobileIndexId(mobile) {
       .update(EVENT_ID + ":" + mobile)
       .digest("hex")
   );
+}
+
+async function jcpRequest(path, body) {
+  if (!JCP_API_URL || !JCP_KEY) {
+    throw new Error("JCP integration settings are required.");
+  }
+  const headerName = "x-jcp-" + "internal-token";
+  const response = await fetch(JCP_API_URL + path, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      [headerName]: JCP_KEY,
+    },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw new Error(
+      "JCP request failed: " + response.status + " " + (await response.text()),
+    );
+  }
+  return response.json();
+}
+
+async function provisionProfile(registration) {
+  return jcpRequest("/api/profile-migrations/provision", {
+    value: registration.mobile,
+    displayName: registration.name,
+    address: registration.address,
+  });
 }
 
 function parseRows(workbook) {
@@ -114,6 +145,7 @@ function parseRows(workbook) {
         updatedAt: timestamp,
         foodRequired: true,
         consentAccepted: true,
+        userId: null,
       };
     });
 
@@ -138,6 +170,7 @@ function parseRows(workbook) {
 function asFirestoreRegistration(registration) {
   return {
     ...registration,
+    userId: registration.userId,
     createdAt: Timestamp.fromDate(registration.createdAt),
     updatedAt: Timestamp.fromDate(registration.updatedAt),
     issuedAt: registration.issuedAt
@@ -161,6 +194,16 @@ async function migrate(filePath) {
     cellDates: true,
   });
   const registrations = parseRows(workbook);
+  for (const registration of registrations) {
+    const profile = await provisionProfile(registration);
+    if (!profile?.id) {
+      throw new Error(
+        "JCP profile provisioning returned no id for " +
+          registration.applicationCode,
+      );
+    }
+    registration.userId = profile.id;
+  }
   const db = getFirestore(undefined, FIRESTORE_DATABASE_ID);
 
   const eventRef = db.collection("events").doc(EVENT_ID);
@@ -204,21 +247,31 @@ async function migrate(filePath) {
     const expected = asFirestoreRegistration(registration);
 
     if (existing?.exists) {
-      if (
-        comparableRegistration(existing.data()) !==
-        comparableRegistration(expected)
-      ) {
+      const current = existing.data() ?? {};
+      if (current.userId && current.userId !== registration.userId) {
         throw new Error(
           "Existing registration " +
             registration.applicationCode +
-            " does not match the source.",
+            " is linked to a different profile.",
         );
       }
-      skipped += 1;
+      if (!current.userId) {
+        batch.update(
+          db.collection("registrations").doc(registration.applicationCode),
+          {
+            userId: registration.userId,
+            profileLinkSource: "jcp-mobile-migration",
+            updatedAt: Timestamp.now(),
+          },
+        );
+        imported += 1;
+      } else {
+        skipped += 1;
+      }
     } else {
       batch.create(
         db.collection("registrations").doc(registration.applicationCode),
-        expected,
+        { ...expected, profileLinkSource: "jcp-mobile-migration" },
       );
       imported += 1;
     }
