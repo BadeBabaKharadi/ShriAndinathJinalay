@@ -154,27 +154,40 @@ test("requires applicant overall percentage", async () => {
 
 test("validates Pratibha class and percentage rules", () => {
   const base = {
-    name: "Test Student", mobile: "9876543210", address: "Test Address",
-    city: "Pune", state: "Maharashtra", pincode: "411001",
-    motherName: "Mother", fatherName: "Father", dateOfBirth: "2010-01-01",
-    schoolInstitute: "Test School", achievementDetails: "Achievement",
-    overallPercentage: 85
+    name: "Test Student",
+    mobile: "9876543210",
+    address: "Test Address",
+    city: "Pune",
+    state: "Maharashtra",
+    pincode: "411001",
+    motherName: "Mother",
+    fatherName: "Father",
+    dateOfBirth: "2010-01-01",
+    schoolInstitute: "Test School",
+    achievementDetails: "Achievement",
+    overallPercentage: 85,
   };
+
   assert.doesNotThrow(() => {
     const d = { ...base, classStandard: "10" };
-    if (d.overallPercentage < (d.classStandard === "10" ? 85 : 80)) throw new Error("invalid");
+    if (d.overallPercentage < (d.classStandard === "10" ? 85 : 80)) {
+      throw new Error("invalid");
+    }
   });
+
   assert.throws(() => {
     const d = { ...base, classStandard: "10", overallPercentage: 84 };
     if (d.overallPercentage < 85) throw new Error("10th minimum");
   }, /10th minimum/);
+
   assert.throws(() => {
     const d = { ...base, classStandard: "12", overallPercentage: 79 };
     if (d.overallPercentage < 80) throw new Error("12th minimum");
   }, /12th minimum/);
+
   assert.throws(() => {
     const d = { ...base, classStandard: "11", overallPercentage: 90 };
-    if (!["10","12"].includes(d.classStandard)) throw new Error("class");
+    if (!["10", "12"].includes(d.classStandard)) throw new Error("class");
   }, /class/);
 });
 
@@ -185,11 +198,25 @@ test("supports typed documents and requires Aadhaar plus marksheet", () => {
     { documentType: "OTHER" },
     { documentType: "OTHER" },
   ];
-  assert.equal(docs.filter(x => x.documentType === "AADHAAR").length, 1);
-  assert.equal(docs.filter(x => x.documentType === "MARKSHEET").length, 1);
-  assert.ok(docs.filter(x => x.documentType === "OTHER").length > 1);
+
+  assert.equal(
+    docs.filter((x) => x.documentType === "AADHAAR").length,
+    1,
+  );
+  assert.equal(
+    docs.filter((x) => x.documentType === "MARKSHEET").length,
+    1,
+  );
+  assert.ok(docs.filter((x) => x.documentType === "OTHER").length > 1);
+
   assert.throws(() => {
-    const incomplete = docs.filter(x => x.documentType !== "MARKSHEET");
-    if (incomplete.filter(x => x.documentType === "MARKSHEET").length !== 1) throw new Error("marksheet required");
+    const incomplete = docs.filter(
+      (x) => x.documentType !== "MARKSHEET",
+    );
+    if (
+      incomplete.filter((x) => x.documentType === "MARKSHEET").length !== 1
+    ) {
+      throw new Error("marksheet required");
+    }
   }, /marksheet required/);
 });
