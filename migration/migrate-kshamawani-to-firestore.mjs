@@ -244,17 +244,20 @@ async function migrate(filePath) {
     const expected = asFirestoreRegistration(registration);
 
     if (existing?.exists) {
-      if (
-        comparableRegistration(existing.data()) !==
-        comparableRegistration(expected)
-      ) {
-        throw new Error(
-          "Existing registration " +
-            registration.applicationCode +
-            " does not match the source.",
-        );
+      const current = existing.data() ?? {};
+      if (current.userId && current.userId !== registration.userId) {
+        throw new Error("Existing registration " + registration.applicationCode + " is linked to a different profile.");
       }
-      skipped += 1;
+      if (!current.userId) {
+        batch.update(db.collection("registrations").doc(registration.applicationCode), {
+          userId: registration.userId,
+          profileLinkSource: "jcp-mobile-migration",
+          updatedAt: Timestamp.now(),
+        });
+        imported += 1;
+      } else {
+        skipped += 1;
+      }
     } else {
       batch.create(
         db.collection("registrations").doc(registration.applicationCode),
