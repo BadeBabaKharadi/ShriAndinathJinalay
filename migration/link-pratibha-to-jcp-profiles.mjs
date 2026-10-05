@@ -13,7 +13,10 @@ if (!apiBase || !integrationKey) {
 async function jcpProvision(application) {
   const response = await fetch(apiBase + "/api/profile-migrations/provision", {
     method: "POST",
-    headers: { "content-type": "application/json", [headerName]: integrationKey },
+    headers: {
+      "content-type": "application/json",
+      [headerName]: integrationKey,
+    },
     body: JSON.stringify({
       value: application.mobile,
       displayName: application.name,
@@ -21,7 +24,12 @@ async function jcpProvision(application) {
     }),
   });
   if (!response.ok) {
-    throw new Error("JCP provisioning failed: " + response.status + " " + await response.text());
+    throw new Error(
+      "JCP provisioning failed: " +
+        response.status +
+        " " +
+        (await response.text()),
+    );
   }
   return response.json();
 }
@@ -52,9 +60,15 @@ for (const doc of snapshot.docs) {
   linked += 1;
 }
 
-console.log(JSON.stringify({
-  collection: "pratibhaSammanApplications",
-  scanned: snapshot.size,
-  linked,
-  skipped,
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      collection: "pratibhaSammanApplications",
+      scanned: snapshot.size,
+      linked,
+      skipped,
+    },
+    null,
+    2,
+  ),
+);
