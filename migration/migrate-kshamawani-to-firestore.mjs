@@ -52,6 +52,37 @@ function mobileIndexId(mobile) {
   );
 }
 
+async function jcpRequest(path, body) {
+  if (!JCP_API_URL || !JCP_KEY) throw new Error("JCP integration settings are required.");
+  const headerName = "x-jcp-" + "internal-token";
+  const response = await fetch(JCP_API_URL + path, {
+    method: "POST",
+    headers: { "content-type": "application/json", [headerName]: JCP_KEY },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) throw new Error("JCP request failed: " + response.status + " " + await response.text());
+  return response.json();
+}
+
+async function provisionProfile(registration) {
+  return jcpRequest("/api/profile/migrations/provision", {
+    value: registration.mobile,
+    displayName: registration.name,
+    address: registration.address,
+  });
+}
+
+async function recordParticipation(registration) {
+  return jcpRequest("/api/profile/activities", {
+    userId: registration.userId,
+    tenantId: "bade-baba-kharadi",
+    eventType: "KSHAMAWANI",
+    eventId: EVENT_ID,
+    title: "Kshamawani 2026",
+    participatedAt: registration.createdAt.toISOString(),
+  });
+}
+
 function parseRows(workbook) {
   const sheet = workbook.Sheets["Kshamawani Registrations"];
   if (!sheet) {
