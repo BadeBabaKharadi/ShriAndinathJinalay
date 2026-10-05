@@ -35,7 +35,6 @@ describe("Kshamawani Firebase registration", () => {
     expect(pratibha).toContain("getFirestore(undefined, FIRESTORE_DATABASE_ID)");
     expect(config).not.toContain('"(default)"');
   });
-  });
 
   it("keeps Firestore inaccessible from the public client", async () => {
     const rules = await readFileText("firestore.rules");
