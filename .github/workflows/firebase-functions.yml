@@ -49,6 +49,7 @@ jobs:
       - name: Verify Firebase CI token
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIRESTORE_DATABASE_ID: jcp-firestore-db-001
         run: |
           test -n "$FIREBASE_TOKEN"
       - name: Set up Node.js
