@@ -13,12 +13,26 @@ const origins = [
   "https://badebabakharadi.github.io",
 ];
 const publicOptions = () => ({ cors: origins });
+
+const { mapPublicError } = require("./pratibha-errors.cjs");
 const publicCall = fn => async request => {
   try {
     return await fn(request);
   } catch (error) {
     if (error instanceof HttpsError) throw error;
-    throw new HttpsError("invalid-argument", error?.message || "Request could not be accepted.");
+
+    const mapped = mapPublicError(error);
+    if (mapped) throw mapped;
+
+    console.error("Pratibha public callable failed", {
+      name: error?.name,
+      message: error?.message,
+      stack: error?.stack,
+    });
+    throw new HttpsError(
+      "internal",
+      "आवेदन सेवा में अभी तकनीकी समस्या है। कृपया कुछ देर बाद पुनः प्रयास करें।"
+    );
   }
 };
 const adminOptions = () => ({ ...publicOptions(), secrets: [ADMIN_ACCESS_KEY] });
