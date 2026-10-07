@@ -14,48 +14,15 @@ const origins = [
 ];
 const publicOptions = () => ({ cors: origins });
 
-// Only messages that are intentionally produced for end users may cross the
-// public callable boundary. Unexpected errors (including Google/IAM/Storage
-// errors) are logged server-side and replaced with a safe generic message.
-const PUBLIC_ERROR_PATTERNS = [
-  /^Required field missing: [A-Za-z][A-Za-z0-9]*$/,
-  /^Invalid mobile number\.$/,
-  /^Invalid PIN code\.$/,
-  /^कक्षा केवल 10वीं या 12वीं हो सकती है।$/,
-  /^Overall percentage must be between 0 and 100\.$/,
-  /^कक्षा (10|12)वीं के लिए न्यूनतम (80|85)% आवश्यक है।$/,
-  /^Face photo is required\.$/,
-  /^Maximum 10 supporting documents are allowed\.$/,
-  /^एक Aadhaar और एक marksheet अनिवार्य है।$/,
-  /^Invalid upload\.$/,
-  /^Unsupported file type\.$/,
-  /^File is too large\.$/,
-  /^Form submission is currently paused\.$/,
-  /^Form submission has not opened yet\.$/,
-  /^Registration is closed\.$/,
-  /^A registration already exists for this mobile number\. Please search the existing registration and edit it\.$/,
-  /^All active rules must be accepted\.$/,
-  /^Application not found\.$/,
-  /^Unauthorized\.$/,
-  /^Multiple registrations found for this mobile number\. Please contact the coordinator\.$/,
-  /^Finalized applications cannot be edited\.$/,
-];
-
-const publicErrorMessage = error => {
-  const message = String(error?.message || "").trim();
-  return PUBLIC_ERROR_PATTERNS.some(pattern => pattern.test(message)) ? message : null;
-};
-
+const { mapPublicError } = require("./pratibha-errors.cjs");
 const publicCall = fn => async request => {
   try {
     return await fn(request);
   } catch (error) {
     if (error instanceof HttpsError) throw error;
 
-    const safeMessage = publicErrorMessage(error);
-    if (safeMessage) {
-      throw new HttpsError("invalid-argument", safeMessage);
-    }
+    const mapped = mapPublicError(error);
+    if (mapped) throw mapped;
 
     console.error("Pratibha public callable failed", {
       name: error?.name,
