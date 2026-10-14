@@ -769,7 +769,7 @@
   },
   {
     "id": "kalash-029",
-    "name": "श्री जिनेंद्र, सुधा, अर्पित, निकिता, अंकित, निष्ठा, आंचल, नैंसी, निपुण, निक्षित नौगांव परिवार",
+    "name": "श्री जिनेंद्र, सुधा, अर्पित, निकिता, अंकित, निष्ठा, अंचल, नैंसी, निपुण, निक्षित नौगांव परिवार",
     "kalashType": "चातुर्मास स्मृति विद्या कलश",
     "category": "chaturmas-smriti-vidhya",
     "displayAmount": "२ कलश ११ श्रीफल",
@@ -961,11 +961,11 @@
   },
   {
     "id": "kalash-081",
-    "name": "संरांश जैन, सौरभ जैन, ऋचा जैन,आशा जैन, राजेंद्र जैन ",
+    "name": "श्री सौमित्र श्रीमती प्रज्ञा जैन",
     "kalashType": "चातुर्मास स्मृति समय कलश",
     "category": "chaturmas-smriti-samay",
     "displayAmount": "१ कलश ११ श्रीफल",
-    "address": "स्पैन ओ लाइफ, खराड़ी",
+    "address": "ब्लूबेरी सोसायटी, खराड़ी",
     "comments": "",
     "familyImage": "",
     "kalashNumber": 81,
@@ -1114,7 +1114,17 @@
     "familyImage": "",
     "kalashNumber": 93,
     "amount": 111111
+  },
+  {
+    "id": "kalash-094",
+    "name": "श्री पारस नेहा ओम ज्ञानवी गंगवाल",
+    "kalashType": "चातुर्मास स्मृति समय कलश",
+    "category": "chaturmas-smriti-samay",
+    "displayAmount": "१ कलश ११ श्रीफल",
+    "address": "ड्रीम्स वीरोदय, खराड़ी, नासिक (महाराष्ट्र)",
+    "comments": "",
+    "familyImage": "",
+    "kalashNumber": 94,
+    "amount": 111111
   }
-
-  
 ]
