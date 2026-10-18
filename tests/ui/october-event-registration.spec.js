@@ -6,11 +6,11 @@ const functionsUrl =
 
 async function mockQrLibrary(page) {
   await page.route(
-    "https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
     (route) =>
       route.fulfill({
         contentType: "application/javascript",
-        body: `window.QRCode = { toCanvas: async (canvas, value) => { canvas.dataset.payload = value; canvas.width = 100; canvas.height = 100; } };`,
+        body: `window.QRCode = function (element, options) { element.dataset.payload = options.text; element.style.width = options.width + "px"; element.style.height = options.height + "px"; }; window.QRCode.CorrectLevel = { M: 0 };`,
       }),
   );
 }
@@ -230,7 +230,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
     .click();
   await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
-  await page.getByRole("button", { name: "पिछला पंजीकरण खोजें" }).click();
+  await page.getByRole("button", { name: "खोजें और आगे बढ़ें" }).click();
   await expect(page.locator("#name")).toHaveValue("Existing Traveller");
   await page.locator("#name").fill("Updated Traveller");
   await page.getByRole("button", { name: "पंजीकरण सुरक्षित करें" }).click();
