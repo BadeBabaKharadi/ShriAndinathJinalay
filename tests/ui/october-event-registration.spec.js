@@ -108,6 +108,8 @@ test("food registration submits details and renders the stable QR reference", as
   await page.goto("/october-event-registration.html");
   await page.getByRole("button", { name: /दीक्षा समारोह भोजन कूपन/ }).click();
   await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
+  await page.getByRole("button", { name: "खोजें और आगे बढ़ें" }).click();
+  await expect(page.locator("#formFields")).toBeVisible();
   await page.getByLabel("पूरा नाम *").fill("Test Person");
   await page.getByLabel("पूरा पता *").fill("Pune address");
   await page.locator("#coupons").selectOption("3");
