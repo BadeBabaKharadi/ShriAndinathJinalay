@@ -15,6 +15,22 @@ async function mockQrLibrary(page) {
   );
 }
 
+async function handleCallablePreflight(page) {
+  await page.route("**/octoberEvent*", async (route) => {
+    if (route.request().method() === "OPTIONS") {
+      return route.fulfill({
+        status: 204,
+        headers: {
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-allow-headers": "content-type",
+        },
+      });
+    }
+    await route.fallback();
+  });
+}
+
 async function mockCallable(page, name, result) {
   await page.route(`${functionsUrl}/${name}`, (route) =>
     route.fulfill({
@@ -35,6 +51,7 @@ test("October event form is responsive and exposes both registration types", asy
 }) => {
   await mockQrLibrary(page);
   await page.setViewportSize({ width: 1280, height: 900 });
+  await handleCallablePreflight(page);
   await page.goto("/october-event-registration.html");
   await expect(
     page.getByRole("heading", { name: /विशेष आयोजन/ }),
@@ -76,6 +93,7 @@ test("food registration submits details and renders the stable QR reference", as
     });
   });
 
+  await handleCallablePreflight(page);
   await page.goto("/october-event-registration.html");
   await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
   await page.getByLabel("पूरा नाम *").fill("Test Person");
@@ -157,6 +175,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
     });
   });
 
+  await handleCallablePreflight(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
@@ -199,6 +218,7 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
       body: JSON.stringify({ error: { message: "Unauthorized." } }),
     }),
   );
+  await handleCallablePreflight(page);
   await page.goto("/october-event-stay-admin.html");
   await page.locator("#key").fill("wrong-key");
   await page.getByRole("button", { name: "सत्यापित करें" }).click();
@@ -252,6 +272,7 @@ test("authorized food admin can view details and export the filtered list", asyn
     }),
   );
 
+  await handleCallablePreflight(page);
   await page.goto("/october-event-food-admin.html");
   await page.locator("#key").fill("correct-key");
   await page.getByRole("button", { name: "सत्यापित करें" }).click();
@@ -290,6 +311,7 @@ test("new lodging registration includes a selected Aadhaar document", async ({
     });
   });
 
+  await handleCallablePreflight(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
