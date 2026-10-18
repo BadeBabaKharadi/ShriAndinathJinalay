@@ -1,7 +1,7 @@
 (() => {
 "use strict";
 const $ = id => document.getElementById(id);
-const BASE = location.hostname === "localhost" || location.hostname === "127.0.0.1" ? "http://127.0.0.1:5001/jain-community-platform/asia-south1" : "https://asia-south1-jain-community-platform.cloudfunctions.net";
+const BASE = "https://asia-south1-jain-community-platform.cloudfunctions.net";
 let kind = "food", loaded = false, selectedAadhaar = null;
 function message(text, error = false) { $("message").textContent = text; $("message").className = "event-msg"; $("message").style.color = error ? "#a11" : "#164d22"; }
 function friendlyError(error) { const text = String(error?.message || ""); if (text === "Failed to fetch" || text.includes("NetworkError")) return "सर्वर से संपर्क नहीं हो पा रहा है। इंटरनेट कनेक्शन जाँचें और कुछ देर बाद फिर प्रयास करें।"; return text || "सेवा अभी उपलब्ध नहीं है। कृपया दोबारा प्रयास करें।"; }
