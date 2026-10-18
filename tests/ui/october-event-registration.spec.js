@@ -10,7 +10,10 @@ async function mockQrLibrary(page) {
     (route) =>
       route.fulfill({
         contentType: "application/javascript",
-        body: `window.QRCode = function (element, options) { element.dataset.payload = options.text; element.style.width = options.width + "px"; element.style.height = options.height + "px"; }; window.QRCode.CorrectLevel = { M: 0 };`,
+        body: [
+          'window.QRCode = function (element, options) { element.dataset.payload = options.text; element.style.width = options.width + "px"; element.style.height = options.height + "px"; };',
+          "window.QRCode.CorrectLevel = { M: 0 };",
+        ].join(" "),
       }),
   );
 }
