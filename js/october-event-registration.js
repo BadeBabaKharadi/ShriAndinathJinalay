@@ -124,7 +124,7 @@
         return;
       }
       const r = result.registration;
-      ["name", "address", "comingFrom", "checkInDate", "checkInTime", "male", "female", "children", "coupons"].forEach(key => { if ($(key) && r[key] !== undefined) $(key).value = r[key]; });
+      ["name", "address", "comingFrom", "checkInDate", "checkInTime", "checkOutDate", "checkOutTime", "male", "female", "children", "coupons"].forEach(key => { if ($(key) && r[key] !== undefined) $(key).value = r[key]; });
       selectedAadhaar = null; $("aadhaar").value = "";
       existingAadhaar = kind === "stay" && Boolean(r.aadhaarUploaded); removeAadhaar = false;
       renderAadhaarPreview();
@@ -141,7 +141,7 @@
       const data = { kind, mobile: $("mobile").value, name: $("name").value, address: $("address").value };
       if (kind === "food") data.coupons = Number($("coupons").value);
       else {
-        Object.assign(data, { comingFrom: $("comingFrom").value, checkInDate: $("checkInDate").value, checkInTime: $("checkInTime").value, male: Number($("male").value), female: Number($("female").value), children: Number($("children").value) });
+        Object.assign(data, { comingFrom: $("comingFrom").value, checkInDate: $("checkInDate").value, checkInTime: $("checkInTime").value, checkOutDate: $("checkOutDate").value, checkOutTime: $("checkOutTime").value, male: Number($("male").value), female: Number($("female").value), children: Number($("children").value) });
         if (selectedAadhaar) {
           if (selectedAadhaar.size > 5 * 1024 * 1024) throw new Error("आधार फाइल 5 MB से छोटी होनी चाहिए।");
           if (!["application/pdf", "image/jpeg", "image/png"].includes(selectedAadhaar.type)) throw new Error("आधार के लिए PDF, JPG या PNG फ़ाइल चुनें।");
