@@ -166,14 +166,12 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
 });
 
 test("lodging admin denies an incorrect admin key", async ({ page }) => {
-  await page.route(
-    `${functionsUrl}/octoberEventVerifyAdmin`,
-    (route) =>
-      route.fulfill({
-        status: 403,
-        contentType: "application/json",
-        body: JSON.stringify({ error: { message: "Unauthorized." } }),
-      }),
+  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, (route) =>
+    route.fulfill({
+      status: 403,
+      contentType: "application/json",
+      body: JSON.stringify({ error: { message: "Unauthorized." } }),
+    }),
   );
   await page.goto("/october-event-stay-admin.html");
   await page.locator("#key").fill("wrong-key");
@@ -184,42 +182,38 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
 test("authorized food admin can view details and export the filtered list", async ({
   page,
 }) => {
-  await page.route(
-    `${functionsUrl}/octoberEventVerifyAdmin`,
-    (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ result: { verified: true } }),
-      }),
+  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ result: { verified: true } }),
+    }),
   );
-  await page.route(
-    `${functionsUrl}/octoberEventAdminList`,
-    (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          result: {
-            registrations: [
-              {
-                registrationId: "DKF26-ABC123",
-                name: "Test Person",
-                mobile: "9876543210",
-                address: "Pune address",
-                coupons: 3,
-              },
-            ],
-            summary: {
-              registrations: 1,
-              totalCoupons: 3,
-              male: 0,
-              female: 0,
-              children: 0,
+  await page.route(`${functionsUrl}/octoberEventAdminList`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        result: {
+          registrations: [
+            {
+              registrationId: "DKF26-ABC123",
+              name: "Test Person",
+              mobile: "9876543210",
+              address: "Pune address",
+              coupons: 3,
             },
+          ],
+          summary: {
+            registrations: 1,
+            totalCoupons: 3,
+            male: 0,
+            female: 0,
+            children: 0,
           },
-        }),
+        },
       }),
+    }),
   );
 
   await page.goto("/october-event-food-admin.html");
