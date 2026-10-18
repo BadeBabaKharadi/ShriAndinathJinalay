@@ -305,3 +305,11 @@ test("authorized admin can list registrations and obtain a short-lived Aadhaar U
   assert.match(access.url, /^https:\/\/private\.example\//);
   assert.equal(access.expiresInSeconds, 300);
 });
+
+
+test("Aadhaar uploads larger than 5 MB are rejected", () => {
+  const input = validStayInput({
+    aadhaarBase64: Buffer.alloc(5 * 1024 * 1024 + 1, 0x41).toString("base64"),
+  });
+  assert.throws(() => validateStay(input), /smaller than 5 MB/);
+});
