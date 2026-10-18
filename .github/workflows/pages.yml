@@ -34,10 +34,7 @@ jobs:
       - name: Install browser runtime
         run: PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install --with-deps chromium
       - name: Run required checks
-        run: |
-          npx prettier --write tests/ui/october-event-aadhaar-preview.spec.js
-          git diff -- tests/ui/october-event-aadhaar-preview.spec.js
-          exit 1
+        run: npm run check
       - name: Run Functions tests
         working-directory: functions
         run: npm test
