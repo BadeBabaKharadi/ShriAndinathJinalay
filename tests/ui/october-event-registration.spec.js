@@ -4,6 +4,13 @@ import { expect, test } from "@playwright/test";
 const functionsUrl =
   "https://asia-south1-jain-community-platform.cloudfunctions.net";
 
+const corsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "POST, OPTIONS",
+  "access-control-allow-headers":
+    "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+};
+
 async function mockQrLibrary(page) {
   await page.route(
     "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
@@ -23,12 +30,7 @@ async function handleCallablePreflight(page) {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     await route.fallback();
@@ -40,23 +42,13 @@ async function mockCallable(page, name, result) {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     return route.fulfill({
       status: 200,
       contentType: "application/json",
-      headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({ result }),
     });
   });
@@ -94,24 +86,14 @@ test("food registration submits details and renders the stable QR reference", as
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     submitted = JSON.parse(route.request().postData()).data;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({
         result: {
           exists: false,
@@ -155,24 +137,14 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     const request = JSON.parse(route.request().postData()).data;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({
         result:
           request.kind === "stay"
@@ -200,24 +172,14 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     submitted = JSON.parse(route.request().postData()).data;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({
         result: {
           exists: true,
@@ -262,23 +224,13 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     return route.fulfill({
       status: 403,
       contentType: "application/json",
-      headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({ error: { message: "Unauthorized." } }),
     });
   });
@@ -296,23 +248,13 @@ test("authorized food admin can view details and export the filtered list", asyn
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     return route.fulfill({
       status: 200,
       contentType: "application/json",
-      headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({ result: { verified: true } }),
     });
   });
@@ -320,23 +262,13 @@ test("authorized food admin can view details and export the filtered list", asyn
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     return route.fulfill({
       status: 200,
       contentType: "application/json",
-      headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({
         result: {
           registrations: [
@@ -384,24 +316,14 @@ test("new lodging registration includes a selected Aadhaar document", async ({
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
-        headers: {
-          "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-        },
+        headers: corsHeaders,
       });
     }
     submitted = JSON.parse(route.request().postData()).data;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers":
-            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({
         result: {
           exists: false,
