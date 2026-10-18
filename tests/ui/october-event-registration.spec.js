@@ -32,8 +32,9 @@ async function handleCallablePreflight(page) {
 }
 
 async function mockCallable(page, name, result) {
-  await page.route(`${functionsUrl}/${name}`, (route) =>
-    route.fulfill({
+  await page.route(`${functionsUrl}/${name}`, async (route) => {
+    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "content-type" } });
+    return route.fulfill({
       status: 200,
       contentType: "application/json",
       headers: {
@@ -42,8 +43,8 @@ async function mockCallable(page, name, result) {
         "access-control-allow-headers": "content-type",
       },
       body: JSON.stringify({ result }),
-    }),
-  );
+    });
+  });
 }
 
 test("October event form is responsive and exposes both registration types", async ({
@@ -75,6 +76,7 @@ test("food registration submits details and renders the stable QR reference", as
   await mockCallable(page, "octoberEventLookup", { exists: false });
   let submitted;
   await page.route(`${functionsUrl}/octoberEventSave`, async (route) => {
+    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "content-type" } });
     submitted = JSON.parse(route.request().postData()).data;
     await route.fulfill({
       status: 200,
@@ -124,6 +126,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
 }) => {
   await mockQrLibrary(page);
   await page.route(`${functionsUrl}/octoberEventLookup`, async (route) => {
+    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "content-type" } });
     const request = JSON.parse(route.request().postData()).data;
     await route.fulfill({
       status: 200,
@@ -206,8 +209,9 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
 });
 
 test("lodging admin denies an incorrect admin key", async ({ page }) => {
-  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, (route) =>
-    route.fulfill({
+  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, async (route) => {
+    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "content-type" } });
+    return route.fulfill({
       status: 403,
       contentType: "application/json",
       headers: {
@@ -216,8 +220,8 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
         "access-control-allow-headers": "content-type",
       },
       body: JSON.stringify({ error: { message: "Unauthorized." } }),
-    }),
-  );
+    });
+  });
   await handleCallablePreflight(page);
   await page.goto("/october-event-stay-admin.html");
   await page.locator("#key").fill("wrong-key");
@@ -238,10 +242,11 @@ test("authorized food admin can view details and export the filtered list", asyn
         "access-control-allow-headers": "content-type",
       },
       body: JSON.stringify({ result: { verified: true } }),
-    }),
-  );
-  await page.route(`${functionsUrl}/octoberEventAdminList`, (route) =>
-    route.fulfill({
+    });
+  });
+  await page.route(`${functionsUrl}/octoberEventAdminList`, async (route) => {
+    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "content-type" } });
+    return route.fulfill({
       status: 200,
       contentType: "application/json",
       headers: {
@@ -269,8 +274,8 @@ test("authorized food admin can view details and export the filtered list", asyn
           },
         },
       }),
-    }),
-  );
+    });
+  });
 
   await handleCallablePreflight(page);
   await page.goto("/october-event-food-admin.html");
