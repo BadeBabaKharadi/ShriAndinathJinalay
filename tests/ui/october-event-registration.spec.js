@@ -160,6 +160,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
   });
   let submitted;
   await page.route(`${functionsUrl}/octoberEventSave`, async (route) => {
+    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "content-type" } });
     submitted = JSON.parse(route.request().postData()).data;
     await route.fulfill({
       status: 200,
@@ -232,8 +233,18 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
 test("authorized food admin can view details and export the filtered list", async ({
   page,
 }) => {
-  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, (route) =>
-    route.fulfill({
+  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, async (route) => {
+    if (route.request().method() === "OPTIONS") {
+      return route.fulfill({
+        status: 204,
+        headers: {
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-allow-headers": "content-type",
+        },
+      });
+    }
+    return route.fulfill({
       status: 200,
       contentType: "application/json",
       headers: {
