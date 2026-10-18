@@ -43,7 +43,12 @@ function validateStay(input, { allowExistingAadhaar = false } = {}) {
   const checkInDate = required(input.checkInDate, "Check-in date");
   if (!/^2026-10-(2[4-6])$/.test(checkInDate)) throw new Error("Check-in date must be 24, 25, or 26 October 2026.");
   if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(input.checkInTime || ""))) throw new Error("Enter a valid check-in time.");
-  const base = { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), comingFrom: required(input.comingFrom, "Where are you travelling from"), male, female, children, checkInDate, checkInTime: input.checkInTime };
+  const checkOutDate = required(input.checkOutDate, "Check-out date");
+  if (!/^2026-10-(2[4-7])$/.test(checkOutDate)) throw new Error("Check-out date must be 24, 25, 26, or 27 October 2026.");
+  const checkOutTime = String(input.checkOutTime || "");
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(checkOutTime)) throw new Error("Enter a valid check-out time.");
+  if (`${checkOutDate}T${checkOutTime}` <= `${checkInDate}T${input.checkInTime}`) throw new Error("Check-out must be after check-in.");
+  const base = { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), comingFrom: required(input.comingFrom, "Where are you travelling from"), male, female, children, checkInDate, checkInTime: input.checkInTime, checkOutDate, checkOutTime };
   const rawBase64 = String(input.aadhaarBase64 || "").replace(/^data:[^,]+,/, "");
   if (!rawBase64 && allowExistingAadhaar && input.removeAadhaar === true) return { ...base, removeExistingAadhaar: true };
   if (!rawBase64 && allowExistingAadhaar) return { ...base, preserveExistingAadhaar: true };
