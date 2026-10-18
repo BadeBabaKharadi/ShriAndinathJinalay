@@ -51,6 +51,14 @@ function validateStay(input, { allowExistingAadhaar = false } = {}) {
   if (!ALLOWED_MIME.has(mime)) throw new Error("Aadhaar must be a PDF, JPG, or PNG file.");
   const bytes = Buffer.from(rawBase64, "base64");
   if (!bytes.length || bytes.length > MAX_AADHAAR_BYTES) throw new Error("Aadhaar file must be smaller than 5 MB.");
+  const hasPdfSignature = bytes.subarray(0, 5).toString("ascii") === "%PDF-";
+  const hasJpegSignature = bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  const hasPngSignature = bytes.length >= 8 && bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  const contentMatchesMime =
+    (mime === "application/pdf" && hasPdfSignature) ||
+    (mime === "image/jpeg" && hasJpegSignature) ||
+    (mime === "image/png" && hasPngSignature);
+  if (!contentMatchesMime) throw new Error("Aadhaar file content does not match its declared PDF/JPG/PNG type.");
   return { ...base, aadhaarMime: mime, aadhaarFileName: fileName.replace(/[\\/]/g, "_").slice(0, 120), aadhaarBytes: bytes };
 }
 async function saveRegistration({ db, kind, input, storage = getStorage() }) {
