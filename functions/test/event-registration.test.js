@@ -235,3 +235,18 @@ test("Aadhaar MIME type must match the actual file signature", () => {
     /content does not match/,
   );
 });
+
+
+test("authorized admin can list registrations and obtain a short-lived Aadhaar URL", async () => {
+  const { saveRegistration, adminList, adminAadhaarUrl } = require("../event-registration.cjs");
+  const db = createFakeDb();
+  const storage = createFakeStorage();
+  await saveRegistration({ db, kind: "stay", input: validStayInput(), storage });
+  const listing = await adminList({ db, kind: "stay", accessKey: "secret", expectedKey: "secret" });
+  const access = await adminAadhaarUrl({ db, mobile: "9876543210", accessKey: "secret", expectedKey: "secret", storage });
+  assert.equal(listing.summary.registrations, 1);
+  assert.equal(listing.summary.male, 1);
+  assert.equal(listing.registrations[0].aadhaarAvailable, true);
+  assert.match(access.url, /^https:\/\/private\.example\//);
+  assert.equal(access.expiresInSeconds, 300);
+});
