@@ -207,10 +207,19 @@ test("food save, duplicate-mobile update, and lookup persist one record", async 
 });
 
 test("lodging edits preserve existing Aadhaar without another upload", async () => {
-  const { saveRegistration, lookupRegistration, STAY } = require("../event-registration.cjs");
+  const {
+    saveRegistration,
+    lookupRegistration,
+    STAY,
+  } = require("../event-registration.cjs");
   const db = createFakeDb();
   const storage = createFakeStorage();
-  await saveRegistration({ db, kind: "stay", input: validStayInput(), storage });
+  await saveRegistration({
+    db,
+    kind: "stay",
+    input: validStayInput(),
+    storage,
+  });
   assert.equal(storage.saved.length, 1);
 
   const updated = await saveRegistration({
@@ -253,7 +262,12 @@ test("admin listing and Aadhaar URL require the expected key", async () => {
   const { adminList, adminAadhaarUrl } = require("../event-registration.cjs");
   const db = createFakeDb();
   await assert.rejects(
-    adminList({ db, kind: "stay", accessKey: "wrong", expectedKey: "secret" }),
+    adminList({
+      db,
+      kind: "stay",
+      accessKey: "wrong",
+      expectedKey: "secret",
+    }),
     /Unauthorized/,
   );
   await assert.rejects(
@@ -281,10 +295,19 @@ test("Aadhaar MIME type must match the actual file signature", () => {
 });
 
 test("authorized admin can list registrations and obtain a short-lived Aadhaar URL", async () => {
-  const { saveRegistration, adminList, adminAadhaarUrl } = require("../event-registration.cjs");
+  const {
+    saveRegistration,
+    adminList,
+    adminAadhaarUrl,
+  } = require("../event-registration.cjs");
   const db = createFakeDb();
   const storage = createFakeStorage();
-  await saveRegistration({ db, kind: "stay", input: validStayInput(), storage });
+  await saveRegistration({
+    db,
+    kind: "stay",
+    input: validStayInput(),
+    storage,
+  });
 
   const listing = await adminList({
     db,
