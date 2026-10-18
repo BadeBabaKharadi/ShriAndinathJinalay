@@ -4,7 +4,7 @@ const { defineSecret } = require("firebase-functions/params");
 const { FIRESTORE_DATABASE_ID } = require("./config");
 const service = require("./event-registration.cjs");
 const ADMIN_KEY = defineSecret("OCTOBER_EVENT_ADMIN_KEY");
-const origins = ["https://badebabakharadi.com","https://www.badebabakharadi.com","https://babakharadi.com","https://www.babakharadi.com","https://badebabakharadi.github.io"];
+const origins = ["https://badebabakharadi.com","https://www.badebabakharadi.com","https://babakharadi.com","https://www.babakharadi.com","https://badebabakharadi.github.io","http://localhost:5500","http://localhost:5501","http://localhost:5173","http://127.0.0.1:5500","http://127.0.0.1:5501","http://127.0.0.1:5173"];
 const db = () => getFirestore(undefined, FIRESTORE_DATABASE_ID);
 function handle(error) {
   if (error instanceof HttpsError) throw error;
