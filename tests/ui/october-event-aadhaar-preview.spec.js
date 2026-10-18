@@ -1,8 +1,7 @@
 import { Buffer } from "node:buffer";
 import { expect, test } from "@playwright/test";
 
-const functionsUrl =
-  "https://asia-south1-jain-community-platform.cloudfunctions.net";
+const functionsUrl = "https://asia-south1-jain-community-platform.cloudfunctions.net";
 const corsHeaders = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "POST, OPTIONS",
