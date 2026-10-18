@@ -168,7 +168,11 @@ const validStayInput = (overrides = {}) => ({
 });
 
 test("food save, duplicate-mobile update, and lookup persist one record", async () => {
-  const { saveRegistration, lookupRegistration, FOOD } = require("../event-registration.cjs");
+  const {
+    saveRegistration,
+    lookupRegistration,
+    FOOD,
+  } = require("../event-registration.cjs");
   const db = createFakeDb();
   const first = await saveRegistration({
     db,
@@ -203,7 +207,10 @@ test("food save, duplicate-mobile update, and lookup persist one record", async 
   assert.equal(found.registration.name, "Updated Name");
   assert.equal(found.registration.coupons, 7);
   assert.equal(db.collections.get(FOOD).size, 1);
-  assert.equal(found.registration.registrationId, first.registration.registrationId);
+  assert.equal(
+    found.registration.registrationId,
+    first.registration.registrationId,
+  );
 });
 
 test("lodging edits preserve existing Aadhaar without another upload", async () => {
@@ -294,7 +301,9 @@ test("Aadhaar MIME type must match the actual file signature", () => {
   );
 });
 
-test("authorized admin can list registrations and obtain a short-lived Aadhaar URL", async () => {
+test(
+  "authorized admin can list registrations and obtain a short-lived Aadhaar URL",
+  async () => {
   const {
     saveRegistration,
     adminList,
@@ -326,9 +335,9 @@ test("authorized admin can list registrations and obtain a short-lived Aadhaar U
   assert.equal(listing.summary.male, 1);
   assert.equal(listing.registrations[0].aadhaarAvailable, true);
   assert.match(access.url, /^https:\/\/private\.example\//);
-  assert.equal(access.expiresInSeconds, 300);
-});
-
+    assert.equal(access.expiresInSeconds, 300);
+  },
+);
 
 test("Aadhaar uploads larger than 5 MB are rejected", () => {
   const input = validStayInput({
