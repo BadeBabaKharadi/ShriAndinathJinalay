@@ -100,6 +100,7 @@
   function setKind(next) {
     kind = next;
     $("kind").value = next;
+    ["comingFrom", "checkInDate", "checkInTime", "checkOutDate", "checkOutTime", "male", "female", "children"].forEach(id => { const field = $(id); if (field) field.required = next === "stay"; });
     $("registrationCard").classList.remove("event-hidden");
     $("formFields").classList.add("event-hidden");
     $("foodFields").classList.toggle("event-hidden", next !== "food");
