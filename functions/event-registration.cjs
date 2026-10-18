@@ -109,7 +109,9 @@ async function lookupRegistration({ db, kind, mobile }) {
   const snapshot = await db.collection(collection).doc(normalized).get();
   if (!snapshot.exists) return { exists: false };
   const data = snapshot.data();
-  const { aadhaarPath, aadhaarMime, aadhaarFileName, ...safe } = data;
+  const { aadhaarPath, ...safe } = data;
+  delete safe.aadhaarMime;
+  delete safe.aadhaarFileName;
   return { exists: true, registration: { ...safe, aadhaarUploaded: Boolean(aadhaarPath) } };
 }
 async function adminList({ db, kind, accessKey, expectedKey, filter = "" }) {
