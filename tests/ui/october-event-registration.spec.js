@@ -23,7 +23,8 @@ async function handleCallablePreflight(page) {
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -39,7 +40,8 @@ async function mockCallable(page, name, result) {
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -49,7 +51,8 @@ async function mockCallable(page, name, result) {
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({ result }),
     });
@@ -91,7 +94,8 @@ test("food registration submits details and renders the stable QR reference", as
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -102,7 +106,8 @@ test("food registration submits details and renders the stable QR reference", as
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result: {
@@ -150,7 +155,8 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -161,7 +167,8 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result:
@@ -193,7 +200,8 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -204,7 +212,8 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result: {
@@ -253,7 +262,8 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -263,7 +273,8 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({ error: { message: "Unauthorized." } }),
     });
@@ -285,7 +296,8 @@ test("authorized food admin can view details and export the filtered list", asyn
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -295,7 +307,8 @@ test("authorized food admin can view details and export the filtered list", asyn
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({ result: { verified: true } }),
     });
@@ -307,7 +320,8 @@ test("authorized food admin can view details and export the filtered list", asyn
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -317,7 +331,8 @@ test("authorized food admin can view details and export the filtered list", asyn
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result: {
@@ -369,7 +384,8 @@ test("new lodging registration includes a selected Aadhaar document", async ({
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+          "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -380,7 +396,8 @@ test("new lodging registration includes a selected Aadhaar document", async ({
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        "access-control-allow-headers":
+            "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result: {
