@@ -12,7 +12,7 @@ const corsHeaders = {
 async function mockQrLibrary(page) {
   await page.route(
     "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
-    route =>
+    (route) =>
       route.fulfill({
         contentType: "application/javascript",
         body: 'window.QRCode = function (element, options) { element.dataset.payload = options.text; }; window.QRCode.CorrectLevel = { M: 0 };',
@@ -21,7 +21,7 @@ async function mockQrLibrary(page) {
 }
 
 async function mockLookup(page) {
-  await page.route(`${functionsUrl}/octoberEventLookup`, async route => {
+  await page.route(`${functionsUrl}/octoberEventLookup`, async (route) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({ status: 204, headers: corsHeaders });
     }
@@ -40,10 +40,10 @@ test(
     await mockQrLibrary(page);
     await mockLookup(page);
     let releaseSave;
-    const saveGate = new Promise(resolve => {
+    const saveGate = new Promise((resolve) => {
       releaseSave = resolve;
     });
-    await page.route(`${functionsUrl}/octoberEventSave`, async route => {
+    await page.route(`${functionsUrl}/octoberEventSave`, async (route) => {
       if (route.request().method() === "OPTIONS") {
         return route.fulfill({ status: 204, headers: corsHeaders });
       }
