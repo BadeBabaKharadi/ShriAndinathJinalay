@@ -1,7 +1,8 @@
 import { Buffer } from "node:buffer";
 import { expect, test } from "@playwright/test";
 
-const functionsUrl = "https://asia-south1-jain-community-platform.cloudfunctions.net";
+const functionsUrl =
+  "https://asia-south1-jain-community-platform.cloudfunctions.net";
 const corsHeaders = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "POST, OPTIONS",
@@ -66,7 +67,9 @@ test(
       .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
       .click();
     await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
-    await page.getByRole("button", { name: "खोजें और आगे बढ़ें" }).click();
+    await page
+      .getByRole("button", { name: "खोजें और आगे बढ़ें" })
+      .click();
     await expect(page.locator("#formFields")).toBeVisible();
     await page.getByLabel("पूरा नाम *").fill("New Traveller");
     await page.getByLabel("पूरा पता *").fill("Pune address");
@@ -82,7 +85,9 @@ test(
 
     await expect(page.locator("#aadhaarPreview")).toContainText("aadhaar.pdf");
     await expect(page.locator("#aadhaarPreview iframe")).toBeVisible();
-    await page.getByRole("button", { name: "पंजीकरण सुरक्षित करें" }).click();
+    await page
+      .getByRole("button", { name: "पंजीकरण सुरक्षित करें" })
+      .click();
     await expect(page.locator("#aadhaarUploadStatus")).toBeVisible();
     releaseSave();
     await expect(page.locator("#confirmCode")).toHaveText("DKS26-NEW123");
