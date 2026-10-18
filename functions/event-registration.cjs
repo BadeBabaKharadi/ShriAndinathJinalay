@@ -1,0 +1,118 @@
+const crypto = require("node:crypto");
+const { FieldValue } = require("firebase-admin/firestore");
+const { getStorage } = require("firebase-admin/storage");
+
+const FOOD = "octoberEventFoodRegistrations";
+const STAY = "octoberEventStayRegistrations";
+const EVENT_ID = "october-2026";
+const MAX_AADHAAR_BYTES = 5 * 1024 * 1024;
+const ALLOWED_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
+
+function normalizeMobile(value) {
+  const mobile = String(value || "").replace(/\D/g, "");
+  const normalized = mobile.length === 12 && mobile.startsWith("91") ? mobile.slice(2) : mobile;
+  if (!/^[6-9]\d{9}$/.test(normalized)) throw new Error("Enter a valid 10-digit Indian mobile number.");
+  return normalized;
+}
+function required(value, label) {
+  const result = String(value || "").trim();
+  if (!result) throw new Error(label + " is required.");
+  return result.slice(0, 500);
+}
+function count(value, label, max = 100) {
+  const n = Number(value);
+  if (!Number.isInteger(n) || n < 0 || n > max) throw new Error(label + " must be a whole number between 0 and " + max + ".");
+  return n;
+}
+function registrationCode(kind, mobile) {
+  return (kind === "food" ? "DKF26" : "DKS26") + "-" + crypto.createHash("sha256").update(EVENT_ID + ":" + kind + ":" + mobile).digest("hex").slice(0, 10).toUpperCase();
+}
+function validateFood(input) {
+  const mobile = normalizeMobile(input.mobile);
+  const coupons = count(input.coupons, "Food coupon count", 7);
+  if (coupons < 1) throw new Error("Food coupon count must be between 1 and 7.");
+  return { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), coupons };
+}
+function validateStay(input) {
+  const mobile = normalizeMobile(input.mobile);
+  const male = count(input.male, "Male count");
+  const female = count(input.female, "Female count");
+  const children = count(input.children, "Children count");
+  if (male + female + children < 1) throw new Error("At least one traveller is required.");
+  const checkInDate = required(input.checkInDate, "Check-in date");
+  if (!/^2026-10-(2[4-6])$/.test(checkInDate)) throw new Error("Check-in date must be 24, 25, or 26 October 2026.");
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(input.checkInTime || ""))) throw new Error("Enter a valid check-in time.");
+  const mime = String(input.aadhaarMime || "");
+  const fileName = required(input.aadhaarFileName, "Aadhaar file");
+  const base64 = String(input.aadhaarBase64 || "").replace(/^data:[^,]+,/, "");
+  if (!ALLOWED_MIME.has(mime)) throw new Error("Aadhaar must be a PDF, JPG, or PNG file.");
+  const bytes = Buffer.from(base64, "base64");
+  if (!bytes.length || bytes.length > MAX_AADHAAR_BYTES) throw new Error("Aadhaar file must be smaller than 5 MB.");
+  return { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), comingFrom: required(input.comingFrom, "Where are you travelling from"), male, female, children, checkInDate, checkInTime: input.checkInTime, aadhaarMime: mime, aadhaarFileName: fileName.replace(/[\\/]/g, "_").slice(0, 120), aadhaarBytes: bytes };
+}
+async function saveRegistration({ db, kind, input, storage = getStorage() }) {
+  const isFood = kind === "food";
+  const data = isFood ? validateFood(input) : validateStay(input);
+  const collection = isFood ? FOOD : STAY;
+  const code = registrationCode(kind, data.mobile);
+  const ref = db.collection(collection).doc(data.mobile);
+  const old = await ref.get();
+  const now = FieldValue.serverTimestamp();
+  let aadhaarPath;
+  if (!isFood) {
+    aadhaarPath = `october-event-private-aadhaar/${data.mobile}/${crypto.randomUUID()}-${data.aadhaarFileName}`;
+    await storage.bucket().file(aadhaarPath).save(data.aadhaarBytes, {
+      resumable: false,
+      metadata: { contentType: data.aadhaarMime, cacheControl: "private, no-store", metadata: { mobileHash: crypto.createHash("sha256").update(data.mobile).digest("hex") } },
+      public: false,
+      validation: "md5",
+    });
+  }
+  const { aadhaarBytes, aadhaarMime, aadhaarFileName, ...safeData } = data;
+  const record = {
+    ...safeData, eventId: EVENT_ID, registrationId: code,
+    createdAt: old.exists ? old.data().createdAt : now,
+    updatedAt: now,
+    ...(isFood ? {} : { aadhaarPath, aadhaarFileName, aadhaarMime }),
+  };
+  await ref.set(record, { merge: false });
+  return { exists: old.exists, registration: { ...safeData, eventId: EVENT_ID, registrationId: code, updatedAt: new Date().toISOString() } };
+}
+async function lookupRegistration({ db, kind, mobile }) {
+  const normalized = normalizeMobile(mobile);
+  const collection = kind === "food" ? FOOD : kind === "stay" ? STAY : null;
+  if (!collection) throw new Error("Invalid registration type.");
+  const snapshot = await db.collection(collection).doc(normalized).get();
+  if (!snapshot.exists) return { exists: false };
+  const data = snapshot.data();
+  const { aadhaarPath, aadhaarMime, aadhaarFileName, ...safe } = data;
+  return { exists: true, registration: { ...safe, aadhaarUploaded: Boolean(aadhaarPath) } };
+}
+async function adminList({ db, kind, accessKey, expectedKey, filter = "" }) {
+  if (!expectedKey || accessKey !== expectedKey) throw new Error("Unauthorized.");
+  const collection = kind === "food" ? FOOD : kind === "stay" ? STAY : null;
+  if (!collection) throw new Error("Invalid registration type.");
+  const snap = await db.collection(collection).orderBy("updatedAt", "desc").limit(500).get();
+  const needle = String(filter || "").trim().toLowerCase();
+  const registrations = snap.docs.map(doc => {
+    const data = doc.data();
+    const { aadhaarPath, ...rest } = data;
+    return { ...rest, aadhaarAvailable: Boolean(aadhaarPath) };
+  }).filter(row => !needle || [row.name, row.mobile, row.address, row.comingFrom].some(v => String(v || "").toLowerCase().includes(needle)));
+  const summary = registrations.reduce((s, row) => {
+    s.registrations++;
+    if (kind === "food") s.totalCoupons += Number(row.coupons || 0);
+    else { s.male += Number(row.male || 0); s.female += Number(row.female || 0); s.children += Number(row.children || 0); }
+    return s;
+  }, { registrations: 0, totalCoupons: 0, male: 0, female: 0, children: 0 });
+  return { registrations, summary };
+}
+async function adminAadhaarUrl({ db, accessKey, expectedKey, mobile, storage = getStorage() }) {
+  if (!expectedKey || accessKey !== expectedKey) throw new Error("Unauthorized.");
+  const normalized = normalizeMobile(mobile);
+  const snap = await db.collection(STAY).doc(normalized).get();
+  if (!snap.exists || !snap.data().aadhaarPath) throw new Error("Aadhaar document not found.");
+  const [url] = await storage.bucket().file(snap.data().aadhaarPath).getSignedUrl({ action: "read", expires: Date.now() + 5 * 60 * 1000 });
+  return { url, expiresInSeconds: 300 };
+}
+module.exports = { FOOD, STAY, normalizeMobile, validateFood, validateStay, registrationCode, saveRegistration, lookupRegistration, adminList, adminAadhaarUrl };
