@@ -99,13 +99,42 @@
   function updateCount() {
     if ($("photo-select-count")) $("photo-select-count").textContent = selected.size + " चयनित";
   }
-  function printWindow(title, body, styles) {
-    const win = window.open("", "_blank");
-    if (!win) { alert("प्रिंट विंडो ब्लॉक हो गई है। कृपया इस साइट के लिए पॉप-अप की अनुमति दें।"); return; }
+  function printWindow(title, body, styles, existingWindow) {
+    const win = existingWindow || window.open("", "_blank");
+    if (!win) { alert("प्रिंट विंडो ब्लॉक है। कृपया पॉप-अप की अनुमति दें।"); return null; }
     win.document.open();
     win.document.write('<!doctype html><html lang="hi"><head><meta charset="utf-8"><title>' + esc(title) + '</title><style>' + styles + '</style></head><body>' + body + '</body></html>');
     win.document.close();
     return win;
+  }
+  async function renderPdfFirstPage(pdfDataUrl, canvas, status) {
+    if (!window.pdfjsLib) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("PDF पढ़ने की लाइब्रेरी लोड नहीं हुई। इंटरनेट कनेक्शन जाँचें।"));
+        document.head.appendChild(script);
+      });
+    }
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const bytes = await fetch(pdfDataUrl).then((response) => response.arrayBuffer());
+    const pdf = await window.pdfjsLib.getDocument({ data: bytes }).promise;
+    const page = await pdf.getPage(1);
+    const baseViewport = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: Math.min(680 / baseViewport.width, 930 / baseViewport.height) });
+    canvas.width = Math.ceil(viewport.width);
+    canvas.height = Math.ceil(viewport.height);
+    canvas.style.width = "auto";
+    canvas.style.height = "auto";
+    await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+    if (status) status.remove();
+    if (pdf.numPages > 1) {
+      const note = document.createElement("p");
+      note.textContent = "नोट: PDF में " + pdf.numPages + " पृष्ठ हैं; दूसरी शीट पर पहला पृष्ठ दिखाया गया है।";
+      note.style.cssText = "font-size:9pt;text-align:center;margin:2mm";
+      canvas.after(note);
+    }
   }
   const recordStyles = `
     *{box-sizing:border-box}body{font-family:"Noto Sans Devanagari",Arial,sans-serif;color:#181818;font-size:10pt;margin:0}
@@ -121,6 +150,10 @@
     @page{size:A4 portrait;margin:10mm}
   `;
   async function printApplication(id) {
+    // Open synchronously from the click handler so mobile browsers do not block the print tab.
+    const printTab = window.open("", "_blank");
+    if (!printTab) { alert("प्रिंट विंडो ब्लॉक है। ब्राउज़र में इस साइट के लिए पॉप-अप की अनुमति दें।"); return; }
+    printTab.document.write('<!doctype html><html lang="hi"><body style="font-family:Arial,sans-serif;padding:24px">आवेदन और मार्कशीट तैयार हो रही है…</body></html>');
     try {
       const result = await call("pratibhaAdminGet", { applicationId: id });
       const a = result.application || result.data?.application;
@@ -149,20 +182,25 @@
       const page1 = '<section class="page"><header class="heading"><h1>प्रतिभा सम्मान २०२६</h1><div>आवेदन एवं स्वीकृत नियम — अभिलेख प्रति</div></header><div class="identity"><div style="flex:1">' + table + '</div>' + (face ? '<img class="face" src="' + face + '" alt="आवेदक का फोटो">' : '') + '</div><h2>आवेदक द्वारा स्वीकार किए गए नियम</h2>' + ruleMarkup + '<div class="declaration">मैं पुष्टि करता/करती हूँ कि आवेदन में दी गई जानकारी मेरे ज्ञान के अनुसार सही है।</div><div class="signature"><span>आवेदक / अभिभावक के हस्ताक्षर: ______________</span><span>दिनांक: ______________</span></div><div style="position:absolute;bottom:1mm;right:1mm;font-size:8pt">पृष्ठ 1 / 2</div></section>';
       let markPage = '<section class="page"><h1 class="mark-title">संलग्न मार्कशीट — ' + esc(a.name) + ' (' + esc(a.applicationId) + ')</h1>';
       if (!markUrl) markPage += '<div class="missing">मार्कशीट दस्तावेज़ नहीं मिला। कृपया आवेदन में अपलोड किए गए दस्तावेज़ की जाँच करें।</div>';
-      else if (/\.pdf(?:$|[?#])/i.test(mark?.name || "") || String(mark?.mimeType || "").includes("pdf")) markPage += '<iframe class="mark-pdf" src="' + markUrl + '"></iframe>';
-      else markPage += '<img class="mark-image" src="' + markUrl + '" alt="मार्कशीट">';
+      const isPdf = !!markUrl && (String(mark?.mimeType || "").toLowerCase().includes("pdf") || /^data:application\/pdf/i.test(markUrl) || /\.pdf(?:$|[?#])/i.test(mark?.name || ""));
+      if (isPdf) markPage += '<div id="pdf-status" class="missing">PDF मार्कशीट तैयार हो रही है…</div><canvas id="marksheet-pdf-canvas" style="display:block;max-width:100%;max-height:250mm;margin:auto"></canvas>';
+      else if (markUrl) markPage += '<img class="mark-image" src="' + markUrl + '" alt="मार्कशीट">';
       markPage += '<div style="position:absolute;bottom:1mm;right:1mm;font-size:8pt">पृष्ठ 2 / 2</div></section>';
-      const win = printWindow("प्रतिभा सम्मान आवेदन " + a.applicationId, page1 + markPage, recordStyles);
+      const win = printWindow("प्रतिभा सम्मान आवेदन " + a.applicationId, page1 + markPage, recordStyles, printTab);
       if (win) {
         const images = [...win.document.images];
         await Promise.all(images.map((img) => img.complete ? Promise.resolve() : new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; })));
-        win.focus(); win.print();
+        if (isPdf) await renderPdfFirstPage(markUrl, win.document.getElementById("marksheet-pdf-canvas"), win.document.getElementById("pdf-status"));
+        win.focus(); setTimeout(() => win.print(), 150);
       }
-    } catch (error) { alert(error.message || "प्रिंट तैयार नहीं हो सका।"); }
+    } catch (error) { printTab.close(); alert(error.message || "प्रिंट तैयार नहीं हो सका।"); }
   }
   async function printPhotoSheet() {
     const ids = [...selected.keys()];
     if (!ids.length) { alert("फोटो प्रिंट करने के लिए कम-से-कम एक आवेदन चुनें।"); return; }
+    const printTab = window.open("", "_blank");
+    if (!printTab) { alert("प्रिंट विंडो ब्लॉक है। ब्राउज़र में इस साइट के लिए पॉप-अप की अनुमति दें।"); return; }
+    printTab.document.write('<!doctype html><html lang="hi"><body style="font-family:Arial,sans-serif;padding:24px">चयनित फोटो तैयार हो रहे हैं…</body></html>');
     const button = $("print-photo-sheet"); button.disabled = true; button.textContent = "फोटो तैयार हो रहे हैं…";
     try {
       const people = [];
@@ -174,12 +212,12 @@
       }
       const cards = people.map((p) => '<div class="photo">' + (p.image ? '<img src="' + p.image + '" alt="' + esc(p.name) + '">' : '<div class="no-photo">फोटो उपलब्ध नहीं</div>') + '<div class="caption">' + esc(p.name) + ' · ' + esc(p.id) + '</div></div>').join("");
       const styles = ' *{box-sizing:border-box}body{font-family:Arial,sans-serif;margin:0}.sheet{display:grid;grid-template-columns:repeat(5,35mm);grid-auto-rows:45mm;gap:3mm;align-content:start;justify-content:center}.photo{width:35mm;height:45mm;border:0.2mm dashed #aaa;display:flex;flex-direction:column;align-items:center;overflow:hidden}.photo img{width:35mm;height:40mm;object-fit:cover}.caption{width:100%;height:5mm;font-size:5.5pt;text-align:center;overflow:hidden;white-space:nowrap;padding:0.5mm}.no-photo{width:35mm;height:40mm;display:grid;place-items:center;font-size:8pt;text-align:center}@page{size:A4 portrait;margin:8mm}';
-      const win = printWindow("प्रतिभा सम्मान — पासपोर्ट आकार फोटो", '<main class="sheet">' + cards + '</main>', styles);
+      const win = printWindow("प्रतिभा सम्मान — पासपोर्ट आकार फोटो", '<main class="sheet">' + cards + '</main>', styles, printTab);
       if (win) {
         await Promise.all([...win.document.images].map((img) => img.complete ? Promise.resolve() : new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; })));
-        win.focus(); win.print();
+        win.focus(); setTimeout(() => win.print(), 150);
       }
-    } catch (error) { alert(error.message || "फोटो शीट तैयार नहीं हो सकी।"); }
+    } catch (error) { printTab.close(); alert(error.message || "फोटो शीट तैयार नहीं हो सकी।"); }
     finally { button.disabled = false; button.textContent = "चयनित फोटो A4 पर प्रिंट करें"; }
   }
   document.addEventListener("click", (event) => {
