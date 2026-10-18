@@ -1,4 +1,5 @@
 const crypto = require("node:crypto");
+const { Buffer } = require("node:buffer");
 const { FieldValue } = require("firebase-admin/firestore");
 const { getStorage } = require("firebase-admin/storage");
 
@@ -51,6 +52,7 @@ function validateStay(input) {
   return { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), comingFrom: required(input.comingFrom, "Where are you travelling from"), male, female, children, checkInDate, checkInTime: input.checkInTime, aadhaarMime: mime, aadhaarFileName: fileName.replace(/[\\/]/g, "_").slice(0, 120), aadhaarBytes: bytes };
 }
 async function saveRegistration({ db, kind, input, storage = getStorage() }) {
+  if (kind !== "food" && kind !== "stay") throw new Error("Invalid registration type.");
   const isFood = kind === "food";
   const data = isFood ? validateFood(input) : validateStay(input);
   const collection = isFood ? FOOD : STAY;
@@ -68,7 +70,8 @@ async function saveRegistration({ db, kind, input, storage = getStorage() }) {
       validation: "md5",
     });
   }
-  const { aadhaarBytes, aadhaarMime, aadhaarFileName, ...safeData } = data;
+  const safeData = { ...data };
+  delete safeData.aadhaarBytes;
   const record = {
     ...safeData, eventId: EVENT_ID, registrationId: code,
     createdAt: old.exists ? old.data().createdAt : now,
