@@ -13,10 +13,10 @@ function handle(error) {
   console.error("October event registration error", error);
   throw new HttpsError("internal", "Registration service failed.");
 }
-exports.octoberEventLookup = onCall({cors:origins}, async request => {
+exports.octoberEventLookup = onCall({cors:true}, async request => {
   try { return await service.lookupRegistration({db:db(),kind:request.data?.kind,mobile:request.data?.mobile}); } catch(error) { return handle(error); }
 });
-exports.octoberEventSave = onCall({cors:origins,timeoutSeconds:60,memory:"512MiB"}, async request => {
+exports.octoberEventSave = onCall({cors:true,timeoutSeconds:60,memory:"512MiB"}, async request => {
   try { return await service.saveRegistration({db:db(),kind:request.data?.kind,input:request.data||{}}); } catch(error) { return handle(error); }
 });
 exports.octoberEventVerifyAdmin = onCall({cors:origins,secrets:[ADMIN_KEY]}, async request => {
