@@ -34,7 +34,7 @@ function validateFood(input) {
   if (coupons < 1) throw new Error("Food coupon count must be between 1 and 7.");
   return { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), coupons };
 }
-function validateStay(input) {
+function validateStay(input, { allowExistingAadhaar = false } = {}) {
   const mobile = normalizeMobile(input.mobile);
   const male = count(input.male, "Male count");
   const female = count(input.female, "Female count");
@@ -43,26 +43,36 @@ function validateStay(input) {
   const checkInDate = required(input.checkInDate, "Check-in date");
   if (!/^2026-10-(2[4-6])$/.test(checkInDate)) throw new Error("Check-in date must be 24, 25, or 26 October 2026.");
   if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(input.checkInTime || ""))) throw new Error("Enter a valid check-in time.");
+  const base = { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), comingFrom: required(input.comingFrom, "Where are you travelling from"), male, female, children, checkInDate, checkInTime: input.checkInTime };
+  const rawBase64 = String(input.aadhaarBase64 || "").replace(/^data:[^,]+,/, "");
+  if (!rawBase64 && allowExistingAadhaar) return { ...base, preserveExistingAadhaar: true };
   const mime = String(input.aadhaarMime || "");
   const fileName = required(input.aadhaarFileName, "Aadhaar file");
-  const base64 = String(input.aadhaarBase64 || "").replace(/^data:[^,]+,/, "");
   if (!ALLOWED_MIME.has(mime)) throw new Error("Aadhaar must be a PDF, JPG, or PNG file.");
-  const bytes = Buffer.from(base64, "base64");
+  const bytes = Buffer.from(rawBase64, "base64");
   if (!bytes.length || bytes.length > MAX_AADHAAR_BYTES) throw new Error("Aadhaar file must be smaller than 5 MB.");
-  return { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), comingFrom: required(input.comingFrom, "Where are you travelling from"), male, female, children, checkInDate, checkInTime: input.checkInTime, aadhaarMime: mime, aadhaarFileName: fileName.replace(/[\\/]/g, "_").slice(0, 120), aadhaarBytes: bytes };
+  return { ...base, aadhaarMime: mime, aadhaarFileName: fileName.replace(/[\\/]/g, "_").slice(0, 120), aadhaarBytes: bytes };
 }
 async function saveRegistration({ db, kind, input, storage = getStorage() }) {
   if (kind !== "food" && kind !== "stay") throw new Error("Invalid registration type.");
   const isFood = kind === "food";
-  const data = isFood ? validateFood(input) : validateStay(input);
   const collection = isFood ? FOOD : STAY;
-  const code = registrationCode(kind, data.mobile);
-  const ref = db.collection(collection).doc(data.mobile);
+  const mobile = normalizeMobile(input?.mobile);
+  const ref = db.collection(collection).doc(mobile);
   const old = await ref.get();
+  const oldData = old.exists ? old.data() : {};
+  const data = isFood
+    ? validateFood(input)
+    : validateStay(input, { allowExistingAadhaar: Boolean(oldData.aadhaarPath) });
+  const code = registrationCode(kind, data.mobile);
   const now = FieldValue.serverTimestamp();
-  let aadhaarPath;
-  if (!isFood) {
+  let aadhaarPath = oldData.aadhaarPath;
+  let storedAadhaarFileName = oldData.aadhaarFileName;
+  let storedAadhaarMime = oldData.aadhaarMime;
+  if (!isFood && !data.preserveExistingAadhaar) {
     aadhaarPath = `october-event-private-aadhaar/${data.mobile}/${crypto.randomUUID()}-${data.aadhaarFileName}`;
+    storedAadhaarFileName = data.aadhaarFileName;
+    storedAadhaarMime = data.aadhaarMime;
     await storage.bucket().file(aadhaarPath).save(data.aadhaarBytes, {
       resumable: false,
       metadata: { contentType: data.aadhaarMime, cacheControl: "private, no-store", metadata: { mobileHash: crypto.createHash("sha256").update(data.mobile).digest("hex") } },
@@ -72,11 +82,14 @@ async function saveRegistration({ db, kind, input, storage = getStorage() }) {
   }
   const safeData = { ...data };
   delete safeData.aadhaarBytes;
+  delete safeData.aadhaarMime;
+  delete safeData.aadhaarFileName;
+  delete safeData.preserveExistingAadhaar;
   const record = {
     ...safeData, eventId: EVENT_ID, registrationId: code,
-    createdAt: old.exists ? old.data().createdAt : now,
+    createdAt: old.exists ? oldData.createdAt : now,
     updatedAt: now,
-    ...(isFood ? {} : { aadhaarPath, aadhaarFileName, aadhaarMime }),
+    ...(isFood ? {} : { aadhaarPath, aadhaarFileName: storedAadhaarFileName, aadhaarMime: storedAadhaarMime }),
   };
   await ref.set(record, { merge: false });
   return { exists: old.exists, registration: { ...safeData, eventId: EVENT_ID, registrationId: code, updatedAt: new Date().toISOString() } };
