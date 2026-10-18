@@ -16,14 +16,14 @@ async function mockQrLibrary(page) {
 }
 
 async function handleCallablePreflight(page) {
-  await page.route("**/octoberEvent*", async (route) => {
+  await page.route("**/octoberEvent**", async (route) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -39,7 +39,7 @@ async function mockCallable(page, name, result) {
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -49,7 +49,7 @@ async function mockCallable(page, name, result) {
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({ result }),
     });
@@ -91,7 +91,7 @@ test("food registration submits details and renders the stable QR reference", as
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -102,7 +102,7 @@ test("food registration submits details and renders the stable QR reference", as
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result: {
@@ -150,7 +150,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -161,7 +161,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result:
@@ -193,7 +193,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -204,7 +204,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result: {
@@ -253,7 +253,7 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -263,7 +263,7 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({ error: { message: "Unauthorized." } }),
     });
@@ -285,7 +285,7 @@ test("authorized food admin can view details and export the filtered list", asyn
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -295,7 +295,7 @@ test("authorized food admin can view details and export the filtered list", asyn
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({ result: { verified: true } }),
     });
@@ -307,7 +307,7 @@ test("authorized food admin can view details and export the filtered list", asyn
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
         },
       });
     }
@@ -317,7 +317,7 @@ test("authorized food admin can view details and export the filtered list", asyn
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result: {
@@ -363,6 +363,16 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   await mockCallable(page, "octoberEventLookup", { exists: false });
   let submitted;
   await page.route(`${functionsUrl}/octoberEventSave`, async (route) => {
+    if (route.request().method() === "OPTIONS") {
+      return route.fulfill({
+        status: 204,
+        headers: {
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
+        },
+      });
+    }
     submitted = JSON.parse(route.request().postData()).data;
     await route.fulfill({
       status: 200,
@@ -370,7 +380,7 @@ test("new lodging registration includes a selected Aadhaar document", async ({
       headers: {
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
       },
       body: JSON.stringify({
         result: {
