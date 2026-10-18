@@ -45,6 +45,7 @@ function validateStay(input, { allowExistingAadhaar = false } = {}) {
   if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(input.checkInTime || ""))) throw new Error("Enter a valid check-in time.");
   const base = { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), comingFrom: required(input.comingFrom, "Where are you travelling from"), male, female, children, checkInDate, checkInTime: input.checkInTime };
   const rawBase64 = String(input.aadhaarBase64 || "").replace(/^data:[^,]+,/, "");
+  if (!rawBase64 && allowExistingAadhaar && input.removeAadhaar === true) return { ...base, removeExistingAadhaar: true };
   if (!rawBase64 && allowExistingAadhaar) return { ...base, preserveExistingAadhaar: true };
   const mime = String(input.aadhaarMime || "");
   const fileName = required(input.aadhaarFileName, "Aadhaar file");
@@ -77,7 +78,13 @@ async function saveRegistration({ db, kind, input, storage = getStorage() }) {
   let aadhaarPath = oldData.aadhaarPath;
   let storedAadhaarFileName = oldData.aadhaarFileName;
   let storedAadhaarMime = oldData.aadhaarMime;
-  if (!isFood && !data.preserveExistingAadhaar) {
+  if (!isFood && data.removeExistingAadhaar) {
+    if (aadhaarPath) await storage.bucket().file(aadhaarPath).delete({ ignoreNotFound: true });
+    aadhaarPath = undefined;
+    storedAadhaarFileName = undefined;
+    storedAadhaarMime = undefined;
+  } else if (!isFood && !data.preserveExistingAadhaar) {
+    const previousPath = aadhaarPath;
     aadhaarPath = `october-event-private-aadhaar/${data.mobile}/${crypto.randomUUID()}-${data.aadhaarFileName}`;
     storedAadhaarFileName = data.aadhaarFileName;
     storedAadhaarMime = data.aadhaarMime;
@@ -87,20 +94,22 @@ async function saveRegistration({ db, kind, input, storage = getStorage() }) {
       public: false,
       validation: "md5",
     });
+    if (previousPath) await storage.bucket().file(previousPath).delete({ ignoreNotFound: true });
   }
   const safeData = { ...data };
   delete safeData.aadhaarBytes;
   delete safeData.aadhaarMime;
   delete safeData.aadhaarFileName;
   delete safeData.preserveExistingAadhaar;
+  delete safeData.removeExistingAadhaar;
   const record = {
     ...safeData, eventId: EVENT_ID, registrationId: code,
     createdAt: old.exists ? oldData.createdAt : now,
     updatedAt: now,
-    ...(isFood ? {} : { aadhaarPath, aadhaarFileName: storedAadhaarFileName, aadhaarMime: storedAadhaarMime }),
+    ...(isFood ? {} : (aadhaarPath ? { aadhaarPath, aadhaarFileName: storedAadhaarFileName, aadhaarMime: storedAadhaarMime } : {})),
   };
   await ref.set(record, { merge: false });
-  return { exists: old.exists, registration: { ...safeData, eventId: EVENT_ID, registrationId: code, updatedAt: new Date().toISOString() } };
+  return { exists: old.exists, registration: { ...safeData, eventId: EVENT_ID, registrationId: code, aadhaarUploaded: Boolean(aadhaarPath), updatedAt: new Date().toISOString() } };
 }
 async function lookupRegistration({ db, kind, mobile }) {
   const normalized = normalizeMobile(mobile);
