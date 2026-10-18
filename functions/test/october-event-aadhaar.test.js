@@ -60,6 +60,8 @@ const baseInput = {
   children: 0,
   checkInDate: "2026-10-25",
   checkInTime: "12:30",
+  checkOutDate: "2026-10-26",
+  checkOutTime: "10:00",
 };
 
 test("editing a lodging registration can remove the existing private Aadhaar", async () => {
