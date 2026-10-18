@@ -31,12 +31,6 @@ jobs:
       - name: Install Functions dependencies
         working-directory: functions
         run: npm ci
-      - name: Diagnose new test formatting
-        run: |
-          npx prettier functions/test/event-registration.test.js > /tmp/formatted-functions-test.js
-          diff -u functions/test/event-registration.test.js /tmp/formatted-functions-test.js || true
-          npx prettier tests/ui/october-event-registration.spec.js > /tmp/formatted-ui-test.js
-          diff -u tests/ui/october-event-registration.spec.js /tmp/formatted-ui-test.js || true
       - name: Install browser runtime
         run: PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install --with-deps chromium
       - name: Run required checks
