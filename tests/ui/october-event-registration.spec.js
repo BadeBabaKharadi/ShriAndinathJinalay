@@ -181,7 +181,6 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
   await expect(page.locator("#msg")).toHaveText("Unauthorized.");
 });
 
-
 test("authorized food admin can view details and export the filtered list", async ({
   page,
 }) => {
@@ -236,7 +235,6 @@ test("authorized food admin can view details and export the filtered list", asyn
   expect(download.suggestedFilename()).toBe("october-food-registrations.csv");
 });
 
-
 test("new lodging registration includes a selected Aadhaar document", async ({
   page,
 }) => {
@@ -258,7 +256,9 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   });
 
   await page.goto("/october-event-registration.html");
-  await page.getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" }).click();
+  await page
+    .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
+    .click();
   await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
   await page.getByLabel("पूरा नाम *").fill("New Traveller");
   await page.getByLabel("पूरा पता *").fill("Pune address");
