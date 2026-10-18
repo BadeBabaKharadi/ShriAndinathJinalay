@@ -62,7 +62,7 @@ test("October event form is responsive and exposes both registration types", asy
   await handleCallablePreflight(page);
   await page.goto("/october-event-registration.html");
   await expect(
-    page.getByRole("heading", { name: /विशेष आयोजन/ }),
+    page.getByRole("heading", { name: /मंगलमय आयोजन/ }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "दीक्षा समारोह भोजन कूपन" }),
@@ -71,6 +71,7 @@ test("October event form is responsive and exposes both registration types", asy
     page.getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" }),
   ).toBeVisible();
 
+  await page.getByRole("button", { name: /दीक्षा समारोह भोजन कूपन/ }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByLabel("मोबाइल नंबर *")).toBeVisible();
   await expect(page.locator(".event-wrap")).toBeVisible();
@@ -105,6 +106,7 @@ test("food registration submits details and renders the stable QR reference", as
 
   await handleCallablePreflight(page);
   await page.goto("/october-event-registration.html");
+  await page.getByRole("button", { name: /दीक्षा समारोह भोजन कूपन/ }).click();
   await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
   await page.getByLabel("पूरा नाम *").fill("Test Person");
   await page.getByLabel("पूरा पता *").fill("Pune address");
@@ -219,8 +221,10 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
   expect(submitted).not.toHaveProperty("aadhaarBase64");
 });
 
+const adminEmulatorUrl = "http://127.0.0.1:5001/jain-community-platform/asia-south1";
+
 test("lodging admin denies an incorrect admin key", async ({ page }) => {
-  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, async (route) => {
+  await page.route(`${adminEmulatorUrl}/octoberEventVerifyAdmin`, async (route) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
@@ -244,7 +248,7 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
 test("authorized food admin can view details and export the filtered list", async ({
   page,
 }) => {
-  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, async (route) => {
+  await page.route(`${adminEmulatorUrl}/octoberEventVerifyAdmin`, async (route) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
@@ -258,7 +262,7 @@ test("authorized food admin can view details and export the filtered list", asyn
       body: JSON.stringify({ result: { verified: true } }),
     });
   });
-  await page.route(`${functionsUrl}/octoberEventAdminList`, async (route) => {
+  await page.route(`${adminEmulatorUrl}/octoberEventAdminList`, async (route) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
@@ -339,6 +343,8 @@ test("new lodging registration includes a selected Aadhaar document", async ({
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
     .click();
   await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
+  await page.getByRole("button", { name: "खोजें और आगे बढ़ें" }).click();
+  await expect(page.locator("#formFields")).toBeVisible();
   await page.getByLabel("पूरा नाम *").fill("New Traveller");
   await page.getByLabel("पूरा पता *").fill("Pune address");
   await page.getByLabel("कहाँ से आ रहे हैं? *").fill("Nashik");
