@@ -333,7 +333,7 @@ test("authorized admin can list registrations and obtain a short-lived Aadhaar U
   assert.equal(listing.summary.male, 1);
   assert.equal(listing.registrations[0].aadhaarAvailable, true);
   assert.match(access.url, /^https:\/\/private\.example\//);
-assert.equal(access.expiresInSeconds, 300);
+  assert.equal(access.expiresInSeconds, 300);
 });
 
 test("Aadhaar uploads larger than 5 MB are rejected", () => {
