@@ -188,7 +188,9 @@
       const page1 = '<section class="page"><header class="heading"><h1>प्रतिभा सम्मान २०२६</h1><div>आवेदन एवं स्वीकृत नियम — अभिलेख प्रति</div></header><div class="identity"><div style="flex:1">' + table + '</div>' + (face ? '<img class="face" src="' + face + '" alt="आवेदक का फोटो">' : '') + '</div><h2>आवेदक द्वारा स्वीकार किए गए नियम</h2>' + ruleMarkup + '<div class="declaration">मैं पुष्टि करता/करती हूँ कि आवेदन में दी गई जानकारी मेरे ज्ञान के अनुसार सही है।</div><div class="signature"><span>आवेदक / अभिभावक के हस्ताक्षर: ______________</span><span>दिनांक: ______________</span></div><div style="position:absolute;bottom:1mm;right:1mm;font-size:8pt">पृष्ठ 1 / 2</div></section>';
       let markPage = '<section class="page"><h1 class="mark-title">संलग्न मार्कशीट — ' + esc(a.name) + ' (' + esc(a.applicationId) + ')</h1>';
       if (!markUrl) markPage += '<div class="missing">मार्कशीट दस्तावेज़ नहीं मिला। कृपया आवेदन में अपलोड किए गए दस्तावेज़ की जाँच करें।</div>';
-      const isPdf = !!markUrl && (String(mark?.mimeType || "").toLowerCase().includes("pdf") || /^data:application\/pdf/i.test(markUrl) || /\.pdf(?:$|[?#])/i.test(mark?.name || ""));
+      const signature = markBlob ? new Uint8Array(await markBlob.slice(0, 5).arrayBuffer()) : [];
+      const hasPdfSignature = signature.length === 5 && signature[0] === 0x25 && signature[1] === 0x50 && signature[2] === 0x44 && signature[3] === 0x46 && signature[4] === 0x2d;
+      const isPdf = !!markUrl && (hasPdfSignature || String(markBlob?.type || mark?.mimeType || "").toLowerCase().includes("pdf") || /^data:application\\/pdf/i.test(markUrl) || /\\.pdf(?:$|[?#])/i.test(mark?.name || ""));
       if (isPdf) markPage += '<div id="pdf-status" class="missing">PDF मार्कशीट तैयार हो रही है…</div><canvas id="marksheet-pdf-canvas" style="display:block;max-width:100%;max-height:250mm;margin:auto"></canvas>';
       else if (markUrl) markPage += '<img class="mark-image" src="' + markUrl + '" alt="मार्कशीट">';
       markPage += '<div style="position:absolute;bottom:1mm;right:1mm;font-size:8pt">पृष्ठ 2 / 2</div></section>';
