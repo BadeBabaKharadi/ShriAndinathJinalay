@@ -223,10 +223,13 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
   expect(submitted).not.toHaveProperty("aadhaarBase64");
 });
 
-const adminEmulatorUrl = "http://127.0.0.1:5001/jain-community-platform/asia-south1";
+const adminEmulatorUrl =
+  "http://127.0.0.1:5001/jain-community-platform/asia-south1";
 
 test("lodging admin denies an incorrect admin key", async ({ page }) => {
-  await page.route(`${adminEmulatorUrl}/octoberEventVerifyAdmin`, async (route) => {
+  await page.route(
+    `${adminEmulatorUrl}/octoberEventVerifyAdmin`,
+    async (route) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
@@ -239,7 +242,8 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
       headers: corsHeaders,
       body: JSON.stringify({ error: { message: "Unauthorized." } }),
     });
-  });
+    },
+  );
   await handleCallablePreflight(page);
   await page.goto("/october-event-stay-admin.html");
   await page.locator("#key").fill("wrong-key");
@@ -263,8 +267,11 @@ test("authorized food admin can view details and export the filtered list", asyn
       headers: corsHeaders,
       body: JSON.stringify({ result: { verified: true } }),
     });
-  });
-  await page.route(`${adminEmulatorUrl}/octoberEventAdminList`, async (route) => {
+    },
+  );
+  await page.route(
+    `${adminEmulatorUrl}/octoberEventAdminList`,
+    async (route) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({
         status: 204,
@@ -296,7 +303,8 @@ test("authorized food admin can view details and export the filtered list", asyn
         },
       }),
     });
-  });
+    },
+  );
 
   await handleCallablePreflight(page);
   await page.goto("/october-event-food-admin.html");
