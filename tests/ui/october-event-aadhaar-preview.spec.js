@@ -72,6 +72,9 @@ test("Aadhaar selection shows a preview and upload animation, and can be removed
   await page.getByLabel("पूरा नाम *").fill("New Traveller");
   await page.getByLabel("पूरा पता *").fill("Pune address");
   await page.getByLabel("कहाँ से आ रहे हैं? *").fill("Nashik");
+  await page.locator("#checkOutDate").selectOption("2026-10-26");
+  await page.locator("#checkInTime").fill("12:30");
+  await page.locator("#checkOutTime").fill("10:00");
   await page.locator("#male").fill("1");
   await page.locator("#female").fill("1");
   await page.locator("#children").fill("0");
