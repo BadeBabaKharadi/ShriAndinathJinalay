@@ -118,8 +118,10 @@
       });
     }
     window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    // Worker loading is blocked in some mobile browsers / privacy modes. Disable it
+    // explicitly so the PDF can still be rendered on the main thread.
     const bytes = await fetch(pdfDataUrl).then((response) => response.arrayBuffer());
-    const pdf = await window.pdfjsLib.getDocument({ data: bytes }).promise;
+    const pdf = await window.pdfjsLib.getDocument({ data: bytes, disableWorker: true, isEvalSupported: false }).promise;
     const page = await pdf.getPage(1);
     const baseViewport = page.getViewport({ scale: 1 });
     const viewport = page.getViewport({ scale: Math.min(680 / baseViewport.width, 930 / baseViewport.height) });
@@ -138,8 +140,8 @@
   }
   const recordStyles = `
     *{box-sizing:border-box}body{font-family:"Noto Sans Devanagari",Arial,sans-serif;color:#181818;font-size:10pt;margin:0}
-    .page{height:279mm;position:relative;overflow:hidden;padding:2mm 1mm;page-break-after:always}
-    .page:last-child{page-break-after:auto}.heading{text-align:center;border-bottom:1.5px solid #333;padding-bottom:4mm;margin-bottom:4mm}
+    .page{height:277mm;max-height:277mm;position:relative;overflow:hidden;padding:2mm 1mm;break-after:page;page-break-after:always}
+    .page:last-child{break-after:auto;page-break-after:auto}.heading{text-align:center;border-bottom:1.5px solid #333;padding-bottom:4mm;margin-bottom:4mm}
     h1{font-size:17pt;margin:0 0 2mm}h2{font-size:12pt;margin:3mm 0 2mm}.sub{font-size:9pt}
     .identity{display:flex;gap:5mm;align-items:flex-start}.face{width:30mm;height:38mm;object-fit:cover;border:1px solid #777}
     table{width:100%;border-collapse:collapse;margin:2mm 0 3mm}td,th{border:1px solid #999;padding:1.6mm;vertical-align:top}th{width:28%;text-align:left;background:#f3f0eb}
@@ -164,7 +166,11 @@
         return type === "MARKSHEET" || /marksheet|mark-sheet|marks|मार्कशीट|अंक/i.test(d.name || "");
       });
       let markUrl = "";
-      if (mark?.path) markUrl = await dataUrl(await media(id, mark.path));
+      let markBlob = null;
+      if (mark?.path) {
+        markBlob = await media(id, mark.path);
+        markUrl = await dataUrl(markBlob);
+      }
       const rules = Array.isArray(a.acceptedRulesSnapshot) ? a.acceptedRulesSnapshot : [];
       const ruleMarkup = rules.length
         ? '<ol class="rules">' + rules.map((r) => '<li>' + esc(r.text || r.hindi || r.rule || "") + '</li>').join("") + '</ol>'
@@ -182,14 +188,18 @@
       const page1 = '<section class="page"><header class="heading"><h1>प्रतिभा सम्मान २०२६</h1><div>आवेदन एवं स्वीकृत नियम — अभिलेख प्रति</div></header><div class="identity"><div style="flex:1">' + table + '</div>' + (face ? '<img class="face" src="' + face + '" alt="आवेदक का फोटो">' : '') + '</div><h2>आवेदक द्वारा स्वीकार किए गए नियम</h2>' + ruleMarkup + '<div class="declaration">मैं पुष्टि करता/करती हूँ कि आवेदन में दी गई जानकारी मेरे ज्ञान के अनुसार सही है।</div><div class="signature"><span>आवेदक / अभिभावक के हस्ताक्षर: ______________</span><span>दिनांक: ______________</span></div><div style="position:absolute;bottom:1mm;right:1mm;font-size:8pt">पृष्ठ 1 / 2</div></section>';
       let markPage = '<section class="page"><h1 class="mark-title">संलग्न मार्कशीट — ' + esc(a.name) + ' (' + esc(a.applicationId) + ')</h1>';
       if (!markUrl) markPage += '<div class="missing">मार्कशीट दस्तावेज़ नहीं मिला। कृपया आवेदन में अपलोड किए गए दस्तावेज़ की जाँच करें।</div>';
-      const isPdf = !!markUrl && (String(mark?.mimeType || "").toLowerCase().includes("pdf") || /^data:application\/pdf/i.test(markUrl) || /\.pdf(?:$|[?#])/i.test(mark?.name || ""));
+      const signature = markBlob ? new Uint8Array(await markBlob.slice(0, 5).arrayBuffer()) : [];
+      const hasPdfSignature = signature.length === 5 && signature[0] === 0x25 && signature[1] === 0x50 && signature[2] === 0x44 && signature[3] === 0x46 && signature[4] === 0x2d;
+      const isPdf = !!markUrl && (hasPdfSignature || String(markBlob?.type || mark?.mimeType || "").toLowerCase().includes("pdf") || /^data:application\/pdf/i.test(markUrl) || /\.pdf(?:$|[?#])/i.test(mark?.name || ""));
       if (isPdf) markPage += '<div id="pdf-status" class="missing">PDF मार्कशीट तैयार हो रही है…</div><canvas id="marksheet-pdf-canvas" style="display:block;max-width:100%;max-height:250mm;margin:auto"></canvas>';
       else if (markUrl) markPage += '<img class="mark-image" src="' + markUrl + '" alt="मार्कशीट">';
       markPage += '<div style="position:absolute;bottom:1mm;right:1mm;font-size:8pt">पृष्ठ 2 / 2</div></section>';
       const win = printWindow("प्रतिभा सम्मान आवेदन " + a.applicationId, page1 + markPage, recordStyles, printTab);
       if (win) {
         const images = [...win.document.images];
-        await Promise.all(images.map((img) => img.complete ? Promise.resolve() : new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; })));
+        await Promise.all(images.map((img) => typeof img.decode === "function"
+          ? img.decode().catch(() => undefined)
+          : img.complete ? Promise.resolve() : new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; })));
         if (isPdf) await renderPdfFirstPage(markUrl, win.document.getElementById("marksheet-pdf-canvas"), win.document.getElementById("pdf-status"));
         win.focus(); setTimeout(() => win.print(), 150);
       }
@@ -211,10 +221,12 @@
         people.push({ id, name: a.name, image: await dataUrl(await media(id, a.facePhoto.path)) });
       }
       const cards = people.map((p) => '<div class="photo">' + (p.image ? '<img src="' + p.image + '" alt="' + esc(p.name) + '">' : '<div class="no-photo">फोटो उपलब्ध नहीं</div>') + '<div class="caption">' + esc(p.name) + ' · ' + esc(p.id) + '</div></div>').join("");
-      const styles = ' *{box-sizing:border-box}body{font-family:Arial,sans-serif;margin:0}.sheet{display:grid;grid-template-columns:repeat(5,35mm);grid-auto-rows:45mm;gap:3mm;align-content:start;justify-content:center}.photo{width:35mm;height:45mm;border:0.2mm dashed #aaa;display:flex;flex-direction:column;align-items:center;overflow:hidden}.photo img{width:35mm;height:40mm;object-fit:cover}.caption{width:100%;height:5mm;font-size:5.5pt;text-align:center;overflow:hidden;white-space:nowrap;padding:0.5mm}.no-photo{width:35mm;height:40mm;display:grid;place-items:center;font-size:8pt;text-align:center}@page{size:A4 portrait;margin:8mm}';
+      const styles = ' *{box-sizing:border-box}html,body{font-family:Arial,sans-serif;margin:0;padding:0}.sheet{width:194mm;min-height:281mm;margin:0 auto;display:grid;grid-template-columns:repeat(5,35mm);grid-auto-rows:45mm;gap:3mm;align-content:start;justify-content:center}.photo{width:35mm;height:45mm;border:0.2mm dashed #aaa;display:flex;flex-direction:column;align-items:center;overflow:hidden;break-inside:avoid;page-break-inside:avoid}.photo img{display:block;width:35mm;height:40mm;object-fit:cover}.caption{width:100%;height:5mm;font-size:5.5pt;text-align:center;overflow:hidden;white-space:nowrap;padding:0.5mm}.no-photo{width:35mm;height:40mm;display:grid;place-items:center;font-size:8pt;text-align:center}@page{size:A4 portrait;margin:8mm}@media print{html,body{width:194mm;margin:0;padding:0}.sheet{width:194mm;min-height:281mm;margin:0;grid-template-columns:repeat(5,35mm);grid-auto-rows:45mm;gap:3mm}}';
       const win = printWindow("प्रतिभा सम्मान — पासपोर्ट आकार फोटो", '<main class="sheet">' + cards + '</main>', styles, printTab);
       if (win) {
-        await Promise.all([...win.document.images].map((img) => img.complete ? Promise.resolve() : new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; })));
+        await Promise.all([...win.document.images].map((img) => typeof img.decode === "function"
+          ? img.decode().catch(() => undefined)
+          : img.complete ? Promise.resolve() : new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; })));
         win.focus(); setTimeout(() => win.print(), 150);
       }
     } catch (error) { printTab.close(); alert(error.message || "फोटो शीट तैयार नहीं हो सकी।"); }
