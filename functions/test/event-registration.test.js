@@ -317,7 +317,7 @@ test(
       input: validStayInput(),
       storage,
     });
-  
+
     const listing = await adminList({
       db,
       kind: "stay",
