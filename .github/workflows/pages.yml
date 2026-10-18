@@ -33,6 +33,10 @@ jobs:
         run: npm ci
       - name: Install browser runtime
         run: PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install --with-deps chromium
+      - name: Diagnose test formatting
+        run: |
+          npx prettier tests/ui/october-event-registration.spec.js > /tmp/october-event-registration.spec.js
+          diff -u tests/ui/october-event-registration.spec.js /tmp/october-event-registration.spec.js || true
       - name: Run required checks
         run: npm run check
       - name: Run Functions tests
