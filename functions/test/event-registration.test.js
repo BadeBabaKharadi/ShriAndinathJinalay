@@ -90,3 +90,140 @@ test("registration reference is stable per mobile and form type", () => {
     registrationCode("stay", "9876543210"),
   );
 });
+
+
+function createFakeDb() {
+  const collections = new Map();
+  return {
+    collections,
+    collection(name) {
+      if (!collections.has(name)) collections.set(name, new Map());
+      const records = collections.get(name);
+      return {
+        doc(id) {
+          return {
+            async get() {
+              const data = records.get(id);
+              return { exists: Boolean(data), data: () => data };
+            },
+            async set(data) {
+              records.set(id, data);
+            },
+          };
+        },
+        orderBy() {
+          return {
+            limit() {
+              return {
+                async get() {
+                  const docs = [...records.entries()].map(([id, data]) => ({
+                    id,
+                    data: () => data,
+                  }));
+                  return { docs };
+                },
+              };
+            },
+          };
+        },
+      };
+    },
+  };
+}
+
+function createFakeStorage() {
+  const saved = [];
+  return {
+    saved,
+    bucket() {
+      return {
+        file(path) {
+          return {
+            async save(bytes, options) {
+              saved.push({ path, bytes, options });
+            },
+            async getSignedUrl() {
+              return [`https://private.example/${path}?signed=1`];
+            },
+          };
+        },
+      };
+    },
+  };
+}
+
+const validStayInput = (overrides = {}) => ({
+  mobile: "9876543210",
+  name: "Test Traveller",
+  address: "Pune address",
+  comingFrom: "Nashik",
+  male: 1,
+  female: 1,
+  children: 0,
+  checkInDate: "2026-10-25",
+  checkInTime: "12:30",
+  aadhaarMime: "application/pdf",
+  aadhaarFileName: "id.pdf",
+  aadhaarBase64: Buffer.from("%PDF sample").toString("base64"),
+  ...overrides,
+});
+
+test("food save, duplicate-mobile update, and lookup persist one record", async () => {
+  const { saveRegistration, lookupRegistration, FOOD } = require("../event-registration.cjs");
+  const db = createFakeDb();
+  const first = await saveRegistration({
+    db,
+    kind: "food",
+    input: { mobile: "9876543210", name: "First Name", address: "Pune", coupons: 2 },
+    storage: createFakeStorage(),
+  });
+  const second = await saveRegistration({
+    db,
+    kind: "food",
+    input: { mobile: "+91 98765 43210", name: "Updated Name", address: "Mumbai", coupons: 7 },
+    storage: createFakeStorage(),
+  });
+  const found = await lookupRegistration({ db, kind: "food", mobile: "9876543210" });
+  assert.equal(first.exists, false);
+  assert.equal(second.exists, true);
+  assert.equal(found.exists, true);
+  assert.equal(found.registration.name, "Updated Name");
+  assert.equal(found.registration.coupons, 7);
+  assert.equal(db.collections.get(FOOD).size, 1);
+  assert.equal(found.registration.registrationId, first.registration.registrationId);
+});
+
+test("lodging edits preserve existing Aadhaar without another upload", async () => {
+  const { saveRegistration, lookupRegistration, STAY } = require("../event-registration.cjs");
+  const db = createFakeDb();
+  const storage = createFakeStorage();
+  await saveRegistration({ db, kind: "stay", input: validStayInput(), storage });
+  assert.equal(storage.saved.length, 1);
+  const updated = await saveRegistration({
+    db,
+    kind: "stay",
+    input: validStayInput({ name: "Updated Traveller", aadhaarBase64: "", aadhaarMime: "", aadhaarFileName: "" }),
+    storage,
+  });
+  const found = await lookupRegistration({ db, kind: "stay", mobile: "9876543210" });
+  assert.equal(updated.exists, true);
+  assert.equal(storage.saved.length, 1);
+  assert.equal(found.registration.name, "Updated Traveller");
+  assert.equal(found.registration.aadhaarUploaded, true);
+  assert.equal(db.collections.get(STAY).size, 1);
+});
+
+test("invalid registration type is rejected by save", async () => {
+  const { saveRegistration } = require("../event-registration.cjs");
+  await assert.rejects(
+    saveRegistration({ db: createFakeDb(), kind: "other", input: { mobile: "9876543210" }, storage: createFakeStorage() }),
+    /Invalid registration type/,
+  );
+});
+
+test("admin listing and Aadhaar URL require the expected key", async () => {
+  const { adminList, adminAadhaarUrl } = require("../event-registration.cjs");
+  const db = createFakeDb();
+  await assert.rejects(adminList({ db, kind: "stay", accessKey: "wrong", expectedKey: "secret" }), /Unauthorized/);
+  await assert.rejects(adminAadhaarUrl({ db, mobile: "9876543210", accessKey: "wrong", expectedKey: "secret", storage: createFakeStorage() }), /Unauthorized/);
+});
