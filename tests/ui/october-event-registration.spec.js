@@ -161,6 +161,8 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
                   comingFrom: "Nashik",
                   checkInDate: "2026-10-25",
                   checkInTime: "12:30",
+                  checkOutDate: "2026-10-26",
+                  checkOutTime: "10:00",
                   male: 1,
                   female: 1,
                   children: 0,
@@ -202,6 +204,8 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
   await page.getByRole("button", { name: "खोजें और आगे बढ़ें" }).click();
   await expect(page.locator("#name")).toHaveValue("Existing Traveller");
   await page.locator("#name").fill("Updated Traveller");
+  await page.locator("#checkOutDate").selectOption("2026-10-26");
+  await page.locator("#checkOutTime").fill("10:00");
   await page.getByRole("button", { name: "पंजीकरण सुरक्षित करें" }).click();
 
   await expect(page.locator("#confirmCode")).toHaveText("DKS26-OLD123");
@@ -360,6 +364,9 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   await page.getByLabel("पूरा नाम *").fill("New Traveller");
   await page.getByLabel("पूरा पता *").fill("Pune address");
   await page.getByLabel("कहाँ से आ रहे हैं? *").fill("Nashik");
+  await page.locator("#checkOutDate").selectOption("2026-10-26");
+  await page.locator("#checkInTime").fill("12:30");
+  await page.locator("#checkOutTime").fill("10:00");
   await page.locator("#male").fill("1");
   await page.locator("#female").fill("1");
   await page.locator("#children").fill("0");
