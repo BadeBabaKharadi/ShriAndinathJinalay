@@ -168,3 +168,48 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
   await page.getByRole("button", { name: "सत्यापित करें" }).click();
   await expect(page.locator("#msg")).toHaveText("Unauthorized.");
 });
+
+
+test("authorized food admin can view details and export the filtered list", async ({
+  page,
+}) => {
+  await page.route(`${functionsUrl}/octoberEventVerifyAdmin`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ result: { verified: true } }),
+    }),
+  );
+  await page.route(`${functionsUrl}/octoberEventAdminList`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        result: {
+          registrations: [
+            {
+              registrationId: "DKF26-ABC123",
+              name: "Test Person",
+              mobile: "9876543210",
+              address: "Pune address",
+              coupons: 3,
+            },
+          ],
+          summary: { registrations: 1, totalCoupons: 3, male: 0, female: 0, children: 0 },
+        },
+      }),
+    }),
+  );
+
+  await page.goto("/october-event-food-admin.html");
+  await page.locator("#key").fill("correct-key");
+  await page.getByRole("button", { name: "सत्यापित करें" }).click();
+  await expect(page.locator("#rows")).toContainText("Test Person");
+  await page.getByRole("button", { name: "विवरण" }).click();
+  await expect(page.locator("#details")).toContainText("Pune address");
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "CSV निर्यात" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("october-food-registrations.csv");
+});
