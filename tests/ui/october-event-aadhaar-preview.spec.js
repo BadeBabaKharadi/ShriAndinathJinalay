@@ -53,13 +53,18 @@ test(
         contentType: "application/json",
         headers: corsHeaders,
         body: JSON.stringify({
-          result: { exists: false, registration: { registrationId: "DKS26-NEW123" } },
+          result: {
+            exists: false,
+            registration: { registrationId: "DKS26-NEW123" },
+          },
         }),
       });
     });
 
     await page.goto("/october-event-registration.html");
-    await page.getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" }).click();
+    await page
+      .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
+      .click();
     await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
     await page.getByRole("button", { name: "खोजें और आगे बढ़ें" }).click();
     await expect(page.locator("#formFields")).toBeVisible();
