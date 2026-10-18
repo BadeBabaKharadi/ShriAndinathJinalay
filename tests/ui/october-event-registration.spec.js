@@ -30,7 +30,9 @@ test("October event form is responsive and exposes both registration types", asy
   await mockQrLibrary(page);
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/october-event-registration.html");
-  await expect(page.getByRole("heading", { name: /विशेष आयोजन/ })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /विशेष आयोजन/ }),
+  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "दीक्षा समारोह भोजन कूपन" }),
   ).toBeVisible();
@@ -135,7 +137,9 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
   });
 
   await page.goto("/october-event-registration.html");
-  await page.getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" }).click();
+  await page
+    .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
+    .click();
   await page.getByLabel("मोबाइल नंबर *").fill("9876543210");
   await page.getByRole("button", { name: "पिछला पंजीकरण खोजें" }).click();
   await expect(page.locator("#name")).toHaveValue("Existing Traveller");
