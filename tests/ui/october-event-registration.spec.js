@@ -20,6 +20,11 @@ async function mockCallable(page, name, result) {
     route.fulfill({
       status: 200,
       contentType: "application/json",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "content-type",
+      },
       body: JSON.stringify({ result }),
     }),
   );
@@ -57,6 +62,11 @@ test("food registration submits details and renders the stable QR reference", as
     await route.fulfill({
       status: 200,
       contentType: "application/json",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "content-type",
+      },
       body: JSON.stringify({
         result: {
           exists: false,
@@ -100,6 +110,11 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
     await route.fulfill({
       status: 200,
       contentType: "application/json",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "content-type",
+      },
       body: JSON.stringify({
         result:
           request.kind === "stay"
@@ -128,6 +143,11 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
     await route.fulfill({
       status: 200,
       contentType: "application/json",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "content-type",
+      },
       body: JSON.stringify({
         result: {
           exists: true,
@@ -171,6 +191,11 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
     route.fulfill({
       status: 403,
       contentType: "application/json",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "content-type",
+      },
       body: JSON.stringify({ error: { message: "Unauthorized." } }),
     }),
   );
@@ -187,6 +212,11 @@ test("authorized food admin can view details and export the filtered list", asyn
     route.fulfill({
       status: 200,
       contentType: "application/json",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "content-type",
+      },
       body: JSON.stringify({ result: { verified: true } }),
     }),
   );
@@ -194,6 +224,11 @@ test("authorized food admin can view details and export the filtered list", asyn
     route.fulfill({
       status: 200,
       contentType: "application/json",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "content-type",
+      },
       body: JSON.stringify({
         result: {
           registrations: [
@@ -241,6 +276,11 @@ test("new lodging registration includes a selected Aadhaar document", async ({
     await route.fulfill({
       status: 200,
       contentType: "application/json",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "content-type",
+      },
       body: JSON.stringify({
         result: {
           exists: false,
