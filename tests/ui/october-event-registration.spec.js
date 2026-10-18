@@ -230,18 +230,18 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
   await page.route(
     `${adminEmulatorUrl}/octoberEventVerifyAdmin`,
     async (route) => {
-    if (route.request().method() === "OPTIONS") {
+      if (route.request().method() === "OPTIONS") {
+        return route.fulfill({
+          status: 204,
+          headers: corsHeaders,
+        });
+      }
       return route.fulfill({
-        status: 204,
+        status: 403,
+        contentType: "application/json",
         headers: corsHeaders,
+        body: JSON.stringify({ error: { message: "Unauthorized." } }),
       });
-    }
-    return route.fulfill({
-      status: 403,
-      contentType: "application/json",
-      headers: corsHeaders,
-      body: JSON.stringify({ error: { message: "Unauthorized." } }),
-    });
     },
   );
   await handleCallablePreflight(page);
@@ -254,55 +254,57 @@ test("lodging admin denies an incorrect admin key", async ({ page }) => {
 test("authorized food admin can view details and export the filtered list", async ({
   page,
 }) => {
-  await page.route(`${adminEmulatorUrl}/octoberEventVerifyAdmin`, async (route) => {
-    if (route.request().method() === "OPTIONS") {
+  await page.route(
+    `${adminEmulatorUrl}/octoberEventVerifyAdmin`,
+    async (route) => {
+      if (route.request().method() === "OPTIONS") {
+        return route.fulfill({
+          status: 204,
+          headers: corsHeaders,
+        });
+      }
       return route.fulfill({
-        status: 204,
+        status: 200,
+        contentType: "application/json",
         headers: corsHeaders,
+        body: JSON.stringify({ result: { verified: true } }),
       });
-    }
-    return route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      headers: corsHeaders,
-      body: JSON.stringify({ result: { verified: true } }),
-    });
     },
   );
   await page.route(
     `${adminEmulatorUrl}/octoberEventAdminList`,
     async (route) => {
-    if (route.request().method() === "OPTIONS") {
+      if (route.request().method() === "OPTIONS") {
+        return route.fulfill({
+          status: 204,
+          headers: corsHeaders,
+        });
+      }
       return route.fulfill({
-        status: 204,
+        status: 200,
+        contentType: "application/json",
         headers: corsHeaders,
-      });
-    }
-    return route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      headers: corsHeaders,
-      body: JSON.stringify({
-        result: {
-          registrations: [
-            {
-              registrationId: "DKF26-ABC123",
-              name: "Test Person",
-              mobile: "9876543210",
-              address: "Pune address",
-              coupons: 3,
+        body: JSON.stringify({
+          result: {
+            registrations: [
+              {
+                registrationId: "DKF26-ABC123",
+                name: "Test Person",
+                mobile: "9876543210",
+                address: "Pune address",
+                coupons: 3,
+              },
+            ],
+            summary: {
+              registrations: 1,
+              totalCoupons: 3,
+              male: 0,
+              female: 0,
+              children: 0,
             },
-          ],
-          summary: {
-            registrations: 1,
-            totalCoupons: 3,
-            male: 0,
-            female: 0,
-            children: 0,
           },
-        },
-      }),
-    });
+        }),
+      });
     },
   );
 
