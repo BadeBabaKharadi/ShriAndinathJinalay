@@ -25,6 +25,7 @@ function fakeDb() {
     },
   };
 }
+
 function fakeStorage() {
   const objects = new Map();
   const deleted = [];
@@ -35,14 +36,20 @@ function fakeStorage() {
       return {
         file(path) {
           return {
-            async save(bytes) { objects.set(path, Buffer.from(bytes)); },
-            async delete() { deleted.push(path); objects.delete(path); },
+            async save(bytes) {
+              objects.set(path, Buffer.from(bytes));
+            },
+            async delete() {
+              deleted.push(path);
+              objects.delete(path);
+            },
           };
         },
       };
     },
   };
 }
+
 const baseInput = {
   mobile: "9876543210",
   name: "Test Traveller",
@@ -54,6 +61,7 @@ const baseInput = {
   checkInDate: "2026-10-25",
   checkInTime: "12:30",
 };
+
 test("editing a lodging registration can remove the existing private Aadhaar", async () => {
   const db = fakeDb();
   const storage = fakeStorage();
