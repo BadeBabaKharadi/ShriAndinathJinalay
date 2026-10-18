@@ -58,7 +58,7 @@ test("lodging validates group counts, check-in date/time, and mandatory private 
     checkInTime: "12:30",
     aadhaarMime: "application/pdf",
     aadhaarFileName: "id.pdf",
-    aadhaarBase64: Buffer.from("sample pdf").toString("base64"),
+    aadhaarBase64: Buffer.from("%PDF-1.7 sample pdf").toString("base64"),
   };
   assert.equal(validateStay(valid).male, 1);
   assert.throws(() => validateStay({ ...valid, male: -1 }), /whole number/);
@@ -226,4 +226,12 @@ test("admin listing and Aadhaar URL require the expected key", async () => {
   const db = createFakeDb();
   await assert.rejects(adminList({ db, kind: "stay", accessKey: "wrong", expectedKey: "secret" }), /Unauthorized/);
   await assert.rejects(adminAadhaarUrl({ db, mobile: "9876543210", accessKey: "wrong", expectedKey: "secret", storage: createFakeStorage() }), /Unauthorized/);
+});
+
+test("Aadhaar MIME type must match the actual file signature", () => {
+  const input = validStayInput();
+  assert.throws(
+    () => validateStay({ ...input, aadhaarBase64: Buffer.from("not a PDF").toString("base64") }),
+    /content does not match/,
+  );
 });
