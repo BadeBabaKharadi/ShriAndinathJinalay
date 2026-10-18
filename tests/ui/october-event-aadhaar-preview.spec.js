@@ -34,9 +34,7 @@ async function mockLookup(page) {
   });
 }
 
-test(
-  "Aadhaar selection shows a preview and upload animation, and can be removed",
-  async ({ page }) => {
+test("Aadhaar selection shows a preview and upload animation, and can be removed", async ({ page }) => {
     await mockQrLibrary(page);
     await mockLookup(page);
     let releaseSave;
@@ -82,5 +80,4 @@ test(
     releaseSave();
     await expect(page.locator("#confirmCode")).toHaveText("DKS26-NEW123");
     await expect(page.locator("#aadhaarUploadStatus")).toBeHidden();
-  },
-);
+});
