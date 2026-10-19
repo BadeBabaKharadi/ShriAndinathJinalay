@@ -217,8 +217,11 @@ test("food save, duplicate-mobile update, and lookup persist one record", async 
   );
 });
 
-test("allows lodging check-in from 23 October 2026", () => {
-  const { validateStay } = require("../event-registration.cjs");
+test("allows lodging check-in from 23 October 2026 through backend validation and save", async () => {
+  const {
+    validateStay,
+    saveRegistration,
+  } = require("../event-registration.cjs");
   const input = validStayInput({
     checkInDate: "2026-10-23",
     checkInTime: "12:00",
@@ -226,6 +229,15 @@ test("allows lodging check-in from 23 October 2026", () => {
     checkOutTime: "10:00",
   });
   assert.equal(validateStay(input).checkInDate, "2026-10-23");
+
+  const saved = await saveRegistration({
+    db: createFakeDb(),
+    kind: "stay",
+    input,
+    storage: createFakeStorage(),
+  });
+  assert.equal(saved.registration.checkInDate, "2026-10-23");
+  assert.equal(saved.registration.checkOutDate, "2026-10-24");
 });
 
 test("lodging identity documents are validated and normalized", () => {
