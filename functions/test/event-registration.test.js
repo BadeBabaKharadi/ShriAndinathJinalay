@@ -11,97 +11,97 @@ const {
 test(
   "normalizes valid Indian mobile numbers and rejects invalid values",
   () => {
-      assert.equal(normalizeMobile("+91 98765 43210"), "9876543210");
-      assert.throws(() => normalizeMobile("123"), /valid 10-digit/);
+    assert.equal(normalizeMobile("+91 98765 43210"), "9876543210");
+    assert.throws(() => normalizeMobile("123"), /valid 10-digit/);
   },
 );
 
 test(
   "food registration requires name/address and enforces coupon cap of seven",
   () => {
-      assert.equal(
+    assert.equal(
+      validateFood({
+        mobile: "9876543210",
+        name: "Test Person",
+        address: "Pune",
+        coupons: 7,
+      }).coupons,
+      7,
+    );
+    assert.throws(
+      () =>
         validateFood({
           mobile: "9876543210",
-          name: "Test Person",
+          name: "Test",
           address: "Pune",
-          coupons: 7,
-        }).coupons,
-        7,
-      );
-      assert.throws(
-        () =>
-          validateFood({
-            mobile: "9876543210",
-            name: "Test",
-            address: "Pune",
-            coupons: 8,
-          }),
-        /between 0 and 7/,
-      );
-      assert.throws(
-        () =>
-          validateFood({
-            mobile: "9876543210",
-            name: "Test",
-            address: "Pune",
-            coupons: 0,
-          }),
-        /between 1 and 7/,
-      );
+          coupons: 8,
+        }),
+      /between 0 and 7/,
+    );
+    assert.throws(
+      () =>
+        validateFood({
+          mobile: "9876543210",
+          name: "Test",
+          address: "Pune",
+          coupons: 0,
+        }),
+      /between 1 and 7/,
+    );
   },
 );
 
 test(
   "lodging validates group counts, check-in date/time, and mandatory private document",
   () => {
-      const valid = {
-        mobile: "9876543210",
-        name: "Test Traveller",
-        address: "Pune address",
-        comingFrom: "Nashik",
-        male: 1,
-        female: 1,
-        children: 0,
-        checkInDate: "2026-10-25",
-        checkInTime: "12:30",
-        checkOutDate: "2026-10-26",
-        checkOutTime: "10:00",
-        aadhaarMime: "application/pdf",
-        aadhaarFileName: "id.pdf",
-        aadhaarBase64: Buffer.from("%PDF-1.7 sample pdf").toString("base64"),
-      };
-      assert.equal(validateStay(valid).male, 1);
-      assert.throws(() => validateStay({ ...valid, male: -1 }), /whole number/);
-      assert.throws(
-        () => validateStay({ ...valid, male: 0, female: 0, children: 0 }),
-        /At least one traveller/,
-      );
-      assert.throws(
-        () => validateStay({ ...valid, checkInDate: "2026-10-27" }),
-        /Check-in date/,
-      );
-      assert.throws(
-        () => validateStay({ ...valid, aadhaarMime: "text/plain" }),
-        /PDF, JPG, or PNG/,
-      );
-      assert.throws(
-        () => validateStay({ ...valid, aadhaarBase64: "" }),
-        /Aadhaar file/,
-      );
+    const valid = {
+      mobile: "9876543210",
+      name: "Test Traveller",
+      address: "Pune address",
+      comingFrom: "Nashik",
+      male: 1,
+      female: 1,
+      children: 0,
+      checkInDate: "2026-10-25",
+      checkInTime: "12:30",
+      checkOutDate: "2026-10-26",
+      checkOutTime: "10:00",
+      aadhaarMime: "application/pdf",
+      aadhaarFileName: "id.pdf",
+      aadhaarBase64: Buffer.from("%PDF-1.7 sample pdf").toString("base64"),
+    };
+    assert.equal(validateStay(valid).male, 1);
+    assert.throws(() => validateStay({ ...valid, male: -1 }), /whole number/);
+    assert.throws(
+      () => validateStay({ ...valid, male: 0, female: 0, children: 0 }),
+      /At least one traveller/,
+    );
+    assert.throws(
+      () => validateStay({ ...valid, checkInDate: "2026-10-27" }),
+      /Check-in date/,
+    );
+    assert.throws(
+      () => validateStay({ ...valid, aadhaarMime: "text/plain" }),
+      /PDF, JPG, or PNG/,
+    );
+    assert.throws(
+      () => validateStay({ ...valid, aadhaarBase64: "" }),
+      /Aadhaar file/,
+    );
   },
 );
 
 test(
   "registration reference is stable per mobile and form type",
   () => {
-      assert.equal(
-        registrationCode("food", "9876543210"),
-        registrationCode("food", "9876543210"),
-      );
-      assert.notEqual(
-        registrationCode("food", "9876543210"),
-        registrationCode("stay", "9876543210"),
-      );
+    assert.equal(
+      registrationCode("food", "9876543210"),
+      registrationCode("food", "9876543210"),
+    );
+    assert.notEqual(
+      registrationCode("food", "9876543210"),
+      registrationCode("stay", "9876543210"),
+    );
   },
 );
 
@@ -259,59 +259,59 @@ test(
 test(
   "lodging identity documents are validated and normalized",
   () => {
-      const valid = validStayInput({
-        identityDocumentType: "aadhaar",
-        identityDocumentNumber: "234567890123",
-        city: "Pune",
-        state: "Maharashtra",
-        pincode: "411014",
-    });
-    const { validateStay } = require("../event-registration.cjs");
-    const normalized = validateStay(valid);
-    assert.equal(normalized.identityDocumentType, "aadhaar");
-    assert.equal(normalized.identityDocumentNumber, "234567890123");
-    assert.equal(normalized.city, "Pune");
-    assert.equal(normalized.state, "Maharashtra");
-    assert.equal(normalized.pincode, "411014");
+    const valid = validStayInput({
+      identityDocumentType: "aadhaar",
+      identityDocumentNumber: "234567890123",
+      city: "Pune",
+      state: "Maharashtra",
+      pincode: "411014",
+  });
+  const { validateStay } = require("../event-registration.cjs");
+  const normalized = validateStay(valid);
+  assert.equal(normalized.identityDocumentType, "aadhaar");
+  assert.equal(normalized.identityDocumentNumber, "234567890123");
+  assert.equal(normalized.city, "Pune");
+  assert.equal(normalized.state, "Maharashtra");
+  assert.equal(normalized.pincode, "411014");
 
-    assert.equal(
+  assert.equal(
+    validateStay({
+      ...valid,
+      identityDocumentType: "pan",
+      identityDocumentNumber: "abcde1234f",
+    }).identityDocumentNumber,
+    "ABCDE1234F",
+  );
+  assert.throws(
+    () => validateStay({ ...valid, pincode: "41101" }),
+    /PIN code/,
+  );
+  assert.throws(
+    () => validateStay({ ...valid, identityDocumentNumber: "012345678901" }),
+    /Aadhaar number/,
+  );
+  assert.throws(
+    () =>
       validateStay({
         ...valid,
         identityDocumentType: "pan",
-        identityDocumentNumber: "abcde1234f",
-      }).identityDocumentNumber,
-      "ABCDE1234F",
-    );
-    assert.throws(
-      () => validateStay({ ...valid, pincode: "41101" }),
-      /PIN code/,
-    );
-    assert.throws(
-      () => validateStay({ ...valid, identityDocumentNumber: "012345678901" }),
-      /Aadhaar number/,
-    );
-    assert.throws(
-      () =>
-        validateStay({
-          ...valid,
-          identityDocumentType: "pan",
-          identityDocumentNumber: "INVALID",
-        }),
-      /PAN number/,
-    );
-    assert.throws(
-      () =>
-        validateStay({
-          ...valid,
-          identityDocumentType: "voter_id",
-          identityDocumentNumber: "ABC123",
-        }),
-      /Voter ID/,
-    );
-    assert.throws(
-      () => validateStay({ ...valid, identityDocumentType: "other" }),
-      /identity document type/,
-    );
+        identityDocumentNumber: "INVALID",
+      }),
+    /PAN number/,
+  );
+  assert.throws(
+    () =>
+      validateStay({
+        ...valid,
+        identityDocumentType: "voter_id",
+        identityDocumentNumber: "ABC123",
+      }),
+    /Voter ID/,
+  );
+  assert.throws(
+    () => validateStay({ ...valid, identityDocumentType: "other" }),
+    /identity document type/,
+  );
   },
 );
 
@@ -400,15 +400,15 @@ test(
 test(
   "Aadhaar MIME type must match the actual file signature",
   () => {
-      const input = validStayInput();
-      assert.throws(
-        () =>
-          validateStay({
-            ...input,
-            aadhaarBase64: Buffer.from("not a PDF").toString("base64"),
-          }),
-        /content does not match/,
-      );
+    const input = validStayInput();
+    assert.throws(
+      () =>
+        validateStay({
+          ...input,
+          aadhaarBase64: Buffer.from("not a PDF").toString("base64"),
+        }),
+      /content does not match/,
+    );
   },
 );
 
@@ -452,10 +452,10 @@ test(
 test(
   "Aadhaar uploads larger than 5 MB are rejected",
   () => {
-      const input = validStayInput({
-        aadhaarBase64: Buffer.alloc(5 * 1024 * 1024 + 1, 0x41).toString("base64"),
-    });
-    assert.throws(() => validateStay(input), /smaller than 5 MB/);
+    const input = validStayInput({
+      aadhaarBase64: Buffer.alloc(5 * 1024 * 1024 + 1, 0x41).toString("base64"),
+  });
+  assert.throws(() => validateStay(input), /smaller than 5 MB/);
   },
 );
 
