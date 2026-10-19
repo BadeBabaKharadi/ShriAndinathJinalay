@@ -186,11 +186,7 @@ const validStayInput = (overrides = {}) => ({
 test(
   "food save, duplicate-mobile update, and lookup persist one record",
   async () => {
-    const {
-      saveRegistration,
-      lookupRegistration,
-      FOOD,
-    } = require("../event-registration.cjs");
+    const { saveRegistration, lookupRegistration, FOOD } = require("../event-registration.cjs");
     const db = createFakeDb();
     const first = await saveRegistration({
       db,
@@ -235,10 +231,7 @@ test(
 test(
   "allows lodging check-in from 23 October 2026 through backend validation and save",
   async () => {
-    const {
-      validateStay,
-      saveRegistration,
-    } = require("../event-registration.cjs");
+    const { validateStay, saveRegistration } = require("../event-registration.cjs");
     const input = validStayInput({
       checkInDate: "2026-10-23",
       checkInTime: "12:00",
@@ -320,11 +313,7 @@ test(
 test(
   "lodging edits preserve existing Aadhaar without another upload",
   async () => {
-    const {
-      saveRegistration,
-      lookupRegistration,
-      STAY,
-    } = require("../event-registration.cjs");
+    const { saveRegistration, lookupRegistration, STAY } = require("../event-registration.cjs");
     const db = createFakeDb();
     const storage = createFakeStorage();
     await saveRegistration({
@@ -420,11 +409,7 @@ test(
 test(
   "authorized admin can list registrations and obtain a short-lived Aadhaar URL",
   async () => {
-    const {
-      saveRegistration,
-      adminList,
-      adminAadhaarUrl,
-    } = require("../event-registration.cjs");
+    const { saveRegistration, adminList, adminAadhaarUrl } = require("../event-registration.cjs");
     const db = createFakeDb();
     const storage = createFakeStorage();
     await saveRegistration({
