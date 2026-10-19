@@ -218,7 +218,10 @@ test("food save, duplicate-mobile update, and lookup persist one record", async 
 });
 
 test("allows lodging check-in from 23 October 2026 through backend validation and save", async () => {
-  const { validateStay, saveRegistration } = require("../event-registration.cjs");
+  const {
+    validateStay,
+    saveRegistration,
+  } = require("../event-registration.cjs");
   const input = validStayInput({
     checkInDate: "2026-10-23",
     checkInTime: "12:00",
