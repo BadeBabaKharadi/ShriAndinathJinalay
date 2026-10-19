@@ -8,12 +8,16 @@ const {
   registrationCode,
 } = require("../event-registration.cjs");
 
-test("normalizes valid Indian mobile numbers and rejects invalid values", () => {
+test(
+  "normalizes valid Indian mobile numbers and rejects invalid values",
+  () => {
   assert.equal(normalizeMobile("+91 98765 43210"), "9876543210");
   assert.throws(() => normalizeMobile("123"), /valid 10-digit/);
 });
 
-test("food registration requires name/address and enforces coupon cap of seven", () => {
+test(
+  "food registration requires name/address and enforces coupon cap of seven",
+  () => {
   assert.equal(
     validateFood({
       mobile: "9876543210",
@@ -45,7 +49,9 @@ test("food registration requires name/address and enforces coupon cap of seven",
   );
 });
 
-test("lodging validates group counts, check-in date/time, and mandatory private document", () => {
+test(
+  "lodging validates group counts, check-in date/time, and mandatory private document",
+  () => {
   const valid = {
     mobile: "9876543210",
     name: "Test Traveller",
@@ -82,7 +88,9 @@ test("lodging validates group counts, check-in date/time, and mandatory private 
   );
 });
 
-test("registration reference is stable per mobile and form type", () => {
+test(
+  "registration reference is stable per mobile and form type",
+  () => {
   assert.equal(
     registrationCode("food", "9876543210"),
     registrationCode("food", "9876543210"),
@@ -171,7 +179,9 @@ const validStayInput = (overrides = {}) => ({
   ...overrides,
 });
 
-test("food save, duplicate-mobile update, and lookup persist one record", async () => {
+test(
+  "food save, duplicate-mobile update, and lookup persist one record",
+  async () => {
   const {
     saveRegistration,
     lookupRegistration,
@@ -217,7 +227,9 @@ test("food save, duplicate-mobile update, and lookup persist one record", async 
   );
 });
 
-test("allows lodging check-in from 23 October 2026 through backend validation and save", async () => {
+test(
+  "allows lodging check-in from 23 October 2026 through backend validation and save",
+  async () => {
   const {
     validateStay,
     saveRegistration,
@@ -240,7 +252,9 @@ test("allows lodging check-in from 23 October 2026 through backend validation an
   assert.equal(saved.registration.checkOutDate, "2026-10-24");
 });
 
-test("lodging identity documents are validated and normalized", () => {
+test(
+  "lodging identity documents are validated and normalized",
+  () => {
   const valid = validStayInput({
     identityDocumentType: "aadhaar",
     identityDocumentNumber: "234567890123",
@@ -293,7 +307,9 @@ test("lodging identity documents are validated and normalized", () => {
   );
 });
 
-test("lodging edits preserve existing Aadhaar without another upload", async () => {
+test(
+  "lodging edits preserve existing Aadhaar without another upload",
+  async () => {
   const {
     saveRegistration,
     lookupRegistration,
@@ -332,7 +348,9 @@ test("lodging edits preserve existing Aadhaar without another upload", async () 
   assert.equal(db.collections.get(STAY).size, 1);
 });
 
-test("invalid registration type is rejected by save", async () => {
+test(
+  "invalid registration type is rejected by save",
+  async () => {
   const { saveRegistration } = require("../event-registration.cjs");
   await assert.rejects(
     saveRegistration({
@@ -345,7 +363,9 @@ test("invalid registration type is rejected by save", async () => {
   );
 });
 
-test("admin listing and Aadhaar URL require the expected key", async () => {
+test(
+  "admin listing and Aadhaar URL require the expected key",
+  async () => {
   const { adminList, adminAadhaarUrl } = require("../event-registration.cjs");
   const db = createFakeDb();
   await assert.rejects(
@@ -369,7 +389,9 @@ test("admin listing and Aadhaar URL require the expected key", async () => {
   );
 });
 
-test("Aadhaar MIME type must match the actual file signature", () => {
+test(
+  "Aadhaar MIME type must match the actual file signature",
+  () => {
   const input = validStayInput();
   assert.throws(
     () =>
@@ -381,7 +403,9 @@ test("Aadhaar MIME type must match the actual file signature", () => {
   );
 });
 
-test("authorized admin can list registrations and obtain a short-lived Aadhaar URL", async () => {
+test(
+  "authorized admin can list registrations and obtain a short-lived Aadhaar URL",
+  async () => {
   const {
     saveRegistration,
     adminList,
@@ -416,14 +440,14 @@ test("authorized admin can list registrations and obtain a short-lived Aadhaar U
   assert.equal(access.expiresInSeconds, 300);
 });
 
-test("Aadhaar uploads larger than 5 MB are rejected", () => {
+test(
+  "Aadhaar uploads larger than 5 MB are rejected",
+  () => {
   const input = validStayInput({
     aadhaarBase64: Buffer.alloc(5 * 1024 * 1024 + 1, 0x41).toString("base64"),
   });
   assert.throws(() => validateStay(input), /smaller than 5 MB/);
 });
-
-
 
 test(
   "stay admin summary counts check-ins and check-outs by date and half-day",
