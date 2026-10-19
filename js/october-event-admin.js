@@ -114,7 +114,7 @@ function exportRows(format) {
     : [];
   const cell = value => {
     const text = String(value ?? "");
-    return /^[=+@\\-\\t\\r]/.test(text) ? "'" + text : text;
+    return /^[=+\-@\t\r]/.test(text) ? "'" + text : text;
   };
   let content, type, extension;
   if (format === "excel") {
@@ -126,11 +126,11 @@ function exportRows(format) {
     extension = "xls";
   } else {
     const quote = value => '"' + cell(value).replace(/"/g, '""') + '"';
-    content = [keys.map(quote).join(","), ...exportedRecords.map(row => keys.map(key => quote(row[key])).join(","))].join("\\r\\n");
+    content = [keys.map(quote).join(","), ...exportedRecords.map(row => keys.map(key => quote(row[key])).join(","))].join("\r\n");
     type = "text/csv;charset=utf-8";
     extension = "csv";
   }
-  const blob = new Blob(["\\ufeff", content], { type });
+  const blob = new Blob(["\ufeff", content], { type });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
