@@ -84,11 +84,11 @@ test(
 
     await expect(page.locator("#authCard")).toBeHidden();
     await expect(page.locator("#authSuccess")).toContainText("✓");
-    const row = page.locator('tr[data-registration-row="DKS26-TEST123"]');
+    const row = page.locator("tr[data-registration-row=\"DKS26-TEST123\"]");
     await expect(row.locator("td")).toHaveCount(12);
     await row.getByRole("button", { name: "विवरण" }).click();
 
-    const details = page.locator('tr[data-details-for="DKS26-TEST123"]');
+    const details = page.locator("tr[data-details-for=\"DKS26-TEST123\"]");
     await expect(details).toBeVisible();
     await expect(
       details.locator("img[alt='आधार दस्तावेज़ पूर्वावलोकन']"),
@@ -133,7 +133,7 @@ test(
     await expect(page.locator("#rows")).toContainText("Two Guest");
     await page.locator("#rows button[data-detail]").click();
     await expect(
-      page.locator('tr[data-details-for="DKF26-BBB222"]'),
+      page.locator("tr[data-details-for=\"DKF26-BBB222\"]"),
     ).toBeVisible();
   },
 );
