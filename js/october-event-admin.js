@@ -107,10 +107,40 @@ $("rows").addEventListener("click",async event=>{
     const win=window.open("","_blank"); if(win){win.document.write("<title>Registration QR</title>");win.document.body.append(canvas);win.document.body.append(document.createTextNode(target.dataset.qr));}
   }
 });
-$("export").onclick=()=>{
-  const keys=records.length?Object.keys(records[0]).filter(key=>!["aadhaarPath","aadhaarMime"].includes(key)):[];
-  const csv=[keys.join(","),...records.map(row=>keys.map(key=>JSON.stringify(row[key]??"")).join(","))].join("\r\n");
-  const anchor=document.createElement("a");anchor.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));anchor.download="october-"+kind+"-registrations.csv";anchor.click();URL.revokeObjectURL(anchor.href);
-};
+function exportRows(format) {
+  const exportedRecords = records.filter(matchesFilters);
+  const keys = exportedRecords.length
+    ? Object.keys(exportedRecords[0]).filter(key => !["aadhaarPath", "aadhaarMime", "aadhaarBase64"].includes(key))
+    : [];
+  const cell = value => {
+    const text = String(value ?? "");
+    return /^[=+@\\-\\t\\r]/.test(text) ? "'" + text : text;
+  };
+  let content, type, extension;
+  if (format === "excel") {
+    const table = "<table><thead><tr>" + keys.map(key => "<th>" + esc(key) + "</th>").join("") + "</tr></thead><tbody>" +
+      exportedRecords.map(row => "<tr>" + keys.map(key => "<td>" + esc(cell(row[key])) + "</td>").join("") + "</tr>").join("") +
+      "</tbody></table>";
+    content = '<html><head><meta charset="utf-8"></head><body>' + table + "</body></html>";
+    type = "application/vnd.ms-excel;charset=utf-8";
+    extension = "xls";
+  } else {
+    const quote = value => '"' + cell(value).replace(/"/g, '""') + '"';
+    content = [keys.map(quote).join(","), ...exportedRecords.map(row => keys.map(key => quote(row[key])).join(","))].join("\\r\\n");
+    type = "text/csv;charset=utf-8";
+    extension = "csv";
+  }
+  const blob = new Blob(["\\ufeff", content], { type });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "october-" + kind + "-registrations." + extension;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+$("exportCsv").onclick = () => exportRows("csv");
+$("exportExcel").onclick = () => exportRows("excel");
 Object.defineProperty(window,"__octoberAdminKey",{set(value){accessKey=value;showAuthorized();}});
 })();
