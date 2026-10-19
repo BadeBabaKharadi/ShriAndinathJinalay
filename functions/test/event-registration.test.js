@@ -186,216 +186,221 @@ const validStayInput = (overrides = {}) => ({
 test(
   "food save, duplicate-mobile update, and lookup persist one record",
   async () => {
-  const {
-    saveRegistration,
-    lookupRegistration,
-    FOOD,
-  } = require("../event-registration.cjs");
-  const db = createFakeDb();
-  const first = await saveRegistration({
-    db,
-    kind: "food",
-    input: {
+    const {
+      saveRegistration,
+      lookupRegistration,
+      FOOD,
+    } = require("../event-registration.cjs");
+    const db = createFakeDb();
+    const first = await saveRegistration({
+      db,
+      kind: "food",
+      input: {
+        mobile: "9876543210",
+        name: "First Name",
+        address: "Pune",
+        coupons: 2,
+      },
+      storage: createFakeStorage(),
+    });
+    const second = await saveRegistration({
+      db,
+      kind: "food",
+      input: {
+        mobile: "+91 98765 43210",
+        name: "Updated Name",
+        address: "Mumbai",
+        coupons: 7,
+      },
+      storage: createFakeStorage(),
+    });
+    const found = await lookupRegistration({
+      db,
+      kind: "food",
       mobile: "9876543210",
-      name: "First Name",
-      address: "Pune",
-      coupons: 2,
-    },
-    storage: createFakeStorage(),
-  });
-  const second = await saveRegistration({
-    db,
-    kind: "food",
-    input: {
-      mobile: "+91 98765 43210",
-      name: "Updated Name",
-      address: "Mumbai",
-      coupons: 7,
-    },
-    storage: createFakeStorage(),
-  });
-  const found = await lookupRegistration({
-    db,
-    kind: "food",
-    mobile: "9876543210",
-  });
-  assert.equal(first.exists, false);
-  assert.equal(second.exists, true);
-  assert.equal(found.exists, true);
-  assert.equal(found.registration.name, "Updated Name");
-  assert.equal(found.registration.coupons, 7);
-  assert.equal(db.collections.get(FOOD).size, 1);
-  assert.equal(
-    found.registration.registrationId,
-    first.registration.registrationId,
-  );
-});
+    });
+    assert.equal(first.exists, false);
+    assert.equal(second.exists, true);
+    assert.equal(found.exists, true);
+    assert.equal(found.registration.name, "Updated Name");
+    assert.equal(found.registration.coupons, 7);
+    assert.equal(db.collections.get(FOOD).size, 1);
+    assert.equal(
+      found.registration.registrationId,
+      first.registration.registrationId,
+    );
+  },
+);
 
 test(
   "allows lodging check-in from 23 October 2026 through backend validation and save",
   async () => {
-  const {
-    validateStay,
-    saveRegistration,
-  } = require("../event-registration.cjs");
-  const input = validStayInput({
-    checkInDate: "2026-10-23",
-    checkInTime: "12:00",
-    checkOutDate: "2026-10-24",
-    checkOutTime: "10:00",
-  });
-  assert.equal(validateStay(input).checkInDate, "2026-10-23");
+    const {
+      validateStay,
+      saveRegistration,
+    } = require("../event-registration.cjs");
+    const input = validStayInput({
+      checkInDate: "2026-10-23",
+      checkInTime: "12:00",
+      checkOutDate: "2026-10-24",
+      checkOutTime: "10:00",
+    });
+    assert.equal(validateStay(input).checkInDate, "2026-10-23");
 
-  const saved = await saveRegistration({
-    db: createFakeDb(),
-    kind: "stay",
-    input,
-    storage: createFakeStorage(),
-  });
-  assert.equal(saved.registration.checkInDate, "2026-10-23");
-  assert.equal(saved.registration.checkOutDate, "2026-10-24");
-});
+    const saved = await saveRegistration({
+      db: createFakeDb(),
+      kind: "stay",
+      input,
+      storage: createFakeStorage(),
+    });
+    assert.equal(saved.registration.checkInDate, "2026-10-23");
+    assert.equal(saved.registration.checkOutDate, "2026-10-24");
+  },
+);
 
 test(
   "lodging identity documents are validated and normalized",
   () => {
-    const valid = validStayInput({
-      identityDocumentType: "aadhaar",
-      identityDocumentNumber: "234567890123",
-      city: "Pune",
-      state: "Maharashtra",
-      pincode: "411014",
-  });
-  const { validateStay } = require("../event-registration.cjs");
-  const normalized = validateStay(valid);
-  assert.equal(normalized.identityDocumentType, "aadhaar");
-  assert.equal(normalized.identityDocumentNumber, "234567890123");
-  assert.equal(normalized.city, "Pune");
-  assert.equal(normalized.state, "Maharashtra");
-  assert.equal(normalized.pincode, "411014");
+      const valid = validStayInput({
+        identityDocumentType: "aadhaar",
+        identityDocumentNumber: "234567890123",
+        city: "Pune",
+        state: "Maharashtra",
+        pincode: "411014",
+    });
+    const { validateStay } = require("../event-registration.cjs");
+    const normalized = validateStay(valid);
+    assert.equal(normalized.identityDocumentType, "aadhaar");
+    assert.equal(normalized.identityDocumentNumber, "234567890123");
+    assert.equal(normalized.city, "Pune");
+    assert.equal(normalized.state, "Maharashtra");
+    assert.equal(normalized.pincode, "411014");
 
-  assert.equal(
-    validateStay({
-      ...valid,
-      identityDocumentType: "pan",
-      identityDocumentNumber: "abcde1234f",
-    }).identityDocumentNumber,
-    "ABCDE1234F",
-  );
-  assert.throws(
-    () => validateStay({ ...valid, pincode: "41101" }),
-    /PIN code/,
-  );
-  assert.throws(
-    () => validateStay({ ...valid, identityDocumentNumber: "012345678901" }),
-    /Aadhaar number/,
-  );
-  assert.throws(
-    () =>
+    assert.equal(
       validateStay({
         ...valid,
         identityDocumentType: "pan",
-        identityDocumentNumber: "INVALID",
-      }),
-    /PAN number/,
-  );
-  assert.throws(
-    () =>
-      validateStay({
-        ...valid,
-        identityDocumentType: "voter_id",
-        identityDocumentNumber: "ABC123",
-      }),
-    /Voter ID/,
-  );
-  assert.throws(
-    () => validateStay({ ...valid, identityDocumentType: "other" }),
-    /identity document type/,
-  );
+        identityDocumentNumber: "abcde1234f",
+      }).identityDocumentNumber,
+      "ABCDE1234F",
+    );
+    assert.throws(
+      () => validateStay({ ...valid, pincode: "41101" }),
+      /PIN code/,
+    );
+    assert.throws(
+      () => validateStay({ ...valid, identityDocumentNumber: "012345678901" }),
+      /Aadhaar number/,
+    );
+    assert.throws(
+      () =>
+        validateStay({
+          ...valid,
+          identityDocumentType: "pan",
+          identityDocumentNumber: "INVALID",
+        }),
+      /PAN number/,
+    );
+    assert.throws(
+      () =>
+        validateStay({
+          ...valid,
+          identityDocumentType: "voter_id",
+          identityDocumentNumber: "ABC123",
+        }),
+      /Voter ID/,
+    );
+    assert.throws(
+      () => validateStay({ ...valid, identityDocumentType: "other" }),
+      /identity document type/,
+    );
   },
 );
 
 test(
   "lodging edits preserve existing Aadhaar without another upload",
   async () => {
-  const {
-    saveRegistration,
-    lookupRegistration,
-    STAY,
-  } = require("../event-registration.cjs");
-  const db = createFakeDb();
-  const storage = createFakeStorage();
-  await saveRegistration({
-    db,
-    kind: "stay",
-    input: validStayInput(),
-    storage,
-  });
-  assert.equal(storage.saved.length, 1);
+    const {
+      saveRegistration,
+      lookupRegistration,
+      STAY,
+    } = require("../event-registration.cjs");
+    const db = createFakeDb();
+    const storage = createFakeStorage();
+    await saveRegistration({
+      db,
+      kind: "stay",
+      input: validStayInput(),
+      storage,
+    });
+    assert.equal(storage.saved.length, 1);
 
-  const updated = await saveRegistration({
-    db,
-    kind: "stay",
-    input: validStayInput({
-      name: "Updated Traveller",
-      aadhaarBase64: "",
-      aadhaarMime: "",
-      aadhaarFileName: "",
-    }),
-    storage,
-  });
-  const found = await lookupRegistration({
-    db,
-    kind: "stay",
-    mobile: "9876543210",
-  });
-  assert.equal(updated.exists, true);
-  assert.equal(storage.saved.length, 1);
-  assert.equal(found.registration.name, "Updated Traveller");
-  assert.equal(found.registration.aadhaarUploaded, true);
-  assert.equal(db.collections.get(STAY).size, 1);
-});
+    const updated = await saveRegistration({
+      db,
+      kind: "stay",
+      input: validStayInput({
+        name: "Updated Traveller",
+        aadhaarBase64: "",
+        aadhaarMime: "",
+        aadhaarFileName: "",
+      }),
+      storage,
+    });
+    const found = await lookupRegistration({
+      db,
+      kind: "stay",
+      mobile: "9876543210",
+    });
+    assert.equal(updated.exists, true);
+    assert.equal(storage.saved.length, 1);
+    assert.equal(found.registration.name, "Updated Traveller");
+    assert.equal(found.registration.aadhaarUploaded, true);
+    assert.equal(db.collections.get(STAY).size, 1);
+  },
+);
 
 test(
   "invalid registration type is rejected by save",
   async () => {
-  const { saveRegistration } = require("../event-registration.cjs");
-  await assert.rejects(
-    saveRegistration({
-      db: createFakeDb(),
-      kind: "other",
-      input: { mobile: "9876543210" },
-      storage: createFakeStorage(),
-    }),
-    /Invalid registration type/,
-  );
-});
+    const { saveRegistration } = require("../event-registration.cjs");
+    await assert.rejects(
+      saveRegistration({
+        db: createFakeDb(),
+        kind: "other",
+        input: { mobile: "9876543210" },
+        storage: createFakeStorage(),
+      }),
+      /Invalid registration type/,
+    );
+  },
+);
 
 test(
   "admin listing and Aadhaar URL require the expected key",
   async () => {
-  const { adminList, adminAadhaarUrl } = require("../event-registration.cjs");
-  const db = createFakeDb();
-  await assert.rejects(
-    adminList({
-      db,
-      kind: "stay",
-      accessKey: "wrong",
-      expectedKey: "secret",
-    }),
-    /Unauthorized/,
-  );
-  await assert.rejects(
-    adminAadhaarUrl({
-      db,
-      mobile: "9876543210",
-      accessKey: "wrong",
-      expectedKey: "secret",
-      storage: createFakeStorage(),
-    }),
-    /Unauthorized/,
-  );
-});
+    const { adminList, adminAadhaarUrl } = require("../event-registration.cjs");
+    const db = createFakeDb();
+    await assert.rejects(
+      adminList({
+        db,
+        kind: "stay",
+        accessKey: "wrong",
+        expectedKey: "secret",
+      }),
+      /Unauthorized/,
+    );
+    await assert.rejects(
+      adminAadhaarUrl({
+        db,
+        mobile: "9876543210",
+        accessKey: "wrong",
+        expectedKey: "secret",
+        storage: createFakeStorage(),
+      }),
+      /Unauthorized/,
+    );
+  },
+);
 
 test(
   "Aadhaar MIME type must match the actual file signature",
@@ -415,39 +420,40 @@ test(
 test(
   "authorized admin can list registrations and obtain a short-lived Aadhaar URL",
   async () => {
-  const {
-    saveRegistration,
-    adminList,
-    adminAadhaarUrl,
-  } = require("../event-registration.cjs");
-  const db = createFakeDb();
-  const storage = createFakeStorage();
-  await saveRegistration({
-    db,
-    kind: "stay",
-    input: validStayInput(),
-    storage,
-  });
+    const {
+      saveRegistration,
+      adminList,
+      adminAadhaarUrl,
+    } = require("../event-registration.cjs");
+    const db = createFakeDb();
+    const storage = createFakeStorage();
+    await saveRegistration({
+      db,
+      kind: "stay",
+      input: validStayInput(),
+      storage,
+    });
 
-  const listing = await adminList({
-    db,
-    kind: "stay",
-    accessKey: "secret",
-    expectedKey: "secret",
-  });
-  const access = await adminAadhaarUrl({
-    db,
-    mobile: "9876543210",
-    accessKey: "secret",
-    expectedKey: "secret",
-    storage,
-  });
-  assert.equal(listing.summary.registrations, 1);
-  assert.equal(listing.summary.male, 1);
-  assert.equal(listing.registrations[0].aadhaarAvailable, true);
-  assert.match(access.url, /^https:\/\/private\.example\//);
-  assert.equal(access.expiresInSeconds, 300);
-});
+    const listing = await adminList({
+      db,
+      kind: "stay",
+      accessKey: "secret",
+      expectedKey: "secret",
+    });
+    const access = await adminAadhaarUrl({
+      db,
+      mobile: "9876543210",
+      accessKey: "secret",
+      expectedKey: "secret",
+      storage,
+    });
+    assert.equal(listing.summary.registrations, 1);
+    assert.equal(listing.summary.male, 1);
+    assert.equal(listing.registrations[0].aadhaarAvailable, true);
+    assert.match(access.url, /^https:\/\/private\.example\//);
+    assert.equal(access.expiresInSeconds, 300);
+  },
+);
 
 test(
   "Aadhaar uploads larger than 5 MB are rejected",
