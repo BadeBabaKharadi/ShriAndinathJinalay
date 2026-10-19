@@ -75,6 +75,27 @@ test("October event form is responsive and exposes both registration types", asy
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByLabel("मोबाइल नंबर *")).toBeVisible();
   await expect(page.locator(".event-wrap")).toBeVisible();
+  await expect(page.locator("#address")).toHaveValue("");
+  await expect(page.locator("#address")).toHaveAttribute(
+    "placeholder",
+    "उदा. फ्लैट 101, ABC सोसाइटी, खराड़ी, पुणे",
+  );
+});
+
+test("lodging form shows one origin-city field instead of duplicate city inputs", async ({
+  page,
+}) => {
+  await mockQrLibrary(page);
+  await handleCallablePreflight(page);
+  await page.goto("/october-event-registration.html");
+  await page
+    .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
+    .click();
+
+  await expect(page.locator("#city")).toHaveCount(1);
+  await expect(page.locator("#comingFrom")).toHaveCount(0);
+  await expect(page.locator("#cityLabel")).toHaveText("कहाँ से आ रहे हैं? *");
+  await expect(page.locator("#city")).toHaveValue("");
 });
 
 test("food registration submits details and renders the stable QR reference", async ({
