@@ -1,4 +1,4 @@
-name: Deploy Pratibha Firebase Functions
+name: Deploy Firebase Functions
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
         run: npm test
 
   deploy:
-    name: Deploy Pratibha Functions
+    name: Deploy Registration Functions
     needs: test
     runs-on: ubuntu-latest
     environment: production
@@ -66,4 +66,4 @@ jobs:
         run: |
           npx --yes firebase-tools@latest deploy \
             --project jain-community-platform \
-            --only functions:pratibhaConfig,functions:pratibhaCreate,functions:pratibhaFindByMobile,functions:pratibhaGet,functions:pratibhaUpdate,functions:pratibhaAdminConfig,functions:pratibhaAdminSaveConfig,functions:pratibhaAdminSaveRule,functions:pratibhaAdminDeleteRule,functions:pratibhaAdminStats,functions:pratibhaAdminList,functions:pratibhaAdminGet,functions:pratibhaAdminMedia,functions:pratibhaAdminReview
+            --only functions:pratibhaConfig,functions:pratibhaCreate,functions:pratibhaFindByMobile,functions:pratibhaGet,functions:pratibhaUpdate,functions:pratibhaAdminConfig,functions:pratibhaAdminSaveConfig,functions:pratibhaAdminSaveRule,functions:pratibhaAdminDeleteRule,functions:pratibhaAdminStats,functions:pratibhaAdminList,functions:pratibhaAdminGet,functions:pratibhaAdminMedia,functions:pratibhaAdminReview,functions:octoberEventLookup,functions:octoberEventSave,functions:octoberEventVerifyAdmin,functions:octoberEventAdminList,functions:octoberEventAdminAadhaar
