@@ -460,8 +460,8 @@ test(
   () => {
     const input = validStayInput({
       aadhaarBase64: Buffer.alloc(5 * 1024 * 1024 + 1, 0x41).toString("base64"),
-  });
-  assert.throws(() => validateStay(input), /smaller than 5 MB/);
+    });
+    assert.throws(() => validateStay(input), /smaller than 5 MB/);
   },
 );
 
