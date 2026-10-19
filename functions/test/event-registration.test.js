@@ -261,12 +261,12 @@ test(
 test(
   "lodging identity documents are validated and normalized",
   () => {
-      const valid = validStayInput({
-        identityDocumentType: "aadhaar",
-        identityDocumentNumber: "234567890123",
-        city: "Pune",
-        state: "Maharashtra",
-        pincode: "411014",
+    const valid = validStayInput({
+      identityDocumentType: "aadhaar",
+      identityDocumentNumber: "234567890123",
+      city: "Pune",
+      state: "Maharashtra",
+      pincode: "411014",
     });
     const { validateStay } = require("../event-registration.cjs");
     const normalized = validateStay(valid);
