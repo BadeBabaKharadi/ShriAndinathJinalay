@@ -40,8 +40,18 @@ function validateStay(input, { allowExistingAadhaar = false } = {}) {
   const female = count(input.female, "Female count");
   const children = count(input.children, "Children count");
   if (male + female + children < 1) throw new Error("At least one traveller is required.");
+  // Keep this allow-list explicit so the first accommodation day (23 October)
+  // is accepted by the server as well as by the public form.
   const checkInDate = required(input.checkInDate, "Check-in date");
-  if (!/^2026-10-(2[3-6])$/.test(checkInDate)) throw new Error("Check-in date must be 23, 24, 25, or 26 October 2026.");
+  const allowedCheckInDates = new Set([
+    "2026-10-23",
+    "2026-10-24",
+    "2026-10-25",
+    "2026-10-26",
+  ]);
+  if (!allowedCheckInDates.has(checkInDate)) {
+    throw new Error("Check-in date must be 23, 24, 25, or 26 October 2026.");
+  }
   if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(input.checkInTime || ""))) throw new Error("Enter a valid check-in time.");
   const checkOutDate = required(input.checkOutDate, "Check-out date");
   if (!/^2026-10-(2[4-7])$/.test(checkOutDate)) throw new Error("Check-out date must be 24, 25, 26, or 27 October 2026.");
