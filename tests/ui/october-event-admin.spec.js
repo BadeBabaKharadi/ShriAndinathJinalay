@@ -34,9 +34,9 @@ async function mockQrLibrary(page) {
   );
 }
 
-test("stay admin hides the key form after authorization and shows inline details with Aadhaar preview and day statistics", async ({
-  page,
-}) => {
+test(
+  "stay admin hides the key form after authorization and shows inline details with Aadhaar preview and day statistics",
+  async ({ page }) => {
   await mockCallable(page, "octoberEventVerifyAdmin", { verified: true });
   await mockCallable(page, "octoberEventAdminList", {
     registrations: [
@@ -97,9 +97,9 @@ test("stay admin hides the key form after authorization and shows inline details
   await expect(page.locator("#dayStats")).toContainText("2026-10-24");
 });
 
-test("food admin filters by coupon count and expands details below the matching row", async ({
-  page,
-}) => {
+test(
+  "food admin filters by coupon count and expands details below the matching row",
+  async ({ page }) => {
   await mockCallable(page, "octoberEventVerifyAdmin", { verified: true });
   await mockCallable(page, "octoberEventAdminList", {
     registrations: [
