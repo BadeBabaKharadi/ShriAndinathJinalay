@@ -76,6 +76,7 @@ test("Aadhaar selection shows a preview and upload animation, and can be removed
   await page.locator("#pincode").fill("411014");
   await page.locator("#identityDocumentNumber").fill("234567890123");
   await page.getByLabel("कहाँ से आ रहे हैं? *").fill("Nashik");
+  await page.locator("#checkInDate").selectOption("2026-10-23");
   await page.locator("#checkOutDate").selectOption("2026-10-26");
   await page.locator("#checkInTime").selectOption("12:00");
   await page.locator("#checkOutTime").selectOption("10:00");
