@@ -422,3 +422,19 @@ test("Aadhaar uploads larger than 5 MB are rejected", () => {
   });
   assert.throws(() => validateStay(input), /smaller than 5 MB/);
 });
+
+
+test("stay admin summary counts check-ins and check-outs by date and half-day", async () => {
+  const { adminList } = require("../event-registration.cjs");
+  const db = createFakeDb();
+  const records = new Map();
+  db.collections.set("octoberEventStayRegistrations", records);
+  records.set("9876543210", { registrationId: "DKS26-A", name: "Morning Guest", mobile: "9876543210", address: "Pune", comingFrom: "Nashik", male: 1, female: 2, children: 0, checkInDate: "2026-10-24", checkInTime: "10:00", checkOutDate: "2026-10-25", checkOutTime: "13:00", updatedAt: 1 });
+  records.set("9876543211", { registrationId: "DKS26-B", name: "Afternoon Guest", mobile: "9876543211", address: "Pune", comingFrom: "Mumbai", male: 2, female: 0, children: 1, checkInDate: "2026-10-24", checkInTime: "12:00", checkOutDate: "2026-10-25", checkOutTime: "09:00", updatedAt: 2 });
+  const listing = await adminList({ db, kind: "stay", accessKey: "secret", expectedKey: "secret" });
+  assert.deepEqual(listing.summary.dailyCheckIn["2026-10-24"], { firstHalf: 1, secondHalf: 1 });
+  assert.deepEqual(listing.summary.dailyCheckOut["2026-10-25"], { firstHalf: 1, secondHalf: 1 });
+  assert.equal(listing.summary.male, 3);
+  assert.equal(listing.summary.female, 2);
+  assert.equal(listing.summary.children, 1);
+});
