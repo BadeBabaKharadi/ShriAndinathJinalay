@@ -127,7 +127,9 @@ test(
     await page.locator("#login").click();
     await page.locator("#couponFilter").fill("3");
 
-    await expect(page.locator("#rows tr[data-registration-row]")).toHaveCount(1);
+    await expect(
+      page.locator("#rows tr[data-registration-row]"),
+    ).toHaveCount(1);
     await expect(page.locator("#rows")).toContainText("Two Guest");
     await page.locator("#rows button[data-detail]").click();
     await expect(
