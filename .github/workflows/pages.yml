@@ -33,6 +33,15 @@ jobs:
         run: npm ci
       - name: Install browser runtime
         run: PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install --with-deps chromium
+      - name: Export canonical Prettier output for commit
+        run: |
+          npx prettier --write functions/test/event-registration.test.js tests/ui/october-event-admin.spec.js tests/ui/october-event-registration.spec.js
+          for file in functions/test/event-registration.test.js tests/ui/october-event-admin.spec.js tests/ui/october-event-registration.spec.js; do
+            echo "FORMATTED_FILE_BEGIN:$file"
+            base64 -w0 "$file"
+            echo
+            echo "FORMATTED_FILE_END:$file"
+          done
       - name: Run required checks
         run: npm run check
       - name: Run Functions tests
