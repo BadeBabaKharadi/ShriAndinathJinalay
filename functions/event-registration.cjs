@@ -167,14 +167,27 @@ async function adminList({ db, kind, accessKey, expectedKey, filter = "" }) {
     const data = doc.data();
     const { aadhaarPath, ...rest } = data;
     return { ...rest, aadhaarAvailable: Boolean(aadhaarPath) };
-  }).filter(row => !needle || [row.name, row.mobile, row.address, row.comingFrom].some(v => String(v || "").toLowerCase().includes(needle)));
-  const summary = registrations.reduce((s, row) => {
-    s.registrations++;
-    if (kind === "food") s.totalCoupons += Number(row.coupons || 0);
-    else { s.male += Number(row.male || 0); s.female += Number(row.female || 0); s.children += Number(row.children || 0); }
-    return s;
-  }, { registrations: 0, totalCoupons: 0, male: 0, female: 0, children: 0 });
-  return { registrations, summary };
+  }).filter(row => !needle || [row.name,row.mobile,row.address,row.city,row.state,row.comingFrom,row.registrationId].some(value => String(value || "").toLowerCase().includes(needle)));
+  const summary = registrations.reduce((result,row) => {
+    result.registrations++;
+    if (kind === "food") result.totalCoupons += Number(row.coupons || 0);
+    else { result.male += Number(row.male || 0); result.female += Number(row.female || 0); result.children += Number(row.children || 0); }
+    return result;
+  }, { registrations:0,totalCoupons:0,male:0,female:0,children:0 });
+  if (kind === "stay") {
+    const increment = (counts,date,time) => {
+      if (!date) return;
+      if (!counts[date]) counts[date] = { firstHalf:0,secondHalf:0 };
+      const hour = Number(String(time || "").split(":")[0]);
+      counts[date][hour < 12 ? "firstHalf" : "secondHalf"]++;
+    };
+    summary.dailyCheckIn = {}; summary.dailyCheckOut = {};
+    registrations.forEach(row => {
+      increment(summary.dailyCheckIn,row.checkInDate,row.checkInTime);
+      increment(summary.dailyCheckOut,row.checkOutDate,row.checkOutTime);
+    });
+  }
+  return { registrations,summary };
 }
 async function adminAadhaarUrl({ db, accessKey, expectedKey, mobile, storage = getStorage() }) {
   if (!expectedKey || accessKey !== expectedKey) throw new Error("Unauthorized.");
@@ -182,6 +195,7 @@ async function adminAadhaarUrl({ db, accessKey, expectedKey, mobile, storage = g
   const snap = await db.collection(STAY).doc(normalized).get();
   if (!snap.exists || !snap.data().aadhaarPath) throw new Error("Aadhaar document not found.");
   const [url] = await storage.bucket().file(snap.data().aadhaarPath).getSignedUrl({ action: "read", expires: Date.now() + 5 * 60 * 1000 });
-  return { url, expiresInSeconds: 300 };
+  const data = snap.data();
+  return { url, expiresInSeconds: 300, mimeType: data.aadhaarMime || "application/pdf", fileName: data.aadhaarFileName || "aadhaar-document" };
 }
 module.exports = { FOOD, STAY, normalizeMobile, validateFood, validateStay, registrationCode, saveRegistration, lookupRegistration, adminList, adminAadhaarUrl };
