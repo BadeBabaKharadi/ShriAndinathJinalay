@@ -365,10 +365,10 @@ test("authorized food admin can view details and export the filtered list", asyn
   await page.getByRole("button", { name: "सत्यापित करें" }).click();
   await expect(page.locator("#rows")).toContainText("Test Person");
   await page.getByRole("button", { name: "विवरण" }).click();
-  await expect(page.locator("#details")).toContainText("Pune address");
+  await expect(page.locator('tr[data-details-for="DKF26-ABC123"]')).toContainText("Pune address");
 
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "CSV निर्यात" }).click();
+  await page.getByRole("button", { name: "CSV डाउनलोड" }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("october-food-registrations.csv");
 });
