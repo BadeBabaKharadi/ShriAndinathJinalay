@@ -84,7 +84,8 @@ test(
     () => validateStay({ ...valid, aadhaarBase64: "" }),
     /Aadhaar file/,
   );
-});
+  },
+);
 
 test("registration reference is stable per mobile and form type", () => {
   assert.equal(
