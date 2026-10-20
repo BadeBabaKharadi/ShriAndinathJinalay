@@ -13,7 +13,9 @@ test("normalizes valid Indian mobile numbers and rejects invalid values", () => 
   assert.throws(() => normalizeMobile("123"), /valid 10-digit/);
 });
 
-test("food registration requires name/address and enforces coupon cap of seven", () => {
+test(
+  "food registration requires name/address and enforces coupon cap of seven",
+  () => {
   assert.equal(
     validateFood({
       mobile: "9876543210",
@@ -45,7 +47,9 @@ test("food registration requires name/address and enforces coupon cap of seven",
   );
 });
 
-test("lodging validates group counts, check-in date/time, and mandatory private document", () => {
+test(
+  "lodging validates group counts, check-in date/time, and mandatory private document",
+  () => {
   const valid = {
     mobile: "9876543210",
     name: "Test Traveller",
@@ -264,7 +268,10 @@ test("lodging identity documents are validated and normalized", () => {
     }).identityDocumentNumber,
     "ABCDE1234F",
   );
-  assert.throws(() => validateStay({ ...valid, pincode: "41101" }), /PIN code/);
+  assert.throws(
+    () => validateStay({ ...valid, pincode: "41101" }),
+    /PIN code/,
+  );
   assert.throws(
     () => validateStay({ ...valid, identityDocumentNumber: "012345678901" }),
     /Aadhaar number/,
