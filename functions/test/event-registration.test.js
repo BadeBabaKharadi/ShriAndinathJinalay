@@ -47,6 +47,7 @@ test(
     );
   },
 );
+
 test(
   "lodging validates group counts, check-in date/time, and mandatory private document",
   () => {
@@ -84,10 +85,9 @@ test(
       () => validateStay({ ...valid, aadhaarBase64: "" }),
       /Aadhaar file/,
     );
-    },
-  );
   },
 );
+
 test("registration reference is stable per mobile and form type", () => {
   assert.equal(
     registrationCode("food", "9876543210"),
