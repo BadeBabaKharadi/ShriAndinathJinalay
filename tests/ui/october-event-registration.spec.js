@@ -365,10 +365,12 @@ test("authorized food admin can view details and export the filtered list", asyn
   await page.getByRole("button", { name: "सत्यापित करें" }).click();
   await expect(page.locator("#rows")).toContainText("Test Person");
   await page.getByRole("button", { name: "विवरण" }).click();
-  await expect(page.locator("#details")).toContainText("Pune address");
+  await expect(
+    page.locator('tr[data-details-for="DKF26-ABC123"]'),
+  ).toContainText("Pune address");
 
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "CSV निर्यात" }).click();
+  await page.getByRole("button", { name: "CSV डाउनलोड" }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("october-food-registrations.csv");
 });
@@ -385,9 +387,9 @@ test("supports lodging check-in starting on 23 October", async ({ page }) => {
   await page.getByRole("button", { name: "खोजें और आगे बढ़ें" }).click();
   await expect(page.locator("#formFields")).toBeVisible();
   await expect(page.locator("#checkInDate")).toContainText("23 अक्टूबर");
-  await expect(page.locator("#checkInDate option").first()).toHaveValue(
-    "2026-10-23",
-  );
+  await expect(page.locator("#checkInDate option").first()).toHaveValue("");
+  await expect(page.locator("#checkInDate")).toHaveValue("");
+  await page.locator("#checkInDate").selectOption("2026-10-23");
 });
 
 test("new lodging registration includes a selected Aadhaar document", async ({
@@ -432,6 +434,7 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   await page.locator("#pincode").fill("411014");
   await page.locator("#identityDocumentNumber").fill("234567890123");
   await page.getByLabel("कहाँ से आ रहे हैं? *").fill("Nashik");
+  await page.locator("#checkInDate").selectOption("2026-10-23");
   await page.locator("#checkOutDate").selectOption("2026-10-26");
   await page.locator("#checkInTime").selectOption("12:00");
   await page.locator("#checkOutTime").selectOption("10:00");
