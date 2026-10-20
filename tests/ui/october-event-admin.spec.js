@@ -10,7 +10,7 @@ const corsHeaders = {
 };
 
 async function mockCallable(page, name, result) {
-  await page.route(`${functionsUrl}/${name}`, async (route) => {
+  await page.route(`**/${name}`, async (route) => {
     if (route.request().method() === "OPTIONS") {
       return route.fulfill({ status: 204, headers: corsHeaders });
     }
