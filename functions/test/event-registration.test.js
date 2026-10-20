@@ -13,45 +13,40 @@ test("normalizes valid Indian mobile numbers and rejects invalid values", () => 
   assert.throws(() => normalizeMobile("123"), /valid 10-digit/);
 });
 
-test(
-  "food registration requires name/address and enforces coupon cap of seven",
-  () => {
-    assert.equal(
+test("food registration requires name/address and enforces coupon cap of seven", () => {
+  assert.equal(
+    validateFood({
+      mobile: "9876543210",
+      name: "Test Person",
+      address: "Pune",
+      coupons: 7,
+    }).coupons,
+    7,
+  );
+  assert.throws(
+    () =>
       validateFood({
         mobile: "9876543210",
-        name: "Test Person",
+        name: "Test",
         address: "Pune",
-        coupons: 7,
-      }).coupons,
-      7,
-    );
-    assert.throws(
-      () =>
-        validateFood({
-          mobile: "9876543210",
-          name: "Test",
-          address: "Pune",
-          coupons: 8,
-        }),
-      /between 0 and 7/,
-    );
-    assert.throws(
-      () =>
-        validateFood({
-          mobile: "9876543210",
-          name: "Test",
-          address: "Pune",
-          coupons: 0,
-        }),
-      /between 1 and 7/,
-    );
-  },
-);
+        coupons: 8,
+      }),
+    /between 0 and 7/,
+  );
+  assert.throws(
+    () =>
+      validateFood({
+        mobile: "9876543210",
+        name: "Test",
+        address: "Pune",
+        coupons: 0,
+      }),
+    /between 1 and 7/,
+  );
+});
 
-test(
-  "lodging validates group counts, check-in date/time, and mandatory private document",
-  () => {
-    const valid = {
+test("lodging validates group counts, check-in date/time, and mandatory private document", () => {
+  const valid = {
       mobile: "9876543210",
       name: "Test Traveller",
       address: "Pune address",
@@ -66,8 +61,8 @@ test(
       aadhaarMime: "application/pdf",
       aadhaarFileName: "id.pdf",
       aadhaarBase64: Buffer.from("%PDF-1.7 sample pdf").toString("base64"),
-    };
-    assert.equal(validateStay(valid).male, 1);
+  };
+  assert.equal(validateStay(valid).male, 1);
     assert.throws(() => validateStay({ ...valid, male: -1 }), /whole number/);
     assert.throws(
       () => validateStay({ ...valid, male: 0, female: 0, children: 0 }),
@@ -270,10 +265,7 @@ test("lodging identity documents are validated and normalized", () => {
     }).identityDocumentNumber,
     "ABCDE1234F",
   );
-  assert.throws(
-    () => validateStay({ ...valid, pincode: "41101" }),
-    /PIN code/,
-  );
+  assert.throws(() => validateStay({ ...valid, pincode: "41101" }), /PIN code/);
   assert.throws(
     () => validateStay({ ...valid, identityDocumentNumber: "012345678901" }),
     /Aadhaar number/,
@@ -432,10 +424,8 @@ test("Aadhaar uploads larger than 5 MB are rejected", () => {
   assert.throws(() => validateStay(input), /smaller than 5 MB/);
 });
 
-test(
-  "stay admin summary counts check-ins and check-outs by date and half-day",
-  async () => {
-    const { adminList } = require("../event-registration.cjs");
+test("stay admin summary counts check-ins and check-outs by date and half-day", async () => {
+  const { adminList } = require("../event-registration.cjs");
     const db = createFakeDb();
     const records = new Map();
     db.collections.set("octoberEventStayRegistrations", records);
@@ -475,16 +465,15 @@ test(
       accessKey: "secret",
       expectedKey: "secret",
     });
-    assert.deepEqual(listing.summary.dailyCheckIn["2026-10-24"], {
+  assert.deepEqual(listing.summary.dailyCheckIn["2026-10-24"], {
       firstHalf: 1,
       secondHalf: 1,
     });
-    assert.deepEqual(listing.summary.dailyCheckOut["2026-10-25"], {
+  assert.deepEqual(listing.summary.dailyCheckOut["2026-10-25"], {
       firstHalf: 1,
       secondHalf: 1,
     });
-    assert.equal(listing.summary.male, 3);
-    assert.equal(listing.summary.female, 2);
-    assert.equal(listing.summary.children, 1);
-  },
-);
+  assert.equal(listing.summary.male, 3);
+  assert.equal(listing.summary.female, 2);
+  assert.equal(listing.summary.children, 1);
+});
