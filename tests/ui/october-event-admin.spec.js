@@ -29,7 +29,7 @@ async function mockQrLibrary(page) {
     (route) =>
       route.fulfill({
         contentType: "application/javascript",
-        body: "window.QRCode = { toCanvas: async (canvas) => canvas }; window.QRCode.CorrectLevel = { M: 0 };
+        body: "window.QRCode = { toCanvas: async (canvas) => canvas }; window.QRCode.CorrectLevel = { M: 0 };",
       }),
   );
 }
