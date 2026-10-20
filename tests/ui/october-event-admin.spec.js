@@ -29,15 +29,14 @@ async function mockQrLibrary(page) {
     (route) =>
       route.fulfill({
         contentType: "application/javascript",
-        body:
-          "window.QRCode = { toCanvas: async (canvas) => canvas }; window.QRCode.CorrectLevel = { M: 0 };",
+        body: "window.QRCode = { toCanvas: async (canvas) => canvas }; window.QRCode.CorrectLevel = { M: 0 };
       }),
   );
 }
 
-test(
-  "stay admin hides the key form after authorization and shows inline details with Aadhaar preview and day statistics",
-  async ({ page }) => {
+test("stay admin hides the key form after authorization and shows inline details with Aadhaar preview and day statistics", async ({
+  page,
+}) => {
     await mockCallable(page, "octoberEventVerifyAdmin", { verified: true });
     await mockCallable(page, "octoberEventAdminList", {
       registrations: [
@@ -99,9 +98,9 @@ test(
   },
 );
 
-test(
-  "food admin filters by coupon count and expands details below the matching row",
-  async ({ page }) => {
+test("food admin filters by coupon count and expands details below the matching row", async ({
+  page,
+}) => {
     await mockCallable(page, "octoberEventVerifyAdmin", { verified: true });
     await mockCallable(page, "octoberEventAdminList", {
       registrations: [
