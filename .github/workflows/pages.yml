@@ -42,6 +42,10 @@ jobs:
             echo
             echo "FORMATTED_FILE_END:$file"
           done
+      - name: Inspect formatter output
+        run: |
+          npx prettier --write functions/test/event-registration.test.js tests/ui/october-event-admin.spec.js tests/ui/october-event-registration.spec.js
+          git diff --no-ext-diff -- functions/test/event-registration.test.js tests/ui/october-event-admin.spec.js tests/ui/october-event-registration.spec.js
       - name: Run required checks
         run: npm run check
       - name: Run Functions tests
