@@ -47,41 +47,40 @@ test("food registration requires name/address and enforces coupon cap of seven",
 
 test("lodging validates group counts, check-in date/time, and mandatory private document", () => {
   const valid = {
-      mobile: "9876543210",
-      name: "Test Traveller",
-      address: "Pune address",
-      comingFrom: "Nashik",
-      male: 1,
-      female: 1,
-      children: 0,
-      checkInDate: "2026-10-25",
-      checkInTime: "12:30",
-      checkOutDate: "2026-10-26",
-      checkOutTime: "10:00",
-      aadhaarMime: "application/pdf",
-      aadhaarFileName: "id.pdf",
-      aadhaarBase64: Buffer.from("%PDF-1.7 sample pdf").toString("base64"),
+    mobile: "9876543210",
+    name: "Test Traveller",
+    address: "Pune address",
+    comingFrom: "Nashik",
+    male: 1,
+    female: 1,
+    children: 0,
+    checkInDate: "2026-10-25",
+    checkInTime: "12:30",
+    checkOutDate: "2026-10-26",
+    checkOutTime: "10:00",
+    aadhaarMime: "application/pdf",
+    aadhaarFileName: "id.pdf",
+    aadhaarBase64: Buffer.from("%PDF-1.7 sample pdf").toString("base64"),
   };
   assert.equal(validateStay(valid).male, 1);
-    assert.throws(() => validateStay({ ...valid, male: -1 }), /whole number/);
-    assert.throws(
-      () => validateStay({ ...valid, male: 0, female: 0, children: 0 }),
-      /At least one traveller/,
-    );
-    assert.throws(
-      () => validateStay({ ...valid, checkInDate: "2026-10-27" }),
-      /Check-in date/,
-    );
-    assert.throws(
-      () => validateStay({ ...valid, aadhaarMime: "text/plain" }),
-      /PDF, JPG, or PNG/,
-    );
-    assert.throws(
-      () => validateStay({ ...valid, aadhaarBase64: "" }),
-      /Aadhaar file/,
-    );
-  },
-);
+  assert.throws(() => validateStay({ ...valid, male: -1 }), /whole number/);
+  assert.throws(
+    () => validateStay({ ...valid, male: 0, female: 0, children: 0 }),
+    /At least one traveller/,
+  );
+  assert.throws(
+    () => validateStay({ ...valid, checkInDate: "2026-10-27" }),
+    /Check-in date/,
+  );
+  assert.throws(
+    () => validateStay({ ...valid, aadhaarMime: "text/plain" }),
+    /PDF, JPG, or PNG/,
+  );
+  assert.throws(
+    () => validateStay({ ...valid, aadhaarBase64: "" }),
+    /Aadhaar file/,
+  );
+});
 
 test("registration reference is stable per mobile and form type", () => {
   assert.equal(
