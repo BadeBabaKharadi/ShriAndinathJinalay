@@ -13,12 +13,14 @@ test("normalizes valid Indian mobile numbers and rejects invalid values", () => 
   assert.throws(() => normalizeMobile("123"), /valid 10-digit/);
 });
 
-test("food registration requires name/address and enforces coupon cap of seven", () => {
+test("food registration requires name, address, city, state and enforces coupon cap of seven", () => {
   assert.equal(
     validateFood({
       mobile: "9876543210",
       name: "Test Person",
       address: "Pune",
+      city: "Pune",
+      state: "Maharashtra",
       coupons: 7,
     }).coupons,
     7,
@@ -29,6 +31,8 @@ test("food registration requires name/address and enforces coupon cap of seven",
         mobile: "9876543210",
         name: "Test",
         address: "Pune",
+        city: "Pune",
+        state: "Maharashtra",
         coupons: 8,
       }),
     /between 0 and 7/,
@@ -39,6 +43,32 @@ test("food registration requires name/address and enforces coupon cap of seven",
         mobile: "9876543210",
         name: "Test",
         address: "Pune",
+        city: "",
+        state: "Maharashtra",
+        coupons: 1,
+      }),
+    /City is required/,
+  );
+  assert.throws(
+    () =>
+      validateFood({
+        mobile: "9876543210",
+        name: "Test",
+        address: "Pune",
+        city: "Pune",
+        state: " ",
+        coupons: 1,
+      }),
+    /State is required/,
+  );
+  assert.throws(
+    () =>
+      validateFood({
+        mobile: "9876543210",
+        name: "Test",
+        address: "Pune",
+        city: "Pune",
+        state: "Maharashtra",
         coupons: 0,
       }),
     /between 1 and 7/,
@@ -185,6 +215,8 @@ test("food save, duplicate-mobile update, and lookup persist one record", async 
       mobile: "9876543210",
       name: "First Name",
       address: "Pune",
+      city: "Pune",
+      state: "Maharashtra",
       coupons: 2,
     },
     storage: createFakeStorage(),
@@ -196,6 +228,8 @@ test("food save, duplicate-mobile update, and lookup persist one record", async 
       mobile: "+91 98765 43210",
       name: "Updated Name",
       address: "Mumbai",
+      city: "Mumbai",
+      state: "Maharashtra",
       coupons: 7,
     },
     storage: createFakeStorage(),
@@ -210,6 +244,8 @@ test("food save, duplicate-mobile update, and lookup persist one record", async 
   assert.equal(found.exists, true);
   assert.equal(found.registration.name, "Updated Name");
   assert.equal(found.registration.coupons, 7);
+  assert.equal(found.registration.city, "Mumbai");
+  assert.equal(found.registration.state, "Maharashtra");
   assert.equal(db.collections.get(FOOD).size, 1);
   assert.equal(
     found.registration.registrationId,
