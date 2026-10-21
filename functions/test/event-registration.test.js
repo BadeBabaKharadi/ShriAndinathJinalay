@@ -39,12 +39,26 @@ test("food registration requires name, address, city, state and enforces coupon 
   );
   assert.throws(
     () =>
-      validateFood({ mobile: "9876543210", name: "Test", address: "Pune", city: "", state: "Maharashtra", coupons: 1 }),
+      validateFood({
+        mobile: "9876543210",
+        name: "Test",
+        address: "Pune",
+        city: "",
+        state: "Maharashtra",
+        coupons: 1,
+      }),
     /City is required/,
   );
   assert.throws(
     () =>
-      validateFood({ mobile: "9876543210", name: "Test", address: "Pune", city: "Pune", state: " ", coupons: 1 }),
+      validateFood({
+        mobile: "9876543210",
+        name: "Test",
+        address: "Pune",
+        city: "Pune",
+        state: " ",
+        coupons: 1,
+      }),
     /State is required/,
   );
   assert.throws(
