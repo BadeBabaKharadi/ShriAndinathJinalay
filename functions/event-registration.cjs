@@ -32,7 +32,7 @@ function validateFood(input) {
   const mobile = normalizeMobile(input.mobile);
   const coupons = count(input.coupons, "Food coupon count", 7);
   if (coupons < 1) throw new Error("Food coupon count must be between 1 and 7.");
-  return { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), coupons };
+  return { mobile, name: required(input.name, "Name"), address: required(input.address, "Address"), city: required(input.city, "City"), state: required(input.state, "State"), coupons };
 }
 function validateStay(input, { allowExistingAadhaar = false } = {}) {
   const mobile = normalizeMobile(input.mobile);
