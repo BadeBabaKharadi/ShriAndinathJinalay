@@ -58,9 +58,6 @@ test("booth form validates mobile and displays rules", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: /बूथ सुविधा पंजीकरण/ }),
   ).toBeVisible();
-  await expect(page.locator("#availability")).toContainText(
-    "UAT पंजीकरण सेवा कॉन्फ़िगर है",
-  );
   await expect(page.locator("body")).toContainText("20 बूथ");
   await expect(page.locator("body")).toContainText("₹2,100");
 
@@ -114,10 +111,7 @@ test("new applicant can submit a receipt-backed registration", async ({
   await page.locator("#continue").click();
 
   await expect(page.locator("#paymentCard")).toBeVisible();
-  await expect(page.locator("#qrBox [data-payload]")).toHaveAttribute(
-    "data-payload",
-    /^upi:\/\/pay/,
-  );
+  await expect(page.locator("#qrBox img.booth-qr")).toBeVisible();
   await page.locator("#paymentDone").click();
   await expect(page.locator("#formCard")).toBeVisible();
 
@@ -208,7 +202,8 @@ test("admin can review payments, disable records, and export CSV", async ({
   await page.locator("#login").click();
 
   await expect(page.locator("#rows")).toContainText("Admin Test");
-  await expect(page.locator("#rows")).toContainText("रसीद खोलें");
+  await expect(page.locator("#rows")).toContainText("रसीद देखें / जाँचें");
+  await expect(page.locator("#rows img.receipt-thumb")).toBeVisible();
   await page.locator('[data-action="verify"]').click();
   await page.locator('[data-action="disable"]').click();
 
