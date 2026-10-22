@@ -19,6 +19,8 @@ const publishPaths = [
   "pratibha-samman.html",
   "pratibha-admin-4f7c9a.html",
   "october-event-registration.html",
+  "booth-registration.html",
+  "booth-admin-2026.html",
   "food-admin-a7f3c9d2e4b6815f.html",
   "stay-admin-b8e1f6a4c9d2730a.html",
   "team.html",
@@ -26,6 +28,7 @@ const publishPaths = [
   "css",
   "data",
   "images",
+  "assets",
   "js",
 ];
 
