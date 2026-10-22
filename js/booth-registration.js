@@ -7,8 +7,8 @@ const hide=id=>$(id).classList.add("booth-hidden"), show=id=>$(id).classList.rem
 function msg(text,error=false){$("status").textContent=text;$("status").style.borderLeft=error?"4px solid #b42318":"4px solid #d8aa63";}
 function mobileValue(){return $("mobile").value.replace(/\D/g,"").slice(-10);}
 function setBusy(button,busy,label){button.disabled=busy;button.innerHTML=busy?'<span class="booth-spin" aria-hidden="true"></span>'+label:(button.dataset.label||"पंजीकरण जमा करें");}
-async function call(name,data){const base=window.BOOTH_FUNCTIONS_BASE;if(!base)throw new Error("UAT backend is not configured. Please configure the dedicated UAT Firebase Functions endpoint before testing.");let response;try{response=await fetch(base+"/"+name,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data})});}catch(e){throw new Error("सर्वर से कनेक्शन नहीं हो पाया। कृपया बाद में पुनः प्रयास करें।");}let json;try{json=await response.json();}catch(e){throw new Error("सर्वर से अमान्य उत्तर मिला।");}if(!response.ok||json.error)throw new Error(json.error?.message||"अनुरोध विफल हुआ।");return json.result??json.data;}
-function setupFirebase(){$("availability").textContent=window.BOOTH_FUNCTIONS_BASE?"UAT पंजीकरण सेवा कॉन्फ़िगर है। मोबाइल नंबर से अपनी स्थिति जाँचें।":"UAT backend configuration pending — अभी वास्तविक आवेदन जमा न करें।";}
+async function call(name,data){const base=window.BOOTH_FUNCTIONS_BASE;if(!base)throw new Error("पंजीकरण सेवा अभी उपलब्ध नहीं है। कृपया आयोजन समिति से संपर्क करें।");let response;try{response=await fetch(base+"/"+name,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data})});}catch(e){throw new Error("सर्वर से कनेक्शन नहीं हो पाया। कृपया बाद में पुनः प्रयास करें।");}let json;try{json=await response.json();}catch(e){throw new Error("सर्वर से अमान्य उत्तर मिला।");}if(!response.ok||json.error)throw new Error(json.error?.message||"अनुरोध विफल हुआ।");return json.result??json.data;}
+function setupFirebase(){}
 function showQr(){
 const upi=window.BOOTH_PAYMENT_UPI_ID;
 const qrImage=window.BOOTH_PAYMENT_QR_IMAGE;
