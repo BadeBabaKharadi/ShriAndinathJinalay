@@ -14,7 +14,7 @@ const upi=window.BOOTH_PAYMENT_UPI_ID;
 const qrImage=window.BOOTH_PAYMENT_QR_IMAGE;
 if(!upi&&!qrImage){$("qrBox").textContent="भुगतान QR उपलब्ध नहीं है। ट्रस्ट का आधिकारिक UPI ID/QR कॉन्फ़िगर होने तक भुगतान न करें।";return;}
 $("qrBox").replaceChildren();
-if(qrImage){const img=document.createElement("img");img.src=qrImage;img.alt="Kharadi Jain Samaj Trust का आधिकारिक भुगतान QR";img.className="booth-qr";$("qrBox").append(img);}
+if(qrImage){const img=document.createElement("img");img.src=qrImage;img.alt="मंदिर भुगतान QR — इसे UPI ऐप से स्कैन करें";img.className="booth-qr";img.loading="eager";img.decoding="async";img.onerror=()=>{img.remove();const error=document.createElement("p");error.setAttribute("role","alert");error.textContent="भुगतान QR लोड नहीं हो पाया। कृपया पृष्ठ रीफ़्रेश करें या आयोजन समिति से संपर्क करें।";$("qrBox").append(error);};$("qrBox").append(img);}
 else if(window.QRCode){const uri="upi://pay?pa="+encodeURIComponent(upi)+"&pn="+encodeURIComponent("Kharadi Jain Samaj Trust")+"&am="+EVENT_FEE+"&cu=INR&tn="+encodeURIComponent("Booth booking 25 Oct 2026");const holder=document.createElement("div");holder.className="booth-qr";$("qrBox").append(holder);new QRCode(holder,{text:uri,width:240,height:240,correctLevel:QRCode.CorrectLevel.M});}
 else{$("qrBox").textContent="QR कोड लोड नहीं हो पाया। कृपया पृष्ठ रीफ़्रेश करें।";return;}
 const t=document.createElement("p");t.textContent=(upi?"UPI ID: "+upi+" · ":"")+"राशि ₹2,100";$("qrBox").append(t);
