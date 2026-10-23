@@ -11,6 +11,18 @@ const corsHeaders = {
     "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
 };
 
+async function bypassStayClosureForFormInternals(page) {
+  await page.route("**/october-event-registration.html", async (route) => {
+    const response = await route.fetch();
+    const html = await response.text();
+    const marker = '<script>\n(() => {\n  const style = document.createElement("style");';
+    const start = html.indexOf(marker);
+    const end = start >= 0 ? html.indexOf("</script>", start) : -1;
+    const body = start >= 0 && end >= 0 ? html.slice(0, start) + html.slice(end + 9) : html;
+    return route.fulfill({ response, body });
+  });
+}
+
 async function mockQrLibrary(page) {
   await page.route(
     "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
@@ -87,6 +99,7 @@ test("lodging form shows one origin-city field instead of duplicate city inputs"
 }) => {
   await mockQrLibrary(page);
   await handleCallablePreflight(page);
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
@@ -222,6 +235,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
   });
 
   await handleCallablePreflight(page);
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
@@ -378,6 +392,7 @@ test("authorized food admin can view details and export the filtered list", asyn
 test("supports lodging check-in starting on 23 October", async ({ page }) => {
   await mockQrLibrary(page);
   await handleCallablePreflight(page);
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
@@ -420,6 +435,7 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   });
 
   await handleCallablePreflight(page);
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
