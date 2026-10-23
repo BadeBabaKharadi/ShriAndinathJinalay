@@ -17,7 +17,10 @@ async function bypassStayClosureForFormInternals(page) {
     const marker = '<script>\n(() => {\n  const style = document.createElement("style");';
     const start = html.indexOf(marker);
     const end = start >= 0 ? html.indexOf("</script>", start) : -1;
-    const body = start >= 0 && end >= 0 ? html.slice(0, start) + html.slice(end + 9) : html;
+    const body =
+      start >= 0 && end >= 0
+        ? html.slice(0, start) + html.slice(end + 9)
+        : html;
     return route.fulfill({ response, body });
   });
 }
