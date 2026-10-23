@@ -461,3 +461,20 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   });
   expect(submitted.aadhaarBase64).toBeTruthy();
 });
+
+test("stay registration link shows closure notice and never opens the stay form", async ({ page }) => {
+  await mockQrLibrary(page);
+  await page.goto("/october-event-registration.html?closed=stay");
+
+  await expect(
+    page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/आवास के लिए पंजीकरण अब बंद हो चुका है/),
+  ).toBeVisible();
+  await expect(page.locator("#registrationCard")).toBeHidden();
+
+  await page.getByRole("button", { name: "समझ गया" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page).toHaveURL(/october-event-registration\.html$/);
+});
