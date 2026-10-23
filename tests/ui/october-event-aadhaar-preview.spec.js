@@ -25,7 +25,10 @@ async function bypassStayClosureForFormInternals(page) {
       start >= 0 && end >= 0
         ? html.slice(0, start) + html.slice(end + 9)
         : html;
-    return route.fulfill({\n      response,\n      body,\n    });
+    return route.fulfill({
+      response,
+      body,
+    });
   });
 }
 
