@@ -11,10 +11,11 @@
   document.head.appendChild(style);
   const backdrop = document.createElement("div");
   backdrop.className = "stay-closed-backdrop";
+  backdrop.style.display = "none";
   backdrop.setAttribute("role", "presentation");
   backdrop.innerHTML = '<section class="stay-closed-dialog" role="dialog" aria-modal="true" aria-labelledby="stay-closed-title"><div aria-hidden="true" style="font-size:2.5rem">🙏</div><h2 id="stay-closed-title">आवास पंजीकरण बंद है</h2><p>आवास के लिए पंजीकरण अब बंद हो चुका है। कृपया आगे की जानकारी या सहायता के लिए सीधे आवास व्यवस्थापक से संपर्क करें।</p><button type="button" id="stay-closed-close">समझ गया</button></section>';
   document.body.appendChild(backdrop);
-  document.querySelectorAll('[data-kind="stay"]').forEach(button => button.addEventListener("click", event => { event.preventDefault(); event.stopImmediatePropagation(); if (!backdrop.isConnected) document.body.appendChild(backdrop); document.getElementById("stay-closed-close").focus(); }, true));
+  document.querySelectorAll('[data-kind="stay"]').forEach(button => button.addEventListener("click", event => { event.preventDefault(); event.stopImmediatePropagation(); if (!backdrop.isConnected) document.body.appendChild(backdrop); backdrop.style.display = "flex"; document.getElementById("stay-closed-close").focus(); }, true));
   const close = () => {
     backdrop.remove();
 
