@@ -488,28 +488,27 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   expect(submitted.aadhaarBase64).toBeTruthy();
 });
 
-test(
-  "stay registration remains available and opens only after choosing stay",
-  async ({ page }) => {
-    await mockQrLibrary(page);
-    await handleCallablePreflight(page);
-    await page.goto("/october-event-registration.html");
+test("stay registration remains available and opens only after choosing stay", async ({
+  page,
+}) => {
+  await mockQrLibrary(page);
+  await handleCallablePreflight(page);
+  await page.goto("/october-event-registration.html");
 
-    await expect(
-      page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" }),
-    ).toHaveCount(0);
-    await expect(page.locator("#registrationCard")).toBeHidden();
+  await expect(
+    page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" }),
+  ).toHaveCount(0);
+  await expect(page.locator("#registrationCard")).toBeHidden();
 
-    await page
-      .getByRole("button", { name: /बाहर से आने वाले यात्रियों हेतु आवास/ })
-      .click();
+  await page
+    .getByRole("button", { name: /बाहर से आने वाले यात्रियों हेतु आवास/ })
+    .click();
 
-    await expect(
-      page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" }),
-    ).toHaveCount(0);
-    await expect(page.locator("#registrationCard")).toBeVisible();
-    await expect(page.locator("#kind")).toHaveValue("stay");
-    await expect(page.locator("#lookupSection")).toBeVisible();
-    await expect(page.locator("#mobile")).toBeVisible();
-  },
-);
+  await expect(
+    page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" }),
+  ).toHaveCount(0);
+  await expect(page.locator("#registrationCard")).toBeVisible();
+  await expect(page.locator("#kind")).toHaveValue("stay");
+  await expect(page.locator("#lookupSection")).toBeVisible();
+  await expect(page.locator("#mobile")).toBeVisible();
+});
