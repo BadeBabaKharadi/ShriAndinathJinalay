@@ -10,6 +10,28 @@ const corsHeaders = {
     "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
 };
 
+async function bypassStayClosureForFormInternals(page) {
+  await page.route("**/october-event-registration.html", async (route) => {
+    const response = await route.fetch();
+    const html = await response.text();
+    const marker = [
+      "<script>",
+      "(() => {",
+      '  const style = document.createElement("style");',
+    ].join("\n");
+    const start = html.indexOf(marker);
+    const end = start >= 0 ? html.indexOf("</script>", start) : -1;
+    const body =
+      start >= 0 && end >= 0
+        ? html.slice(0, start) + html.slice(end + 9)
+        : html;
+    return route.fulfill({
+      response,
+      body,
+    });
+  });
+}
+
 async function mockQrLibrary(page) {
   await page.route(
     "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
@@ -62,6 +84,7 @@ test("Aadhaar selection shows a preview and upload animation, and can be removed
     });
   });
 
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })

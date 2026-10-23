@@ -11,6 +11,28 @@ const corsHeaders = {
     "authorization, content-type, x-firebase-appcheck, x-firebase-gmpid, x-firebase-client",
 };
 
+async function bypassStayClosureForFormInternals(page) {
+  await page.route("**/october-event-registration.html", async (route) => {
+    const response = await route.fetch();
+    const html = await response.text();
+    const marker = [
+      "<script>",
+      "(() => {",
+      '  const style = document.createElement("style");',
+    ].join("\n");
+    const start = html.indexOf(marker);
+    const end = start >= 0 ? html.indexOf("</script>", start) : -1;
+    const body =
+      start >= 0 && end >= 0
+        ? html.slice(0, start) + html.slice(end + 9)
+        : html;
+    return route.fulfill({
+      response,
+      body,
+    });
+  });
+}
+
 async function mockQrLibrary(page) {
   await page.route(
     "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
@@ -87,6 +109,7 @@ test("lodging form shows one origin-city field instead of duplicate city inputs"
 }) => {
   await mockQrLibrary(page);
   await handleCallablePreflight(page);
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
@@ -222,6 +245,7 @@ test("existing lodging registration can be edited without re-uploading Aadhaar",
   });
 
   await handleCallablePreflight(page);
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
@@ -378,6 +402,7 @@ test("authorized food admin can view details and export the filtered list", asyn
 test("supports lodging check-in starting on 23 October", async ({ page }) => {
   await mockQrLibrary(page);
   await handleCallablePreflight(page);
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
@@ -420,6 +445,7 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   });
 
   await handleCallablePreflight(page);
+  await bypassStayClosureForFormInternals(page);
   await page.goto("/october-event-registration.html");
   await page
     .getByRole("button", { name: "बाहर से आने वाले यात्रियों हेतु आवास" })
@@ -462,21 +488,25 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   expect(submitted.aadhaarBase64).toBeTruthy();
 });
 
-test("stay registration link shows closure notice and never opens the stay form", async ({
+test("stay closure notice appears only after clicking the stay option", async ({
   page,
 }) => {
   await mockQrLibrary(page);
-  await page.goto("/october-event-registration.html?closed=stay");
+  await page.goto("/october-event-registration.html");
 
-  await expect(
-    page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" }),
-  ).toBeVisible();
+  const dialog = page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" });
+  await expect(dialog).toHaveCount(0);
+  await expect(page.locator("#registrationCard")).toBeHidden();
+
+  await page
+    .getByRole("button", { name: /बाहर से आने वाले यात्रियों हेतु आवास/ })
+    .click();
+  await expect(dialog).toBeVisible();
   await expect(
     page.getByText(/आवास के लिए पंजीकरण अब बंद हो चुका है/),
   ).toBeVisible();
-  await expect(page.locator("#registrationCard")).toBeHidden();
 
   await page.getByRole("button", { name: "समझ गया" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(dialog).toHaveCount(0);
   await expect(page).toHaveURL(/october-event-registration\.html$/);
 });
