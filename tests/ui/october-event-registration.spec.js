@@ -462,21 +462,23 @@ test("new lodging registration includes a selected Aadhaar document", async ({
   expect(submitted.aadhaarBase64).toBeTruthy();
 });
 
-test("stay registration link shows closure notice and never opens the stay form", async ({
+test("stay closure notice appears only after clicking the stay option", async ({
   page,
 }) => {
   await mockQrLibrary(page);
-  await page.goto("/october-event-registration.html?closed=stay");
+  await page.goto("/october-event-registration.html");
 
-  await expect(
-    page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" }),
-  ).toBeVisible();
+  const dialog = page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" });
+  await expect(dialog).toHaveCount(0);
+  await expect(page.locator("#registrationCard")).toBeVisible();
+
+  await page.getByRole("button", { name: /बाहर से आने वाले यात्रियों हेतु आवास/ }).click();
+  await expect(dialog).toBeVisible();
   await expect(
     page.getByText(/आवास के लिए पंजीकरण अब बंद हो चुका है/),
   ).toBeVisible();
-  await expect(page.locator("#registrationCard")).toBeHidden();
 
   await page.getByRole("button", { name: "समझ गया" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(dialog).toHaveCount(0);
   await expect(page).toHaveURL(/october-event-registration\.html$/);
 });
