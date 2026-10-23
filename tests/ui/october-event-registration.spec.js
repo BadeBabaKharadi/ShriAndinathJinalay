@@ -478,5 +478,5 @@ test("stay registration link shows closure notice and never opens the stay form"
 
   await page.getByRole("button", { name: "समझ गया" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  await expect(page).toHaveURL(/october-event-registration\\.html$/);
+  await expect(page).toHaveURL(/october-event-registration\.html$/);
 });
