@@ -15,14 +15,18 @@ async function bypassStayClosureForFormInternals(page) {
   await page.route("**/october-event-registration.html", async (route) => {
     const response = await route.fetch();
     const html = await response.text();
-    const marker = '<script>\n(() => {\n  const style = document.createElement("style");';
+    const marker = [
+      "<script>",
+      "(() => {",
+      '  const style = document.createElement("style");',
+    ].join("\n");
     const start = html.indexOf(marker);
     const end = start >= 0 ? html.indexOf("</script>", start) : -1;
     const body =
       start >= 0 && end >= 0
         ? html.slice(0, start) + html.slice(end + 9)
         : html;
-    return route.fulfill({ response, body });
+    return route.fulfill({\n      response,\n      body,\n    });
   });
 }
 
