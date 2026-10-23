@@ -470,7 +470,7 @@ test("stay closure notice appears only after clicking the stay option", async ({
 
   const dialog = page.getByRole("dialog", { name: "आवास पंजीकरण बंद है" });
   await expect(dialog).toHaveCount(0);
-  await expect(page.locator("#registrationCard")).toBeVisible();
+  await expect(page.locator("#registrationCard")).toBeHidden();
 
   await page
     .getByRole("button", { name: /बाहर से आने वाले यात्रियों हेतु आवास/ })
