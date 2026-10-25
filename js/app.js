@@ -35,57 +35,75 @@ async function getTodayDisplayDate() {
 }
 
 async function loadHomeData() {
+  const announceText = document.getElementById(siteContent.announce);
+  const todayDate = document.getElementById(siteContent.date);
+  const kalash = document.getElementById(siteContent.kalash);
+  const announcement = document.getElementById(siteContent.announcement);
+  const footerLocation = document.getElementById(siteContent.location);
+  const today = getTodayDate();
+
+  // Render the date immediately so an optional calendar/data-file failure
+  // cannot leave the entire daily-highlights card blank.
+  if (todayDate) {
+    todayDate.textContent = new Intl.DateTimeFormat('hi-IN', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(new Date());
+  }
+
+  let homeData = {};
   try {
     const response = await fetch('data/home.json');
-    if (!response.ok) {
-      throw new Error('Unable to load home data');
-    }
-
-    const data = await response.json();
-
-    const announceText = document.getElementById(siteContent.announce);
-    const todayDate = document.getElementById(siteContent.date);
-    const kalash = document.getElementById(siteContent.kalash);
-    const announcement = document.getElementById(siteContent.announcement);
-    const footerLocation = document.getElementById(siteContent.location);
-
-    const today = getTodayDate();
-
-    let headerAnnouncement = data.announcement || 'जिनधर्म आराधना चातुर्मास में आपका स्वागत है';
-    let dailyAnnouncement = data.announcement || 'जिनधर्म आराधना चातुर्मास में आपका स्वागत है';
-
-    if (typeof getAnnouncementByDate === 'function') {
-      const announcementEntry = await getAnnouncementByDate(today);
-      const announcementText = getAnnouncementText(announcementEntry);
-
-      if (announcementText) {
-        headerAnnouncement = announcementText;
-        dailyAnnouncement = announcementText;
-      }
-    }
-
-    if (typeof getHinduCalendarByDate === 'function') {
-      const calendarEntry = await getHinduCalendarByDate(today);
-
-      if (calendarEntry?.special && String(calendarEntry.special).trim()) {
-        dailyAnnouncement = String(calendarEntry.special).trim();
-      }
-    }
-
-    if (announceText) {
-      announceText.textContent = headerAnnouncement;
-    }
-
-    if (todayDate) todayDate.textContent = await getTodayDisplayDate();
-    if (kalash) kalash.textContent = data.kalash || 'कलश स्थापना';
-
-    if (announcement) {
-      announcement.textContent = dailyAnnouncement;
-    }
-
-    if (footerLocation) footerLocation.textContent = data.location || 'आदिनाथ जिनालय, खराड़ी, pune';
+    if (!response.ok) throw new Error(`Unable to load home data (HTTP ${response.status})`);
+    homeData = await response.json();
   } catch (error) {
-    console.warn('Home data could not be loaded:', error);
+    console.warn('Home configuration could not be loaded:', error);
+  }
+
+  if (kalash) kalash.textContent = homeData.kalash || 'कलश स्थापना';
+  if (footerLocation) {
+    footerLocation.textContent = homeData.location || 'आदिनाथ जिनालय, खराड़ी, पुणे';
+  }
+
+  const fallbackAnnouncement =
+    homeData.announcement || 'जिनधर्म आराधना चातुर्मास में आपका स्वागत है';
+  let headerAnnouncement = fallbackAnnouncement;
+  let dailyAnnouncement = fallbackAnnouncement;
+
+  try {
+    if (typeof getAnnouncementByDate === 'function') {
+      const entry = await getAnnouncementByDate(today);
+      const text = getAnnouncementText(entry);
+      if (text) {
+        headerAnnouncement = text;
+        dailyAnnouncement = text;
+      }
+    }
+  } catch (error) {
+    console.warn('Daily announcement data could not be loaded:', error);
+  }
+
+  try {
+    if (typeof getHinduCalendarByDate === 'function') {
+      const entry = await getHinduCalendarByDate(today);
+      if (entry?.englishDate && todayDate) {
+        todayDate.textContent = entry.englishDate;
+      }
+      if (entry?.hindiDate && todayDate) {
+        todayDate.textContent = `${todayDate.textContent} / ${entry.hindiDate}`;
+      }
+      if (entry?.special && String(entry.special).trim()) {
+        dailyAnnouncement = String(entry.special).trim();
+      }
+    }
+  } catch (error) {
+    console.warn('Hindu calendar data could not be loaded:', error);
+  }
+
+  if (announceText) announceText.textContent = headerAnnouncement;
+  if (announcement) {
+    announcement.textContent = dailyAnnouncement || 'आज के लिए कोई विशेष सूचना नहीं है।';
   }
 }
 
