@@ -1,4 +1,4 @@
-import { cp, mkdir, rm } from "node:fs/promises";
+import { access, cp, mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -33,6 +33,16 @@ await rm(outputDirectory, { force: true, recursive: true });
 await mkdir(outputDirectory, { recursive: true });
 
 for (const publishPath of publishPaths) {
+  // The UAT Pages site uses the repository subpath and intentionally has no
+  // production custom-domain CNAME. Keep CNAME optional across environments.
+  if (publishPath === "CNAME") {
+    try {
+      await access(path.join(repositoryRoot, publishPath));
+    } catch {
+      continue;
+    }
+  }
+
   await cp(
     path.join(repositoryRoot, publishPath),
     path.join(outputDirectory, publishPath),
