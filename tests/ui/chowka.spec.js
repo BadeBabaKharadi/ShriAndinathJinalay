@@ -90,7 +90,7 @@ test.describe("Chowka section on home page", () => {
     await expectNoBrowserErrors(browserErrors);
   });
 
-  test("shows both confirmed Maharaj names and blanks remaining rows", async ({
+  test("requires all three Maharaj and sorts their entries in the requested order", async ({
     page,
   }) => {
     const browserErrors = collectBrowserErrors(page);
@@ -106,12 +106,12 @@ test.describe("Chowka section on home page", () => {
       {
         name: "चौका 2",
         address: "पुणे",
-        maharaj: "१०५ ऐलक श्री विवेकानंद सागर जी",
+        maharaj: "१०८ मुनि श्री विदित सागर जी",
       },
       {
         name: "चौका 3",
         address: "पुणे",
-        maharaj: "",
+        maharaj: "१०५ ऐलक श्री विजित सागर जी",
       },
       {
         name: "चौका 4",
@@ -135,10 +135,12 @@ test.describe("Chowka section on home page", () => {
     );
 
     await expect(rows.nth(1).locator("td").nth(3)).toContainText(
-      "१०५ ऐलक श्री विवेकानंद सागर जी",
+      "१०८ मुनि श्री विदित सागर जी",
     );
 
-    await expect(rows.nth(2).locator("td").nth(3)).toHaveText("");
+    await expect(rows.nth(2).locator("td").nth(3)).toContainText(
+      "१०५ ऐलक श्री विजित सागर जी",
+    );
 
     await expect(rows.nth(3).locator("td").nth(3)).toHaveText("");
 
@@ -147,7 +149,7 @@ test.describe("Chowka section on home page", () => {
     await expectNoBrowserErrors(browserErrors);
   });
 
-  test("keeps placeholder when the same Maharaj is populated twice", async ({
+  test("keeps remaining rows unconfirmed until all three Maharaj have entries", async ({
     page,
   }) => {
     const browserErrors = collectBrowserErrors(page);
@@ -163,7 +165,7 @@ test.describe("Chowka section on home page", () => {
       {
         name: "चौका 2",
         address: "पुणे",
-        maharaj: "१०८ मुनि श्री अजित सागर जी",
+        maharaj: "१०८ मुनि श्री विदित सागर जी",
       },
       {
         name: "चौका 3",

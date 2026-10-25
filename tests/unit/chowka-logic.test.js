@@ -3,41 +3,71 @@ import {
   bothMaharajUpdated,
   getChowkaDateBounds,
   isValidChowkaDate,
+  sortChowkaRows,
 } from "../../js/chowka-logic.js";
 
-describe("Chowka Maharaj update rule", () => {
-  it("returns false when no Maharaj is populated", () => {
+describe("Chowka Maharaj completion rule", () => {
+  it("returns false when fewer than all three required Maharaj are populated", () => {
     expect(bothMaharajUpdated([])).toBe(false);
-  });
-
-  it("returns false when only one distinct Maharaj is populated", () => {
     expect(
       bothMaharajUpdated([
         { maharaj: "AjitSagarJi" },
-        { maharaj: "" },
+        { maharaj: "ViditSagarJi" },
+      ]),
+    ).toBe(false);
+    expect(
+      bothMaharajUpdated([
+        { maharaj: "AjitSagarJi" },
+        { maharaj: "ViditSagarJi" },
         { maharaj: "" },
       ]),
     ).toBe(false);
   });
 
-  it("returns true when two distinct Maharaj names are populated", () => {
+  it("returns true only when Ajit, Vidit, and Vijit Sagar Ji are populated", () => {
     expect(
       bothMaharajUpdated([
         { maharaj: "AjitSagarJi" },
-        { maharaj: "VivekanandSagarJi" },
-        { maharaj: "" },
+        { maharaj: "ViditSagarJi" },
+        { maharaj: "VijitSagarJi" },
       ]),
     ).toBe(true);
   });
 
-  it("does not count the same Maharaj twice", () => {
+  it("does not treat duplicate entries as a missing Maharaj", () => {
     expect(
       bothMaharajUpdated([
-        { maharaj: "VivekanandSagarJi" },
-        { maharaj: "VivekanandSagarJi" },
-        { maharaj: "" },
+        { maharaj: "AjitSagarJi" },
+        { maharaj: "ViditSagarJi" },
+        { maharaj: "ViditSagarJi" },
       ]),
     ).toBe(false);
+  });
+
+  it("sorts entries in Ajit, Vidit, Vijit order and preserves other rows afterward", () => {
+    const rows = [
+      { id: "vijit", maharaj: "VijitSagarJi" },
+      { id: "other", maharaj: "Other Maharaj" },
+      { id: "vidit", maharaj: "ViditSagarJi" },
+      { id: "ajit", maharaj: "AjitSagarJi" },
+    ];
+
+    expect(sortChowkaRows(rows).map((row) => row.id)).toEqual([
+      "ajit",
+      "vidit",
+      "vijit",
+      "other",
+    ]);
+  });
+
+  it("recognizes the former Vivekanand name as Vidit Sagar Ji for existing records", () => {
+    expect(
+      bothMaharajUpdated([
+        { maharaj: "१०८ मुनि श्री अजित सागर जी" },
+        { maharaj: "ऐलक श्री विवेकानंद सागर जी" },
+        { maharaj: "१०५ ऐलक श्री विजित सागर जी" },
+      ]),
+    ).toBe(true);
   });
 });
 

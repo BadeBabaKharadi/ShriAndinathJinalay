@@ -21,7 +21,13 @@ describe("website entry points", () => {
   });
 
   it("does not publish retired registration or coordinator pages", () => {
-    for (const file of ["registration.html", "coordinator-7x9p2.html"]) {
+    for (const file of [
+      "registration.html",
+      "coordinator-7x9p2.html",
+      "pratibha-samman.html",
+      "october-event-registration.html",
+      "booth-registration.html",
+    ]) {
       expect(
         fs.existsSync(path.join(root, file)),
         file + " should be removed",
