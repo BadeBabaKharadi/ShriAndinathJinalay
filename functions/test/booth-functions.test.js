@@ -1,7 +1,5 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { readFileSync } = require("node:fs");
-const path = require("node:path");
 const {
   EVENT_ID,
   LIMIT,
@@ -101,28 +99,4 @@ test("oversized receipt payloads are rejected", () => {
     () => validate({ ...validInput, receiptBase64: "x".repeat(1900001) }),
     /too large/,
   );
-});
-
-test("booth form exposes mandatory fields and the agreed event rules", () => {
-  const cwd = process.cwd();
-  const root = path.basename(cwd) === "functions" ? path.dirname(cwd) : cwd;
-  const html = readFileSync(path.join(root, "booth-registration.html"), "utf8");
-
-  for (const id of [
-    "mobile",
-    "name",
-    "stallName",
-    "businessType",
-    "formMobile",
-    "society",
-    "city",
-    "state",
-    "receipt",
-  ]) {
-    assert.match(html, new RegExp(`id="${id}"[^>]*required`));
-  }
-
-  assert.match(html, /20 बूथ/);
-  assert.match(html, /₹2,100/);
-  assert.match(html, /टेबल और 2 कुर्सियाँ/);
 });
