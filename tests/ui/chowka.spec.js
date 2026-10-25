@@ -74,39 +74,71 @@ test.describe("Chowka section on home page", () => {
     await expectNoBrowserErrors(errors);
   });
 
-  test("requires all three Maharaj and sorts their entries in the requested order", async ({ page }) => {
+  test(
+    "requires all three Maharaj and sorts their entries in the requested order",
+    async ({ page }) => {
     const errors = collectBrowserErrors(page);
     await freezeToday(page);
     await mockChowkaApi(page, [
-      { name: "चौका 1", address: "पुणे", maharaj: "१०५ ऐलक श्री विजित सागर जी" },
-      { name: "चौका 2", address: "पुणे", maharaj: "१०८ मुनि श्री अजित सागर जी" },
-      { name: "चौका 3", address: "पुणे", maharaj: "१०८ मुनि श्री विदित सागर जी" },
+      {
+        name: "चौका 1",
+        address: "पुणे",
+        maharaj: "१०५ ऐलक श्री विजित सागर जी",
+      },
+      {
+        name: "चौका 2",
+        address: "पुणे",
+        maharaj: "१०८ मुनि श्री अजित सागर जी",
+      },
+      {
+        name: "चौका 3",
+        address: "पुणे",
+        maharaj: "१०८ मुनि श्री विदित सागर जी",
+      },
       { name: "चौका 4", address: "पुणे", maharaj: "" },
     ]);
     await page.goto("/index.html");
 
     const rows = page.locator("#chowka-table-body tr");
     await expect(rows).toHaveCount(4);
-    await expect(rows.nth(0).locator("td").nth(3)).toContainText("१०८ मुनि श्री अजित सागर जी");
-    await expect(rows.nth(1).locator("td").nth(3)).toContainText("१०८ मुनि श्री विदित सागर जी");
-    await expect(rows.nth(2).locator("td").nth(3)).toContainText("१०५ ऐलक श्री विजित सागर जी");
+    await expect(rows.nth(0).locator("td").nth(3)).toContainText(
+      "१०८ मुनि श्री अजित सागर जी",
+    );
+    await expect(rows.nth(1).locator("td").nth(3)).toContainText(
+      "१०८ मुनि श्री विदित सागर जी",
+    );
+    await expect(rows.nth(2).locator("td").nth(3)).toContainText(
+      "१०५ ऐलक श्री विजित सागर जी",
+    );
     await expect(rows.nth(3).locator("td").nth(3)).toHaveText("");
     await expect(page.locator(".not-confirmed")).toHaveCount(0);
     await expectNoBrowserErrors(errors);
   });
 
-  test("keeps remaining rows unconfirmed until all three Maharaj have entries", async ({ page }) => {
+  test(
+    "keeps remaining rows unconfirmed until all three Maharaj have entries",
+    async ({ page }) => {
     const errors = collectBrowserErrors(page);
     await freezeToday(page);
     await mockChowkaApi(page, [
-      { name: "चौका 1", address: "पुणे", maharaj: "१०८ मुनि श्री अजित सागर जी" },
-      { name: "चौका 2", address: "पुणे", maharaj: "१०८ मुनि श्री विदित सागर जी" },
+      {
+        name: "चौका 1",
+        address: "पुणे",
+        maharaj: "१०८ मुनि श्री अजित सागर जी",
+      },
+      {
+        name: "चौका 2",
+        address: "पुणे",
+        maharaj: "१०८ मुनि श्री विदित सागर जी",
+      },
       { name: "चौका 3", address: "पुणे", maharaj: "" },
     ]);
     await page.goto("/index.html");
     const rows = page.locator("#chowka-table-body tr");
     await expect(rows).toHaveCount(3);
-    await expect(rows.nth(2).locator("td").nth(3)).toContainText("पड़गाहन के बाद अपडेट होगा");
+    await expect(rows.nth(2).locator("td").nth(3)).toContainText(
+      "पड़गाहन के बाद अपडेट होगा",
+    );
     await expectNoBrowserErrors(errors);
   });
 
