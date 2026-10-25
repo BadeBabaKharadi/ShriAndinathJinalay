@@ -9,6 +9,7 @@
 
 import {
   bothMaharajUpdated,
+  sortChowkaRows,
   getChowkaDateBounds,
   isValidChowkaDate,
 } from "./chowka-logic.js";
@@ -169,11 +170,11 @@ document.addEventListener("DOMContentLoaded", () => {
        * We need two DISTINCT Maharaj names before the
        * remaining unconfirmed rows become blank.
        */
-      const hasBothMaharajUpdated =
-        bothMaharajUpdated(result.rows);
+      const sortedRows = sortChowkaRows(result.rows);
+      const hasBothMaharajUpdated = bothMaharajUpdated(sortedRows);
 
       tbody.innerHTML =
-        result.rows
+        sortedRows
           .map(
             (row, index) => {
               const confirmed =
@@ -271,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
         detailName.textContent =
           key === "AjitSagarJi"
             ? "१०८ मुनि श्री अजित सागर जी"
-            : "१०५ ऐलक श्री विवेकानंद सागर जी";
+            : "१०८ मुनि श्री विदित सागर जी";
 
         padgahan.innerHTML = placeholder();
 
