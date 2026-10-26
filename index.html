@@ -138,20 +138,18 @@
             </div>
             <style>
               @media (max-width:640px) {
-                /* Keep Ajit as the main hero; show Vidit and Vijit side by side beneath him. */
-                .maharaj-trio { grid-template-columns:repeat(2,minmax(0,1fr)) !important; align-items:start !important; gap:14px 10px !important; }
-                .maharaj-center { grid-column:1 / -1; grid-row:1; }
+                /* Mobile hierarchy: Ajit first, Vidit second, Vijit third. Stack explicitly. */
+                .maharaj-trio { grid-template-columns:minmax(0,1fr) !important; grid-template-rows:auto auto auto !important; align-items:center !important; gap:18px !important; }
+                .maharaj-center { grid-column:1; grid-row:1; }
                 .maharaj-vidit { grid-column:1; grid-row:2; }
-                .maharaj-vijit { grid-column:2; grid-row:2; }
+                .maharaj-vijit { grid-column:1; grid-row:3; }
                 .maharaj-center img { height:clamp(260px,76vw,400px) !important; width:100% !important; max-width:460px !important; }
-                /* The source PNGs have different amounts of transparent/blank canvas.
-                   Size the portrait artwork independently so the visual hierarchy is obvious. */
-                .maharaj-side img { display:block; object-fit:contain !important; object-position:center bottom !important; }
-                .maharaj-vidit img { height:clamp(210px,58vw,300px) !important; width:135% !important; max-width:none !important; margin-left:-17.5%; }
-                .maharaj-vijit img { height:clamp(145px,39vw,205px) !important; width:100% !important; max-width:230px !important; margin-left:0; }
+                /* Vidit is larger than Vijit but remains smaller than Ajit's hero portrait. */
+                .maharaj-side { width:100%; }
+                .maharaj-side img { display:block; object-fit:contain !important; object-position:center bottom !important; margin-left:auto !important; margin-right:auto !important; }
+                .maharaj-vidit img { height:clamp(230px,64vw,330px) !important; width:100% !important; max-width:360px !important; }
+                .maharaj-vijit img { height:clamp(160px,44vw,230px) !important; width:100% !important; max-width:270px !important; }
                 .maharaj-side > div { max-width:460px; }
-                .maharaj-vidit { overflow:visible; }
-                .maharaj-vijit { overflow:visible; }
               }
             </style>
           </section>
