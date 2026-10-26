@@ -144,9 +144,14 @@
                 .maharaj-vidit { grid-column:1; grid-row:2; }
                 .maharaj-vijit { grid-column:2; grid-row:2; }
                 .maharaj-center img { height:clamp(260px,76vw,400px) !important; width:100% !important; max-width:460px !important; }
-                .maharaj-vidit img { height:clamp(170px,48vw,250px) !important; width:100% !important; max-width:360px !important; }
-                .maharaj-vijit img { height:clamp(120px,34vw,180px) !important; width:100% !important; max-width:230px !important; }
+                /* The source PNGs have different amounts of transparent/blank canvas.
+                   Size the portrait artwork independently so the visual hierarchy is obvious. */
+                .maharaj-side img { display:block; object-fit:contain !important; object-position:center bottom !important; }
+                .maharaj-vidit img { height:clamp(210px,58vw,300px) !important; width:135% !important; max-width:none !important; margin-left:-17.5%; }
+                .maharaj-vijit img { height:clamp(145px,39vw,205px) !important; width:100% !important; max-width:230px !important; margin-left:0; }
                 .maharaj-side > div { max-width:460px; }
+                .maharaj-vidit { overflow:visible; }
+                .maharaj-vijit { overflow:visible; }
               }
             </style>
           </section>
