@@ -138,14 +138,14 @@
             </div>
             <style>
               @media (max-width:640px) {
-                .maharaj-trio { grid-template-columns:minmax(0,1fr) !important; align-items:start !important; gap:18px !important; }
-                /* Mobile hierarchy is explicit: Vidit first, Ajit largest, Vijit last. */
-                .maharaj-vidit { grid-column:1; grid-row:1; }
-                .maharaj-center { grid-column:1; grid-row:2; }
-                .maharaj-vijit { grid-column:1; grid-row:3; }
-                .maharaj-vidit img { height:clamp(220px,62vw,320px) !important; width:100% !important; max-width:360px !important; }
+                /* Keep Ajit as the main hero; show Vidit and Vijit side by side beneath him. */
+                .maharaj-trio { grid-template-columns:repeat(2,minmax(0,1fr)) !important; align-items:start !important; gap:14px 10px !important; }
+                .maharaj-center { grid-column:1 / -1; grid-row:1; }
+                .maharaj-vidit { grid-column:1; grid-row:2; }
+                .maharaj-vijit { grid-column:2; grid-row:2; }
                 .maharaj-center img { height:clamp(260px,76vw,400px) !important; width:100% !important; max-width:460px !important; }
-                .maharaj-vijit img { height:clamp(130px,38vw,200px) !important; width:100% !important; max-width:230px !important; }
+                .maharaj-vidit img { height:clamp(170px,48vw,250px) !important; width:100% !important; max-width:360px !important; }
+                .maharaj-vijit img { height:clamp(120px,34vw,180px) !important; width:100% !important; max-width:230px !important; }
                 .maharaj-side > div { max-width:460px; }
               }
             </style>
