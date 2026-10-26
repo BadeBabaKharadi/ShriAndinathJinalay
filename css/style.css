@@ -851,3 +851,45 @@ body.modal-open {
     transform: translateX(0);
   }
 }
+
+/* UAT homepage: use the full content width and remove the empty desktop column. */
+.home-dashboard {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 18px !important;
+  width: min(1100px, calc(100% - 32px)) !important;
+  max-width: 1100px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.home-dashboard > .location-block,
+.home-dashboard > .home-title-card,
+.home-dashboard > .home-card {
+  grid-column: 1 / -1 !important;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.home-dashboard > .location-block {
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+.home-dashboard .maharaj-showcase {
+  width: 100%;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+/* Make the first / principal portrait visibly dominant at every viewport. */
+.home-dashboard .maharaj-center img {
+  width: 100% !important;
+  max-width: 560px !important;
+  height: clamp(330px, 46vw, 520px) !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+}
+@media (max-width: 600px) {
+  .home-dashboard { width: calc(100% - 24px) !important; gap: 12px !important; }
+  .home-dashboard .maharaj-center img { height: clamp(340px, 92vw, 440px) !important; max-width: 100% !important; }
+  .home-dashboard .maharaj-showcase { padding: 12px !important; }
+}
