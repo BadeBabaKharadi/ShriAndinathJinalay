@@ -137,22 +137,17 @@
               <p style="margin:0;font-size:clamp(.95rem,2vw,1.15rem);line-height:1.65"><strong style="color:#94600c">स्थान:</strong> श्री आदिनाथ दिगंबर जैन मंदिर, खराड़ी, पुणे, महाराष्ट्र</p>
             </div>
             <style>
-              @media (max-width:640px) {
-                /* Keep Ajit as the main hero; show Vidit and Vijit side by side beneath him. */
-                .maharaj-trio { grid-template-columns:repeat(2,minmax(0,1fr)) !important; align-items:start !important; gap:14px 10px !important; }
-                .maharaj-center { grid-column:1 / -1; grid-row:1; }
-                .maharaj-vidit { grid-column:1; grid-row:2; }
-                .maharaj-vijit { grid-column:2; grid-row:2; }
-                .maharaj-center img { height:clamp(260px,76vw,400px) !important; width:100% !important; max-width:460px !important; }
-                /* The source PNGs have different amounts of transparent/blank canvas.
-                   Size the portrait artwork independently so the visual hierarchy is obvious. */
-                .maharaj-side img { display:block; object-fit:contain !important; object-position:center bottom !important; }
-                .maharaj-vidit img { height:clamp(210px,58vw,300px) !important; width:135% !important; max-width:none !important; margin-left:-17.5%; }
-                .maharaj-vijit img { height:clamp(145px,39vw,205px) !important; width:100% !important; max-width:230px !important; margin-left:0; }
-                .maharaj-side > div { max-width:460px; }
-                .maharaj-vidit { overflow:visible; }
-                .maharaj-vijit { overflow:visible; }
-              }
+              /* Keep the same clear hierarchy on desktop and mobile: Ajit, Vidit, Vijit. */
+              .maharaj-trio { display:grid !important; grid-template-columns:minmax(0,1fr) !important; grid-template-rows:auto auto auto !important; align-items:center !important; gap:22px !important; }
+              .maharaj-center { grid-column:1 !important; grid-row:1 !important; width:100%; }
+              .maharaj-vidit { grid-column:1 !important; grid-row:2 !important; width:100%; }
+              .maharaj-vijit { grid-column:1 !important; grid-row:3 !important; width:100%; }
+              .maharaj-center img { height:clamp(270px,42vw,460px) !important; width:100% !important; max-width:460px !important; }
+              .maharaj-side img { display:block; object-fit:contain !important; object-position:center bottom !important; margin-left:auto !important; margin-right:auto !important; }
+              .maharaj-vidit img { height:clamp(230px,32vw,360px) !important; width:100% !important; max-width:360px !important; }
+              .maharaj-vijit img { height:clamp(160px,23vw,270px) !important; width:100% !important; max-width:270px !important; }
+              .maharaj-side > div { width:100%; max-width:460px; margin-left:auto; margin-right:auto; }
+              .maharaj-center > div { max-width:620px; margin-left:auto; margin-right:auto; }
             </style>
           </section>
 
