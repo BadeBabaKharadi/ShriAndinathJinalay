@@ -883,13 +883,13 @@ body.modal-open {
 /* Make the first / principal portrait visibly dominant at every viewport. */
 .home-dashboard .maharaj-center img {
   width: 100% !important;
-  max-width: 560px !important;
-  height: clamp(330px, 46vw, 520px) !important;
+  max-width: 640px !important;
+  height: clamp(360px, 50vw, 560px) !important;
   object-fit: contain !important;
   object-position: center bottom !important;
 }
 @media (max-width: 600px) {
   .home-dashboard { width: calc(100% - 24px) !important; gap: 12px !important; }
-  .home-dashboard .maharaj-center img { height: clamp(340px, 92vw, 440px) !important; max-width: 100% !important; }
+  .home-dashboard .maharaj-center img { height: clamp(380px, 100vw, 480px) !important; max-width: 100% !important; }
   .home-dashboard .maharaj-showcase { padding: 12px !important; }
 }
