@@ -27,20 +27,6 @@
 
 
   <!-- =====================================================
-       ANNOUNCEMENT BAR
-       ===================================================== -->
-
-  <div class="announcement-bar">
-
-    <span id="announce-text">
-      🙏 जिनधर्म आराधना चातुर्मास में आपका स्वागत है
-    </span>
-
-  </div>
-
-
-
-  <!-- =====================================================
        HEADER
        ===================================================== -->
 
@@ -72,6 +58,11 @@
 
   </header>
 
+  <!-- General daily announcement stays in the top banner.
+       Maharaj name changes remain in the hero showcase below. -->
+  <div class="announcement-bar" role="status" aria-live="polite">
+    <span id="announce-text">जिनधर्म आराधना चातुर्मास में आपका स्वागत है।</span>
+  </div>
 
 
   <!-- =====================================================
@@ -86,12 +77,17 @@
 
       <div class="container home-dashboard">
 
+        <div class="location-block" style="text-align:center;margin:0 auto 4px;padding:4px 16px 8px;max-width:900px">
+          <div class="location-name" style="font-size:clamp(1.15rem,3vw,1.8rem);font-weight:800">1008 श्री आदिनाथ दिगंबर जैन मंदिर, ड्रीम्स वीरोदय सोसाइटी</div>
+          <div class="location-place" style="font-size:clamp(1rem,2.5vw,1.4rem);margin-top:4px">खराड़ी, पुणे</div>
+        </div>
+
 
         <!-- =================================================
              1. JINDHARM TITLE
              ================================================= -->
 
-        <section class="home-card home-title-card">
+        <section class="home-card home-title-card" style="margin-top:0">
 
           <div class="event-eyebrow">
             जिनधर्म आराधना
@@ -106,22 +102,56 @@
 
           </h1>
 
-
-          <div class="location-block">
-
-            <div class="location-name">
-
-              1008 श्री आदिनाथ दिगंबर जैन मंदिर,
-              ड्रीम्स वीरोदय सोसाइटी
-
+          <section class="maharaj-showcase" aria-labelledby="maharaj-showcase-title" style="max-width:1100px;margin:8px auto 22px;padding:clamp(14px,2.5vw,28px);border:2px solid #d9c69a;border-radius:28px;background:linear-gradient(135deg,#fffaf0,#fffdf8);box-shadow:0 8px 22px #8a4b1820;text-align:center;color:#6e1a14">
+            <h2 id="maharaj-showcase-title" style="margin:0 0 22px;font-size:clamp(1.5rem,3.5vw,2.5rem);font-weight:900">🙏 पूज्य मुनि संघ 🙏</h2>
+            <div class="maharaj-trio" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.55fr) minmax(0,1fr);align-items:end;gap:clamp(8px,2vw,24px)">
+              <div class="maharaj-side maharaj-vidit" style="min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end">
+                <img src="images/ViditSagarJi.png" alt="पूज्य १०८ मुनि श्री विदित सागर जी महाराज" style="display:block;width:100%;max-width:300px;height:clamp(165px,25vw,300px);object-fit:contain;object-position:center bottom">
+                <div style="width:100%;margin-top:10px;padding:12px 8px;border:1px solid #d9a441;border-radius:14px;background:#fff6df;overflow-wrap:anywhere">
+                  <p style="margin:0 0 5px;font-size:.82rem;font-weight:800;color:#94600c">पूर्व नाम</p>
+                  <p style="margin:0;font-size:clamp(.8rem,1.5vw,1.05rem);font-weight:800">ऐलक श्री विवेकानंद सागर जी</p>
+                  <p style="margin:5px 0;font-size:1rem" aria-hidden="true">↓</p>
+                  <p style="margin:0 0 5px;font-size:.82rem;font-weight:800;color:#94600c">नया नाम</p>
+                  <p style="margin:0;font-size:clamp(.8rem,1.5vw,1.05rem);font-weight:900">१०८ मुनि श्री विदित सागर जी महाराज</p>
+                </div>
+              </div>
+              <div class="maharaj-center" style="min-width:0;display:flex;flex-direction:column;align-items:center">
+                <img src="images/AjitSagarJi.png" alt="पूज्य मुनि श्री १०८ अजित सागर जी महाराज" style="display:block;width:100%;max-width:440px;height:clamp(230px,38vw,440px);object-fit:contain;object-position:center bottom">
+                <div style="margin-top:10px;padding:12px 18px;border:2px solid #d9a441;border-radius:16px;background:linear-gradient(135deg,#fff1cb,#fffaf0);width:100%;box-sizing:border-box">
+                  <p style="margin:0;font-size:clamp(1rem,2vw,1.4rem);font-weight:900">१०८ मुनि श्री अजित सागर जी महाराज</p>
+                </div>
+              </div>
+              <div class="maharaj-side maharaj-vijit" style="min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end">
+                <img src="images/VijitSagarJi.png" alt="पूज्य १०५ ऐलक श्री विजित सागर जी महाराज" style="display:block;width:100%;max-width:240px;height:clamp(130px,19vw,245px);object-fit:contain;object-position:center bottom">
+                <div style="width:100%;margin-top:10px;padding:12px 8px;border:1px solid #d9a441;border-radius:14px;background:#fff6df;overflow-wrap:anywhere">
+                  <p style="margin:0 0 5px;font-size:.82rem;font-weight:800;color:#94600c">पूर्व नाम</p>
+                  <p style="margin:0;font-size:clamp(.8rem,1.5vw,1.05rem);font-weight:800">आदर्श भैया जी</p>
+                  <p style="margin:5px 0;font-size:1rem" aria-hidden="true">↓</p>
+                  <p style="margin:0 0 5px;font-size:.82rem;font-weight:800;color:#94600c">नया नाम</p>
+                  <p style="margin:0;font-size:clamp(.8rem,1.5vw,1.05rem);font-weight:900">१०५ ऐलक श्री विजित सागर जी महाराज</p>
+                </div>
+              </div>
             </div>
-
-
-            <div class="location-place">
-
-              खराड़ी, पुणे
-
+            <div class="diksha-details" style="margin:22px auto 0;padding:16px 18px;border-top:1px solid #e4c77f;border-radius:14px;background:#fff8e8;text-align:left;max-width:850px">
+              <p style="margin:0 0 10px;font-size:clamp(.95rem,2vw,1.15rem);line-height:1.65"><strong style="color:#94600c">दीक्षा तिथि:</strong> 25 अक्टूबर 2026 (शरद पूर्णिमा)</p>
+              <p style="margin:0;font-size:clamp(.95rem,2vw,1.15rem);line-height:1.65"><strong style="color:#94600c">स्थान:</strong> श्री आदिनाथ दिगंबर जैन मंदिर, खराड़ी, पुणे, महाराष्ट्र</p>
             </div>
+            <style>
+              /* Keep the same clear hierarchy on desktop and mobile: Ajit, Vidit, Vijit. */
+              .maharaj-trio { display:grid !important; grid-template-columns:minmax(0,1fr) !important; grid-template-rows:auto auto auto !important; align-items:center !important; gap:22px !important; }
+              .maharaj-center { grid-column:1 !important; grid-row:1 !important; width:100%; }
+              .maharaj-vidit { grid-column:1 !important; grid-row:2 !important; width:100%; }
+              .maharaj-vijit { grid-column:1 !important; grid-row:3 !important; width:100%; }
+              .maharaj-center img { height:clamp(270px,42vw,460px) !important; width:100% !important; max-width:460px !important; }
+              .maharaj-side img { display:block; object-fit:contain !important; object-position:center bottom !important; margin-left:auto !important; margin-right:auto !important; }
+              .maharaj-vidit img { height:clamp(230px,32vw,360px) !important; width:100% !important; max-width:360px !important; }
+              .maharaj-vijit img { height:clamp(160px,23vw,270px) !important; width:100% !important; max-width:270px !important; }
+              .maharaj-side > div { width:100%; max-width:460px; margin-left:auto; margin-right:auto; }
+              .maharaj-center > div { max-width:620px; margin-left:auto; margin-right:auto; }
+            </style>
+          </section>
+
+
 
           </div>
 
@@ -129,66 +159,7 @@
 
 
 
-        <!-- =================================================
-             2. MAHARAJ IMAGES
-             ================================================= -->
-
-        <section class="home-card home-images-card">
-
-          <div class="image-stage image-stage-dual">
-
-            <div class="maharaj-gallery">
-
-
-              <!-- BIG / SENIOR MAHARAJ -->
-
-              <div class="maharaj-figure senior-figure">
-
-                <img class="maharaj-image senior-image" src="images/AjitSagarJi.png"
-                  alt="पूज्य मुनि श्री १०८ अजित सागर जी महाराज">
-
-
-                <div class="maharaj-nameplate">
-
-                  <span class="nameplate-title">
-
-                    १०८ मुनि श्री अजित सागर जी
-
-                  </span>
-
-                </div>
-
-              </div>
-
-
-
-              <!-- SMALL / JUNIOR MAHARAJ -->
-
-              <div class="maharaj-figure junior-figure">
-
-                <img class="maharaj-image junior-image" src="images/Vivekanad.png"
-                  alt="पूज्य ऐलक १०५ श्री विवेकानंद सागर जी">
-
-
-                <div class="maharaj-nameplate">
-
-                  <span class="nameplate-title">
-
-                    १०५ ऐलक श्री विवेकानंद सागर जी
-
-                  </span>
-
-                </div>
-
-              </div>
-
-
-            </div>
-
-          </div>
-
-        </section>
-
+        <!-- Duplicate Maharaj image gallery removed; portraits are shown in the hero above. -->
 
 
         <!-- =================================================
@@ -514,16 +485,6 @@
 
       </div>
 
-<style>.jaineshwari-feature{display:flex;flex-direction:column;align-items:center;gap:5px;max-width:700px;margin:18px auto;padding:18px 16px;border:2px solid #d9a441;border-radius:16px;background:linear-gradient(135deg,#fff7df,#fffdf6);box-shadow:0 8px 22px #8a4b1820;color:#6e1a14}.jaineshwari-feature-label{font-size:.85rem;font-weight:800;letter-spacing:.04em;color:#94600c}.jaineshwari-feature strong{font-size:clamp(1.2rem,3.5vw,1.8rem);font-weight:900}.jaineshwari-feature span:last-child{font-size:.95rem;color:#5f5145;text-align:center}@media(max-width:600px){.jaineshwari-feature{padding:15px 10px}}</style>
-
-<section class="home-card" style="margin:24px auto;max-width:900px;padding:24px;text-align:center">
-  <div class="event-eyebrow">24–26 अक्टूबर 2026</div>
-  <h2 class="section-title">विशेष धार्मिक आयोजन</h2>
-  <p>गणधर विलय विधान · प्रतिभा सम्मान · पिच्छी परिवर्तन · याग मंडल विधान एवं कलश ध्वजारोहण</p>
-  <div class="jaineshwari-feature" role="note" aria-label="विशेष आकर्षण"><span class="jaineshwari-feature-label">🌟 विशेष आकर्षण</span><strong>भव्य जैनेश्वरी दीक्षा</strong><span>25 अक्टूबर 2026 · इस पावन अवसर में सादर सहभागी बनें</span></div>
-  <p>25 अक्टूबर के दीक्षा समारोह हेतु भोजन कूपन और बाहर से आने वाले यात्रियों के आवास का पंजीकरण यहाँ करें।</p>
-</section>
-
 </main>
 
 
@@ -551,7 +512,6 @@
   <script type="module" src="js/chowka.js"></script>
 
 
-  <script src="js/site-utilities.js" defer></script>
 </body>
 
 </html>
