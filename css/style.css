@@ -851,3 +851,69 @@ body.modal-open {
     transform: translateX(0);
   }
 }
+
+/* UAT homepage: use the full content width and remove the empty desktop column. */
+.home-dashboard {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 18px !important;
+  width: min(1100px, calc(100% - 32px)) !important;
+  max-width: 1100px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.home-dashboard > .location-block,
+.home-dashboard > .home-title-card,
+.home-dashboard > .home-card {
+  grid-column: 1 / -1 !important;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.home-dashboard > .location-block {
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+.home-dashboard .maharaj-showcase {
+  width: 100%;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+/* Make the first / principal portrait visibly dominant at every viewport. */
+.home-dashboard .maharaj-center img {
+  width: 100% !important;
+  max-width: 640px !important;
+  height: clamp(360px, 50vw, 560px) !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+}
+@media (max-width: 600px) {
+  .home-dashboard { width: calc(100% - 24px) !important; gap: 12px !important; }
+  .home-dashboard .maharaj-center img { height: clamp(380px, 100vw, 480px) !important; max-width: 100% !important; }
+  .home-dashboard .maharaj-showcase { padding: 12px !important; }
+}
+
+
+/* UAT visual fix: bring the principal Muni portrait closer to its heading.
+   The image was placed in an oversized fixed-height box with bottom alignment,
+   creating a large empty area on mobile. Keep the portrait responsive without
+   changing the existing cream/gold showcase styling. */
+.home-dashboard .maharaj-showcase > h2 {
+  margin-bottom: 8px !important;
+}
+.home-dashboard .maharaj-showcase .maharaj-trio {
+  gap: 10px !important;
+}
+.home-dashboard .maharaj-center img {
+  height: clamp(260px, 34vw, 390px) !important;
+  max-width: 520px !important;
+}
+@media (max-width: 600px) {
+  .home-dashboard .maharaj-showcase > h2 {
+    margin-bottom: 6px !important;
+  }
+  .home-dashboard .maharaj-center img {
+    height: clamp(260px, 78vw, 340px) !important;
+  }
+}
