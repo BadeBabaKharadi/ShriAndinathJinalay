@@ -893,3 +893,27 @@ body.modal-open {
   .home-dashboard .maharaj-center img { height: clamp(380px, 100vw, 480px) !important; max-width: 100% !important; }
   .home-dashboard .maharaj-showcase { padding: 12px !important; }
 }
+
+
+/* UAT visual fix: bring the principal Muni portrait closer to its heading.
+   The image was placed in an oversized fixed-height box with bottom alignment,
+   creating a large empty area on mobile. Keep the portrait responsive without
+   changing the existing cream/gold showcase styling. */
+.home-dashboard .maharaj-showcase > h2 {
+  margin-bottom: 8px !important;
+}
+.home-dashboard .maharaj-showcase .maharaj-trio {
+  gap: 10px !important;
+}
+.home-dashboard .maharaj-center img {
+  height: clamp(260px, 34vw, 390px) !important;
+  max-width: 520px !important;
+}
+@media (max-width: 600px) {
+  .home-dashboard .maharaj-showcase > h2 {
+    margin-bottom: 6px !important;
+  }
+  .home-dashboard .maharaj-center img {
+    height: clamp(260px, 78vw, 340px) !important;
+  }
+}
