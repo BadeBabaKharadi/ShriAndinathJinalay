@@ -11,3 +11,20 @@ test("the current Chaturmas home page is reachable and shows its primary content
     page.locator(".home-registration-card, #registration-closed-modal"),
   ).toHaveCount(0);
 });
+
+test("daily highlights populate date and fallback content even when optional daily data is unavailable", async ({
+  page,
+}) => {
+  await page.route("**/data/announcements.json*", (route) =>
+    route.fulfill({ status: 503, body: "temporarily unavailable" }),
+  );
+  await page.route("**/data/hindu-calendar.json*", (route) =>
+    route.fulfill({ status: 503, body: "temporarily unavailable" }),
+  );
+
+  await page.goto("/index.html");
+
+  await expect(page.locator("#todays-date")).not.toBeEmpty();
+  await expect(page.locator("#todays-shrav")).not.toBeEmpty();
+  await expect(page.locator("#todays-announcement")).not.toBeEmpty();
+});
